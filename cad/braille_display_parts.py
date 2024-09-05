@@ -1,5 +1,5 @@
 import os
-import random
+import math
 from pathlib import Path
 
 import build123d as bd
@@ -174,7 +174,7 @@ def make_housing():
         align=bd.Align.CENTER,
     )
     box_top_face = part.faces().sort_by(bd.Axis.Z)[-1]
-    box_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
+    # box_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
 
     # Remove the pogo pin holes. Set the Z by making the pogo pin stick out
     # the perfect amount to get `dot_height` above the top face.
@@ -188,14 +188,14 @@ def make_housing():
         )
     )
 
-    # Remove cable channel. Bends from bottom of pogo out +Y side.
+    # Remove main cable channel. Bends from bottom of pogo out +Y side.
     for idx, pos in enumerate(dot_center_grid_locations):
         # Do this `idx * 0.001` to avoid overlapping/self-intersecting geometry.
-        cable_channel = make_bent_cylinder(
-            diameter=2.2 + (idx * 0.001),
-            vertical_seg_length=6 + (idx * 0.001),
+        cable_channel = make_curved_bent_cylinder(
+            diameter=1 + (idx * 0.001),
+            vertical_seg_length=4 + (idx * 0.001),
             horizontal_seg_length=housing_size_y + (idx * 0.001),  # Extra for safety.
-            bend_radius=1 + (idx * 0.001),
+            bend_radius=3 + (idx * 0.001),
         )
 
         part -= pos * cable_channel.translate(
@@ -204,6 +204,29 @@ def make_housing():
         )
         show(part)
         print(f"Cable channel {idx} added.")
+
+    # Remove small cable channel which goes all the way to the roof,
+    # and into the large cable channels.
+    for idx, pos in enumerate(dot_center_grid_locations):
+        for offset in (-1, 1):
+            # Note: offset=1 is the downstream (+Y) side.
+            z_rot = {1: 35, -1: -35}[offset]
+            part -= pos * make_angled_cylinders(
+                diameter=0.75,
+                vertical_seg_length=pogo_length - dot_height + pogo_below_flange_length,
+                horizontal_seg_length={1: 2.7, -1: 2.5}[offset],
+                horizontal_angle={1: -60, -1: -30}[offset],
+            ).rotate(bd.Axis.Z, z_rot).translate(
+                # Place top of snorkel at the bottom of the pogo pin's flange.
+                (
+                    offset * math.cos(45) * 2,
+                    offset * math.cos(45) * 2,
+                    box_top_face.center().Z,
+                )
+            )
+
+        show(part)
+        print(f"Tiny channel to surface #{idx} added.")
 
     return part
 
@@ -231,36 +254,46 @@ def demo_test_pipe_bend():
     return line_sum
 
 
-def make_bent_cylinder(
+def make_curved_bent_cylinder(
     *,
     diameter: float,
     vertical_seg_length: float,
     horizontal_seg_length: float,
     bend_radius: float,
+    horizontal_angle: float = 0,
 ):
     """Make a bent cylinder for this project.
 
     * Top snorkel part starts at the origin, then goes down, then in the +Y direction.
     * Makes a 90-degree bend. All X=0.
     * Changing the bend_radius will not change the placement of the straight segments.
+
+    Args:
+        horizontal_angle: Angle in degrees to rotate the horizontal segment.
+            0 means flat. Negative angle means point downwards.
     """
+
+    if horizontal_angle != 0:
+        raise NotImplementedError("Horizontal angle rotation not implemented.")
 
     line_vertical = bd.Line((0, 0, 0), (0, 0, -vertical_seg_length + bend_radius))
     line_horizontal = bd.Line(
         (0, bend_radius, -vertical_seg_length),
         (0, horizontal_seg_length, -vertical_seg_length),
     )
-    line_sum = (
-        line_vertical
-        + bd.TangentArc(
-            [
-                line_vertical.end_point(),
-                line_horizontal.start_point(),
-            ],
-            tangent=(0, 0, -1),
+    line_sum = line_vertical + (
+        # bd.Plane.YZ *
+        bd.CenterArc(
+            (0, 0, 0),
+            radius=bend_radius,
+            start_angle=270,
+            arc_size=90 - horizontal_angle,
         )
-        + line_horizontal
+        .rotate(bd.Axis.Y, 90)  # Rotate to be in the YZ plane.
+        .translate((0, bend_radius, -vertical_seg_length + bend_radius))
     )
+    if horizontal_seg_length > 0:
+        line_sum += line_horizontal
 
     sweep_polygon = bd.Plane.XY * bd.Circle(diameter / 2)
     line_sum = bd.sweep(sweep_polygon, path=line_sum)
@@ -268,31 +301,77 @@ def make_bent_cylinder(
     return line_sum
 
 
-def demo_test_make_bent_cylinder():
-    return make_bent_cylinder(
+def make_angled_cylinders(
+    *,
+    diameter: float,
+    vertical_seg_length: float,
+    horizontal_seg_length: float,
+    horizontal_angle: float = 0,
+):
+    """Make two connected cylinders at an angle.
+
+    * Top snorkel part starts at the origin, then goes down, then in the +Y direction.
+
+    Args:
+        horizontal_angle: Angle in degrees to rotate the horizontal segment.
+            0 means flat. Negative angle means point downwards.
+    """
+
+    part = bd.Cylinder(
+        radius=diameter / 2,
+        height=vertical_seg_length + diameter / 2,
+        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
+    )
+
+    part += (
+        bd.Cylinder(
+            radius=diameter / 2,
+            height=horizontal_seg_length,  #  + diameter / 2,
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        )
+        .rotate(bd.Axis.X, -90 + horizontal_angle)
+        .translate((0, 0, -vertical_seg_length))
+    )
+
+    return part
+
+
+def demo_test_make_curved_bent_cylinder():
+    return make_curved_bent_cylinder(
         diameter=0.5,
         vertical_seg_length=4,
-        horizontal_seg_length=8,
+        horizontal_seg_length=5,
         bend_radius=1,
+    )
+
+
+def demo_test_make_angled_cylinders():
+    return make_angled_cylinders(
+        diameter=0.5,
+        vertical_seg_length=4,
+        horizontal_seg_length=5,
+        horizontal_angle=-30,
     )
 
 
 if __name__ == "__main__":
     validate_dimensions()
 
+    # show(demo_test_make_curved_bent_cylinder())
+    # show(demo_test_make_angled_cylinders())
+    # exit(0)
+
     parts = {
         "pogo_pin": make_pogo_pin(),
-        "housing_sketches_deprecated": make_housing_sketches_deprecated(),
+        # "housing_sketches_deprecated": make_housing_sketches_deprecated(),
         "housing": make_housing(),
-        "demo_test_pipe_bend": demo_test_pipe_bend(),
-        "demo_test_make_bent_cylinder": demo_test_make_bent_cylinder(),
+        # "demo_test_pipe_bend": demo_test_pipe_bend(),
+        # "demo_test_make_curved_bent_cylinder": demo_test_make_curved_bent_cylinder(),
     }
 
     print("Showing CAD model(s)")
     # show(parts["pogo_pin"])
     show(parts["housing"])
-    # show(parts["demo_test_pipe_bend"])
-    # show(parts["demo_test_make_bent_cylinder"])
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     for name, part in parts.items():
