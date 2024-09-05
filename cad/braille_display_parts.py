@@ -30,11 +30,11 @@ min_wall_thickness = 1.0
 spring_max_length = 5
 spring_min_length = 2
 spring_od = 2.0
-cell_outer_y_length = 20
+cell_outer_y_length = 15
 spring_cell_width = spring_od + 0.1
 housing_roof_thickness = 1.0
 # Thickness of the part that holds the spring and routes the string.
-housing_basement_thickness = 5
+housing_basement_thickness = 3
 lock_plate_thickness = 1.0  # <- This is the cool part that locks the dots.
 
 
@@ -155,7 +155,7 @@ def make_housing_sketches_deprecated():
 
 
 def make_housing():
-    housing_size_x = inter_cell_dot_pitch_x * 2
+    housing_size_x = inter_cell_dot_pitch_x + 5
     housing_size_y = cell_outer_y_length
     # Includes roof and basement.
     housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
