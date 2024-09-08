@@ -4,6 +4,9 @@ from pathlib import Path
 
 import build123d as bd
 
+# from cad_lib import float_range
+
+
 if os.getenv("CI"):
 
     def show(*args):
@@ -189,29 +192,35 @@ def make_housing():
     )
 
     # Remove main cable channel. Bends from bottom of pogo out +Y side.
-    for idx, pos in enumerate(dot_center_grid_locations):
+    for idx1, grid_pos in enumerate(dot_center_grid_locations):
+        # Create a channel out through the bottom.
         # Do this `idx * 0.001` to avoid overlapping/self-intersecting geometry.
         cable_channel = make_curved_bent_cylinder(
-            diameter=1 + (idx * 0.001),
-            vertical_seg_length=4 + (idx * 0.001),
-            horizontal_seg_length=housing_size_y + (idx * 0.001),  # Extra for safety.
-            bend_radius=3 + (idx * 0.001),
+            diameter=1 + (idx1 * 0.001),
+            vertical_seg_length=4 + (idx1 * 0.001),
+            horizontal_seg_length=housing_size_y + (idx1 * 0.001),  # Extra for safety.
+            bend_radius=3 + (idx1 * 0.001),
         )
 
-        part -= pos * cable_channel.translate(
+        part -= grid_pos * cable_channel.translate(
             # Place top of snorkel at the bottom of the pogo pin's flange.
-            (0, 0, box_top_face.center().Z - pogo_length + dot_height)
+            # Then, move it down by `z_offset` to make it go through the bottom.
+            (
+                0,
+                0,
+                (box_top_face.center().Z - pogo_length + dot_height),
+            )
         )
         show(part)
-        print(f"Cable channel {idx} added.")
+        print(f"Cable channel {idx1} added.")
 
     # Remove small cable channel which goes all the way to the roof,
     # and into the large cable channels.
-    for idx, pos in enumerate(dot_center_grid_locations):
+    for idx1, grid_pos in enumerate(dot_center_grid_locations):
         for offset in (-1, 1):
             # Note: offset=1 is the downstream (+Y) side.
             z_rot = {1: 35, -1: -35}[offset]
-            part -= pos * make_angled_cylinders(
+            part -= grid_pos * make_angled_cylinders(
                 diameter=0.75,
                 vertical_seg_length=pogo_length - dot_height + pogo_below_flange_length,
                 horizontal_seg_length={1: 2.7, -1: 2.5}[offset],
@@ -226,7 +235,7 @@ def make_housing():
             )
 
         show(part)
-        print(f"Tiny channel to surface #{idx} added.")
+        print(f"Tiny channel to surface #{idx1} added.")
 
     return part
 
