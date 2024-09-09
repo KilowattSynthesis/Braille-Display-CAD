@@ -37,9 +37,9 @@ cell_outer_y_length = 15
 spring_cell_width = spring_od + 0.1
 housing_roof_thickness = 1.0
 # Thickness of the part that holds the spring and routes the string.
-housing_basement_thickness = 3
+housing_basement_thickness = 0
 lock_plate_thickness = 1.0  # <- This is the cool part that locks the dots.
-
+housing_cable_channel_od = 1
 
 # Pogo Pin Specs
 # H=8mm from https://www.aliexpress.com/item/1005003789308391.html
@@ -177,7 +177,7 @@ def make_housing():
         align=bd.Align.CENTER,
     )
     box_top_face = part.faces().sort_by(bd.Axis.Z)[-1]
-    # box_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
+    box_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
 
     # Remove the pogo pin holes. Set the Z by making the pogo pin stick out
     # the perfect amount to get `dot_height` above the top face.
@@ -191,51 +191,45 @@ def make_housing():
         )
     )
 
-    # Remove main cable channel. Bends from bottom of pogo out +Y side.
-    for idx1, grid_pos in enumerate(dot_center_grid_locations):
-        # Create a channel out through the bottom.
-        # Do this `idx * 0.001` to avoid overlapping/self-intersecting geometry.
-        cable_channel = make_curved_bent_cylinder(
-            diameter=1 + (idx1 * 0.001),
-            vertical_seg_length=4 + (idx1 * 0.001),
-            horizontal_seg_length=housing_size_y + (idx1 * 0.001),  # Extra for safety.
-            bend_radius=3 + (idx1 * 0.001),
-        )
-
-        part -= grid_pos * cable_channel.translate(
-            # Place top of snorkel at the bottom of the pogo pin's flange.
-            # Then, move it down by `z_offset` to make it go through the bottom.
-            (
-                0,
-                0,
-                (box_top_face.center().Z - pogo_length + dot_height),
-            )
-        )
-        show(part)
-        print(f"Cable channel {idx1} added.")
-
-    # Remove small cable channel which goes all the way to the roof,
-    # and into the large cable channels.
+    # Remove small cable channels which go all the way to the roof.
     for idx1, grid_pos in enumerate(dot_center_grid_locations):
         for offset in (-1, 1):
-            # Note: offset=1 is the downstream (+Y) side.
-            z_rot = {1: 35, -1: -35}[offset]
-            part -= grid_pos * make_angled_cylinders(
-                diameter=0.75,
-                vertical_seg_length=pogo_length - dot_height + pogo_below_flange_length,
-                horizontal_seg_length={1: 2.7, -1: 2.5}[offset],
-                horizontal_angle={1: -60, -1: -30}[offset],
-            ).rotate(bd.Axis.Z, z_rot).translate(
-                # Place top of snorkel at the bottom of the pogo pin's flange.
+            # Create a channel out through the bottom.
+            # Do this `idx * 0.0005` to avoid overlapping/self-intersecting geometry.
+            cable_channel = make_curved_bent_cylinder(
+                diameter=housing_cable_channel_od + (idx1 * 0.0005),
+                vertical_seg_length=(pogo_length - dot_height) + (idx1 * 0.0005),
+                horizontal_seg_length=housing_size_y
+                + (idx1 * 0.0005),  # Extra for safety.
+                bend_radius=3 + (idx1 * 0.0005),
+            )
+
+            part -= grid_pos * cable_channel.translate(
                 (
-                    offset * math.cos(45) * 2,
-                    offset * math.cos(45) * 2,
+                    offset * math.cos(45) * dot_separation_x,
+                    offset * math.cos(45) * dot_separation_y,
                     box_top_face.center().Z,
                 )
             )
 
-        show(part)
-        print(f"Tiny channel to surface #{idx1} added.")
+            print(f"Cable channel {idx1} added.")
+
+    # Remove the channels out the bottom.
+    for x_multiplier in [-1, 0, 1]:
+        channel_center_x = x_multiplier * math.cos(45) * dot_separation_x * 2
+
+        part -= bd.Box(
+            housing_cable_channel_od,
+            housing_size_y * 0.8,  # TODO
+            housing_size_z - pogo_length + dot_height,
+            align=(bd.Align.CENTER, bd.Align.MAX, bd.Align.MIN),
+        ).translate(
+            (
+                box_bottom_face.center().X + channel_center_x,
+                box_bottom_face.bounding_box().max.Y,
+                box_bottom_face.center().Z,
+            )
+        )
 
     return part
 
