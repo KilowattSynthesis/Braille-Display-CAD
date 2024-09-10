@@ -1,22 +1,26 @@
+"""Demonstrates the CAD library functions."""
+
 import os
 from pathlib import Path  # noqa: F401
 
 import build123d as bd
-
-from cad_lib import make_curved_bent_cylinder, make_angled_cylinders
-
+from cad_lib import make_angled_cylinders, make_curved_bent_cylinder
+from loguru import logger
 
 if os.getenv("CI"):
 
-    def show(*args):
-        return print(f"Skipping show({args}) in CI")
+    def show(*args: object) -> None:
+        """Do nothing (dummy function) to skip showing the CAD model in CI."""
+        logger.info(f"Skipping show({args}) in CI")
 else:
     from ocp_vscode import show
 
 
-def demo_test_pipe_bend():
+def demo_test_pipe_bend() -> bd.Part:
+    """Make a pipe bend, by creating a swept line and a sweep polygon."""
     # Lesson learned: The swept line must start at the origin, and
-    # the sweep polygon must be centered at the origin, normal to the sweep path at the origin.
+    # the sweep polygon must be centered at the origin, normal to the sweep path at the
+    # origin.
 
     line1 = bd.Line((10, 0, 0), (2, 0, 0))
     line2 = bd.Line((0, 2, 0), (0, 10, 0))
@@ -37,7 +41,8 @@ def demo_test_pipe_bend():
     return line_sum
 
 
-def demo_test_make_curved_bent_cylinder():
+def demo_test_make_curved_bent_cylinder() -> bd.Part:
+    """Make a curved bent cylinder using the applicable function."""
     return make_curved_bent_cylinder(
         diameter=0.5,
         vertical_seg_length=4,
@@ -46,7 +51,8 @@ def demo_test_make_curved_bent_cylinder():
     )
 
 
-def demo_test_make_angled_cylinders():
+def demo_test_make_angled_cylinders() -> bd.Part:
+    """Make angled cylinders using the applicable function."""
     return make_angled_cylinders(
         diameter=0.5,
         vertical_seg_length=4,
@@ -62,9 +68,9 @@ if __name__ == "__main__":
         "demo_test_make_angled_cylinders": demo_test_make_angled_cylinders(),
     }
 
-    print("Made CAD model(s)")
+    logger.info("Made CAD model(s)")
 
-    print("Showing CAD model(s)")
+    logger.info("Showing CAD model(s)")
     for part in parts.values():
         show(part)
 

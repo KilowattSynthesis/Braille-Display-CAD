@@ -1,18 +1,26 @@
-import os
+"""Create CAD models for the braille display parts."""
+
 import math
+import os
 from pathlib import Path
 
 import build123d as bd
-
 from cad_lib import make_curved_bent_cylinder
-
+from loguru import logger
 
 if os.getenv("CI"):
 
-    def show(*args):
-        return print(f"Skipping show({args}) in CI")
+    def show(*args: object) -> bd.Part:
+        """Do nothing (dummy function) to skip showing the CAD model in CI."""
+        logger.info(f"Skipping show({args}) in CI")
+        return args[0]
 else:
-    from ocp_vscode import show
+    import ocp_vscode
+
+    def show(*args: object) -> bd.Part:
+        """Show the CAD model in the CAD viewer."""
+        ocp_vscode.show(*args)
+        return args[0]
 
 
 # Constants. All distances are in mm.
@@ -22,7 +30,7 @@ dot_separation_x = 2.5
 dot_separation_y = 2.5
 dot_x_count = 2
 dot_y_count = 3
-inter_cell_dot_pitch_x = 7.6  # 6.1 to 7.6, with 6.2 nominal in printing
+inter_cell_dot_pitch_x = 6.2  # 6.1 to 7.6, with 6.2 nominal in printing
 inter_cell_dot_pitch_y = 10.0
 dot_diameter_base = 1.6
 dot_diameter_top = 1.2
@@ -33,13 +41,14 @@ min_wall_thickness = 1.0
 spring_max_length = 5
 spring_min_length = 2
 spring_od = 2.0
-cell_outer_y_length = 15
 spring_cell_width = spring_od + 0.1
 housing_roof_thickness = 1.0
 # Thickness of the part that holds the spring and routes the string.
 housing_basement_thickness = 0
 lock_plate_thickness = 1.0  # <- This is the cool part that locks the dots.
 housing_cable_channel_od = 1
+housing_mounting_screw_od = 2.2
+housing_mounting_screw_sep_y = 10.1
 
 # Pogo Pin Specs
 # H=8mm from https://www.aliexpress.com/item/1005003789308391.html
@@ -54,12 +63,22 @@ pogo_below_flange_od = 0.8
 pogo_below_flange_length = 2.0  # Ambiguous, 2mm is the longest option.
 
 
-def validate_dimensions():
+# Calculated housing dimensions.
+housing_size_x = inter_cell_dot_pitch_x
+housing_size_y = inter_cell_dot_pitch_y + 3.3
+# Includes roof and basement.
+housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
+
+
+def validate_dimensions() -> None:
+    """Validate that the dimensions are within the expected range."""
     # Calculate the wall thickness between the cell parts.
     wall_thickness_x = dot_separation_x - spring_cell_width
     wall_thickness_y = dot_separation_y - spring_cell_width
 
-    print(f"Wall thicknesses between dots: {wall_thickness_x=}, {wall_thickness_y=}")
+    logger.info(
+        f"Wall thicknesses between dots: {wall_thickness_x=}, {wall_thickness_y=}",
+    )
 
     # assert (
     #     wall_thickness_x >= min_wall_thickness
@@ -68,14 +87,15 @@ def validate_dimensions():
     #     wall_thickness_y >= min_wall_thickness
     # ), f"Wall thickness too thin: {wall_thickness_y}"
 
-    print("Dimensions validated.")
+    logger.info("Dimensions validated.")
 
 
-def make_pogo_pin(pogo_throw_tip_od_delta: float = 0):
-    """Make a pogo pin in order to act as a negative for the print-in-place surrounding part."""
+def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
+    """Make a pogo pin to act as a negative for the print-in-place surrounding part.
 
-    # Orientation: Pin extends up.
-    # Origin (XY): Center of bottom of flange. `pogo_length` extends up.
+    * Orientation: Pin extends up.
+    * Origin (XY): Center of bottom of flange. `pogo_length` extends up.
+    """
     with bd.BuildPart() as pogo_pin_part:
         # Below flange.
         bd.Cylinder(
@@ -109,12 +129,8 @@ def make_pogo_pin(pogo_throw_tip_od_delta: float = 0):
     return pogo_pin_part.part
 
 
-def make_housing():
-    housing_size_x = inter_cell_dot_pitch_x + 5
-    housing_size_y = cell_outer_y_length
-    # Includes roof and basement.
-    housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
-
+def make_housing() -> bd.Part:
+    """Make a housing for a single braille cell."""
     dot_center_grid_locations = bd.GridLocations(
         x_spacing=dot_separation_x,
         y_spacing=dot_separation_y,
@@ -134,26 +150,25 @@ def make_housing():
     # Remove the pogo pin holes. Set the Z by making the pogo pin stick out
     # the perfect amount to get `dot_height` above the top face.
     part -= dot_center_grid_locations * make_pogo_pin(
-        pogo_throw_tip_od_delta=0.5
+        pogo_throw_tip_od_delta=0.5,
     ).translate(
         (
             0,
             0,
             box_top_face.center().Z - pogo_length + dot_height,
-        )
+        ),
     )
 
     # Remove small cable channels which go all the way to the roof.
     for idx1, grid_pos in enumerate(dot_center_grid_locations):
         for offset in (-1, 1):
             # Create a channel out through the bottom.
-            # Do this `idx * 0.0005` to avoid overlapping/self-intersecting geometry.
+            # Do this `idx * 0.0001` to avoid overlapping/self-intersecting geometry.
             cable_channel = make_curved_bent_cylinder(
-                diameter=housing_cable_channel_od + (idx1 * 0.0005),
-                vertical_seg_length=(pogo_length - dot_height) + (idx1 * 0.0005),
-                horizontal_seg_length=housing_size_y
-                + (idx1 * 0.0005),  # Extra for safety.
-                bend_radius=3 + (idx1 * 0.0005),
+                diameter=housing_cable_channel_od + (idx1 * 0.0001),
+                vertical_seg_length=(pogo_length - dot_height) + (idx1 * 0.0001),
+                horizontal_seg_length=housing_size_y,
+                bend_radius=3 + (idx1 * 0.0001),
             )
 
             part -= grid_pos * cable_channel.translate(
@@ -161,52 +176,91 @@ def make_housing():
                     offset * math.cos(45) * dot_separation_x,
                     offset * math.cos(45) * dot_separation_y,
                     box_top_face.center().Z,
-                )
+                ),
             )
 
-            print(f"Cable channel {idx1} added.")
+            logger.info(f"Cable channel {idx1} added.")
 
     # Remove the channels out the bottom.
     for x_multiplier in [-1, 0, 1]:
         channel_center_x = x_multiplier * math.cos(45) * dot_separation_x * 2
 
         part -= bd.Box(
-            housing_cable_channel_od,
-            housing_size_y * 0.8,  # TODO
-            housing_size_z - pogo_length + dot_height,
+            housing_cable_channel_od + 0.01,
+            (
+                housing_size_y / 2  # Get to middle of housing
+                + (
+                    # Get to the center of the dot
+                    dot_separation_y if x_multiplier != 1 else 0
+                )
+                + (
+                    # Get to the center of the channel
+                    math.cos(45) * dot_separation_y
+                )
+            ),
+            housing_size_z - pogo_length + dot_height + housing_cable_channel_od * 0.4,
             align=(bd.Align.CENTER, bd.Align.MAX, bd.Align.MIN),
         ).translate(
             (
                 box_bottom_face.center().X + channel_center_x,
                 box_bottom_face.bounding_box().max.Y,
                 box_bottom_face.center().Z,
-            )
+            ),
         )
+
+    # Add mounting screw holes.
+    for offset in (-1, 1):
+        part -= bd.Cylinder(
+            radius=housing_mounting_screw_od / 2,
+            height=housing_size_z,
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        ).translate(
+            (
+                offset * (dot_separation_x / 2),  # Align to avoid cable channels.
+                offset * housing_mounting_screw_sep_y / 2,
+                box_bottom_face.center().Z,
+            ),
+        )
+
+    assert isinstance(part, bd.Part), "Part is not a Part"
 
     return part
 
 
-def demo_test_pipe_bend():
-    # Lesson learned: The swept line must start at the origin, and
-    # the sweep polygon must be centered at the origin, normal to the sweep path at the origin.
+def make_housing_chain(cell_count: int) -> bd.Part:
+    """Make a chain of `cell_count` braille cells.
 
-    line1 = bd.Line((10, 0, 0), (2, 0, 0))
-    line2 = bd.Line((0, 2, 0), (0, 10, 0))
-    line_sum = (
-        line1
-        + bd.RadiusArc(
-            line1 @ 1,
-            line2 @ 0,
-            radius=2,
+    Generates the chain in the X direction.
+    """
+    logger.info(f"Making a chain of {cell_count} braille cells.")
+    housing = make_housing()
+    assert isinstance(housing, bd.Part), "Housing is not a Part"
+    logger.info(f"Single cell housing volume: {housing.volume}")
+
+    # Make a chain of cells.
+    part = bd.Part()
+    for cell_num in range(cell_count):
+        part += housing.translate(
+            (
+                cell_num * inter_cell_dot_pitch_x,
+                0,
+                0,
+            ),
         )
-        + line2
-    ).translate(-line1.start_point())
 
-    sweep_polygon = bd.Plane.YZ * bd.Circle(0.5).translate(line2.end_point())
+    # Add on edge plates.
+    chain_min_x = part.faces().sort_by(bd.Axis.X)[0].center().X
+    chain_max_x = part.faces().sort_by(bd.Axis.X)[-1].center().X
 
-    line_sum = bd.sweep(sweep_polygon, path=line_sum)
-    line_sum = line_sum.translate(line1.start_point())
-    return line_sum
+    for x, mount_align in ((chain_min_x, bd.Align.MAX), (chain_max_x, bd.Align.MIN)):
+        part += bd.Box(
+            length=1,
+            width=housing_size_y,
+            height=housing_size_z,
+            align=(mount_align, bd.Align.CENTER, bd.Align.CENTER),
+        ).translate((x, 0, 0))
+
+    return part
 
 
 if __name__ == "__main__":
@@ -214,14 +268,20 @@ if __name__ == "__main__":
 
     parts = {
         "pogo_pin": make_pogo_pin(),
-        "housing": make_housing(),
+        "housing": show(make_housing()),
+        "housing_chain_3x": make_housing_chain(3),
+        "housing_chain_10x": make_housing_chain(10),
     }
 
-    print("Showing CAD model(s)")
+    logger.info("Showing CAD model(s)")
     # show(parts["pogo_pin"])
-    show(parts["housing"])
+    # show(parts["housing"])
+    show(parts["housing_chain_3x"])
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     for name, part in parts.items():
+        assert isinstance(part, bd.Part), f"{name} is not a Part"
+        assert part.is_manifold is True, f"{name} is not solid"
+
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))

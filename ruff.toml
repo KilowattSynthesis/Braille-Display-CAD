@@ -1,13 +1,20 @@
 target-version = "py311"
 
 [lint]
-# select = []
+select = ["ALL"]
 ignore = [
+    "ERA001",  # Commented-out code.
+    
+    "S101",  # Use of `assert` statement.
+    "RET504",  # Assignment right before return.
     
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
+fixable = [
+    "ALL",
+    "COM812", # Add missing commas automatically.
+]
 unfixable = []
 
 [format]
