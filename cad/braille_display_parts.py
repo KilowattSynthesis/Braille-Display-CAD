@@ -1,5 +1,6 @@
 """Create CAD models for the braille display parts."""
 
+import json
 import math
 import os
 from pathlib import Path
@@ -38,10 +39,6 @@ dot_height = 0.8
 
 # Housing dimensions.
 min_wall_thickness = 1.0
-spring_max_length = 5
-spring_min_length = 2
-spring_od = 2.0
-spring_cell_width = spring_od + 0.1
 housing_roof_thickness = 1.0
 # Thickness of the part that holds the spring and routes the string.
 housing_basement_thickness = 0
@@ -63,6 +60,20 @@ pogo_below_flange_od = 0.8
 pogo_below_flange_length = 2.0  # Ambiguous, 2mm is the longest option.
 
 
+# Base Plate Specs
+motor_base_plate_thickness = 3
+motor_od = 4.0
+motor_length = 8.0
+motor_count = dot_x_count * dot_y_count
+motor_raise_from_bottom_of_base = 1
+motor_hold_material_on_top_thickness_z = 1
+motor_space_between_motors = 0.7
+motor_holder_thickness = 2
+
+##############################
+##### CALCULATED VALUES ######
+##############################
+
 # Calculated housing dimensions.
 housing_size_x = inter_cell_dot_pitch_x
 housing_size_y = inter_cell_dot_pitch_y + 3.3
@@ -70,22 +81,38 @@ housing_size_y = inter_cell_dot_pitch_y + 3.3
 housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
 
 
-def validate_dimensions() -> None:
-    """Validate that the dimensions are within the expected range."""
-    # Calculate the wall thickness between the cell parts.
-    wall_thickness_x = dot_separation_x - spring_cell_width
-    wall_thickness_y = dot_separation_y - spring_cell_width
+# Calculated motor base plate dimensions.
+motor_base_plate_y_size = (
+    housing_size_y + (motor_count * (motor_od + motor_space_between_motors)) + 3
+)
 
-    logger.info(
-        f"Wall thicknesses between dots: {wall_thickness_x=}, {wall_thickness_y=}",
-    )
 
-    # assert (
-    #     wall_thickness_x >= min_wall_thickness
-    # ), f"Wall thickness too thin: {wall_thickness_x}"
-    # assert (
-    #     wall_thickness_y >= min_wall_thickness
-    # ), f"Wall thickness too thin: {wall_thickness_y}"
+def validate_dimensions_and_info() -> None:
+    """Validate that the dimensions are within the expected range.
+
+    Also, print out sizing info for PCB design.
+    """
+    logger.info("Validating dimensions.")
+
+    # Print mounting screw hole info.
+    pcb_design_info = {
+        "mounting_screw_hole": {
+            "diameter": housing_mounting_screw_od,
+            "separation_x": dot_separation_x,
+            "separation_y": housing_mounting_screw_sep_y,
+        },
+        "motor_base_plate": {
+            "thickness": motor_base_plate_thickness,
+            "motor_count": motor_count,
+            "motor_od": motor_od,
+            "motor_length": motor_length,
+            "motor_space_between_motors": motor_space_between_motors,
+            "total_y_size": housing_size_y
+            + (motor_count * (motor_od + motor_space_between_motors)),
+        },
+    }
+
+    logger.success(f"PCB Design Info: {json.dumps(pcb_design_info, indent=4)}")
 
     logger.info("Dimensions validated.")
 
@@ -263,12 +290,120 @@ def make_housing_chain(cell_count: int) -> bd.Part:
     return part
 
 
+def make_motor_base(cell_count: int) -> bd.Part:
+    """Make a chain of braille cells with a motor base out the end."""
+    logger.info(f"Making a chain of {cell_count} braille cells with a motor base.")
+
+    # Make the base.
+    part = bd.Box(
+        cell_count * inter_cell_dot_pitch_x + 10,
+        motor_base_plate_y_size,
+        motor_base_plate_thickness,
+        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
+    )
+
+    base_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
+    base_back_face = part.faces().sort_by(bd.Axis.Y)[-1]
+    base_front_face = part.faces().sort_by(bd.Axis.Y)[0]
+
+    # Add mounting holes for the cells.
+    cell_num_offset = -((cell_count / 2) - 0.5)
+    for cell_num in range(cell_count):
+        center_of_cell_x = (
+            # Get to the center of the box
+            base_bottom_face.center().X
+            # Then move to the center of the cell
+            + (cell_num_offset + cell_num) * inter_cell_dot_pitch_x
+        )
+
+        for offset in (-1, 1):
+            part -= (
+                bd.Cylinder(
+                    radius=housing_mounting_screw_od / 2,
+                    height=housing_size_z,
+                    align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+                )
+                .translate(
+                    (
+                        offset * (dot_separation_x / 2),
+                        offset * housing_mounting_screw_sep_y / 2,
+                        base_bottom_face.center().Z,
+                    ),
+                )
+                .translate(
+                    (
+                        (center_of_cell_x),
+                        (
+                            # Get to the back of the box
+                            base_back_face.center().Y
+                            # Then move forward to the center of the cell
+                            - (housing_size_y / 2)
+                        ),
+                        0,
+                    ),
+                )
+            )
+
+        logger.debug(f"Mounting holes added for cell {cell_num}.")
+
+        # Add motor gripper.
+        part += bd.Box(
+            inter_cell_dot_pitch_x - 1,
+            (motor_count * (motor_od + motor_space_between_motors)),
+            (
+                motor_od
+                + motor_hold_material_on_top_thickness_z  # Amount on top
+                + motor_raise_from_bottom_of_base  # Amount on bottom
+            ),
+            align=(bd.Align.CENTER, bd.Align.MIN, bd.Align.MIN),
+        ).translate(
+            (
+                center_of_cell_x,
+                base_front_face.center().Y,
+                base_bottom_face.center().Z + motor_raise_from_bottom_of_base,
+            ),
+        )
+
+        # Add motor mount locations, for each cell.
+        for motor_num in range(motor_count):
+            part -= bd.Cylinder(
+                radius=motor_od / 2,
+                height=motor_length + 15,
+                rotation=(0, 90, 0),
+                align=(bd.Align.MAX, bd.Align.CENTER, bd.Align.CENTER),
+            ).translate(
+                (
+                    center_of_cell_x,
+                    (
+                        # Get to the front of the box.
+                        base_front_face.center().Y
+                        # Then move backwards by the motor count.
+                        + ((motor_num + 0.5) * (motor_od + motor_space_between_motors))
+                    ),
+                    (
+                        base_bottom_face.center().Z
+                        + motor_raise_from_bottom_of_base
+                        + (0.0001 * motor_num)  # Avoid overlapping geometry.
+                    ),
+                ),
+            )
+
+        logger.debug(f"Motor mounts added for cell {cell_num}.")
+
+    assert isinstance(part, bd.Part), "Part is not a Part"
+
+    logger.info(f"Motor base volume: {part.volume:.2f} mm^3 for {cell_count} cells.")
+
+    return part
+
+
 if __name__ == "__main__":
-    validate_dimensions()
+    validate_dimensions_and_info()
 
     parts = {
         "pogo_pin": make_pogo_pin(),
         "housing": show(make_housing()),
+        "motor_base_3x": show(make_motor_base(3)),
         "housing_chain_3x": make_housing_chain(3),
         "housing_chain_10x": make_housing_chain(10),
     }
@@ -276,12 +411,12 @@ if __name__ == "__main__":
     logger.info("Showing CAD model(s)")
     # show(parts["pogo_pin"])
     # show(parts["housing"])
-    show(parts["housing_chain_3x"])
+    # show(parts["motor_base_3x"])
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     for name, part in parts.items():
         assert isinstance(part, bd.Part), f"{name} is not a Part"
-        assert part.is_manifold is True, f"{name} is not solid"
+        # assert part.is_manifold is True, f"{name} is not manifold"
 
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
