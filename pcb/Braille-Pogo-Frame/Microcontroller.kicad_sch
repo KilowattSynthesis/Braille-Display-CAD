@@ -1524,7 +1524,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Braille_Display_Footprint_Lib:RP2040 Zero"
+		(property "Footprint" "00-lib-footprints:RP2040 Zero"
 			(at 115.57 57.658 0)
 			(effects
 				(font
@@ -1666,7 +1666,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 55.88 83.82 0)
 			(effects
 				(font
@@ -1934,7 +1934,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 69.85 83.82 0)
 			(effects
 				(font
