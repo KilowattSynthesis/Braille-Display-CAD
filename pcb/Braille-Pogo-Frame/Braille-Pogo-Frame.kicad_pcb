@@ -147,7 +147,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "0991b00c-0362-4712-8542-944e17955718")
-		(at 100 50)
+		(at 100 100)
 		(property "Reference" "J101"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -425,7 +425,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "0b7c3a61-3a28-4a48-8366-066f074bef8b")
-		(at 133 50)
+		(at 133 100)
 		(property "Reference" "J106"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -703,7 +703,7 @@
 	(footprint "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "0c65ff70-74f4-4d87-925b-e056aff3c6f8")
-		(at 152.2 50)
+		(at 152.2 100)
 		(descr "Mounting Hole 2.2mm, M2")
 		(tags "mounting hole 2.2mm m2")
 		(property "Reference" "H112"
@@ -821,7 +821,7 @@
 	(footprint "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
 		(layer "F.Cu")
 		(uuid "13631e7c-a77d-4e3f-8d9e-4d38ce7d2c2c")
-		(at 100 64)
+		(at 100 114)
 		(descr "Mounting Hole 8.4mm, M8")
 		(tags "mounting hole 8.4mm m8")
 		(property "Reference" "H104"
@@ -929,7 +929,7 @@
 	(footprint "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "1eec2a4e-a0f4-4525-b5b5-d466447f077e")
-		(at 152.2 55.5)
+		(at 152.2 105.5)
 		(descr "Mounting Hole 2.2mm, M2")
 		(tags "mounting hole 2.2mm m2")
 		(property "Reference" "H110"
@@ -1047,7 +1047,7 @@
 	(footprint "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
 		(layer "F.Cu")
 		(uuid "1f53e3a3-721f-4c06-8984-a7c6c0230dac")
-		(at 146.2 64)
+		(at 146.2 114)
 		(descr "Mounting Hole 8.4mm, M8")
 		(tags "mounting hole 8.4mm m8")
 		(property "Reference" "H106"
@@ -1155,7 +1155,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "2a87a678-aa71-4c86-b07f-2684ea8403a2")
-		(at 139.6 50)
+		(at 139.6 100)
 		(property "Reference" "J107"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -1433,7 +1433,7 @@
 	(footprint "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "3efe8184-eb33-4d34-a485-f798ac802071")
-		(at 94 44.5)
+		(at 94 94.5)
 		(descr "Mounting Hole 2.2mm, M2")
 		(tags "mounting hole 2.2mm m2")
 		(property "Reference" "H107"
@@ -1551,7 +1551,7 @@
 	(footprint "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
 		(layer "F.Cu")
 		(uuid "4454376f-743c-4e7b-8550-d21718aabf55")
-		(at 146.2 36)
+		(at 146.2 86)
 		(descr "Mounting Hole 8.4mm, M8")
 		(tags "mounting hole 8.4mm m8")
 		(property "Reference" "H103"
@@ -1659,7 +1659,7 @@
 	(footprint "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "538e4c5e-b120-4212-b75e-b2bc822208bd")
-		(at 94 55.5)
+		(at 94 105.5)
 		(descr "Mounting Hole 2.2mm, M2")
 		(tags "mounting hole 2.2mm m2")
 		(property "Reference" "H108"
@@ -1777,7 +1777,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "6d5b3bd7-8b91-42e9-a68b-ca239b3b7926")
-		(at 106.6 50)
+		(at 106.6 100)
 		(property "Reference" "J103"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -2055,7 +2055,7 @@
 	(footprint "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
 		(layer "F.Cu")
 		(uuid "97f602dd-1cbe-4321-991b-8a4af76cc4a7")
-		(at 123.1 36)
+		(at 123.1 86)
 		(descr "Mounting Hole 8.4mm, M8")
 		(tags "mounting hole 8.4mm m8")
 		(property "Reference" "H101"
@@ -2163,7 +2163,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "a3943cd9-ad17-4007-b492-250fe32ae607")
-		(at 146.2 50)
+		(at 146.2 100)
 		(property "Reference" "J108"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -2441,7 +2441,7 @@
 	(footprint "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "a3e280c7-2051-484b-86eb-3c323361a658")
-		(at 94 50)
+		(at 94 100)
 		(descr "Mounting Hole 2.2mm, M2")
 		(tags "mounting hole 2.2mm m2")
 		(property "Reference" "H111"
@@ -2559,7 +2559,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "a419aa39-c071-46a0-8bd2-c2db26acb24d")
-		(at 113.2 50)
+		(at 113.2 100)
 		(property "Reference" "J102"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -2837,7 +2837,7 @@
 	(footprint "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "a9db1bce-e757-4ce4-8ccb-24cdff99c235")
-		(at 152.2 44.5)
+		(at 152.2 94.5)
 		(descr "Mounting Hole 2.2mm, M2")
 		(tags "mounting hole 2.2mm m2")
 		(property "Reference" "H109"
@@ -2955,7 +2955,7 @@
 	(footprint "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "b165c728-eaf6-486b-9ce1-b74110e70107")
-		(at 156.2 65)
+		(at 156.2 115)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H115"
@@ -3073,7 +3073,7 @@
 	(footprint "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
 		(layer "F.Cu")
 		(uuid "b381b55c-2ae6-43dd-a775-00a00cb2c3f4")
-		(at 123.1 64)
+		(at 123.1 114)
 		(descr "Mounting Hole 8.4mm, M8")
 		(tags "mounting hole 8.4mm m8")
 		(property "Reference" "H102"
@@ -3181,7 +3181,7 @@
 	(footprint "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "c0cf5afc-dc15-40ed-a2e3-d21aef961da7")
-		(at 90 35)
+		(at 90 85)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H113"
@@ -3299,7 +3299,7 @@
 	(footprint "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "cdb609b6-84ba-4e86-a387-79ac5c5b7115")
-		(at 156.2 35)
+		(at 156.2 85)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H114"
@@ -3417,7 +3417,7 @@
 	(footprint "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
 		(layer "F.Cu")
 		(uuid "ddb2d3d9-bb18-43c1-aabc-3c8ce56a5f61")
-		(at 90 65)
+		(at 90 115)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H116"
@@ -3535,7 +3535,7 @@
 	(footprint "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
 		(layer "F.Cu")
 		(uuid "df0e2418-ba3d-4c3c-9575-26671fecd4f3")
-		(at 100 36)
+		(at 100 86)
 		(descr "Mounting Hole 8.4mm, M8")
 		(tags "mounting hole 8.4mm m8")
 		(property "Reference" "H105"
@@ -3643,7 +3643,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "e942733b-dd26-4526-b151-e563b1d1c0d6")
-		(at 119.8 50)
+		(at 119.8 100)
 		(property "Reference" "J104"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -3921,7 +3921,7 @@
 	(footprint "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
 		(layer "F.Cu")
 		(uuid "fd89f9c5-d293-47d0-9fc4-23c35b0798a9")
-		(at 126.4 50)
+		(at 126.4 100)
 		(property "Reference" "J105"
 			(at 0 5.1 0)
 			(unlocked yes)
@@ -4197,8 +4197,8 @@
 		)
 	)
 	(gr_rect
-		(start 121.75 41)
-		(end 148 44.5)
+		(start 121.75 91)
+		(end 148 94.5)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -4208,8 +4208,8 @@
 		(uuid "2e021b3d-7b9c-45f9-a2a5-de599b582fe5")
 	)
 	(gr_rect
-		(start 105.5 40)
-		(end 117 44.5)
+		(start 105.5 90)
+		(end 117 94.5)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -4219,8 +4219,8 @@
 		(uuid "b95494c9-a414-4f3d-8ae2-c34b66cebce3")
 	)
 	(gr_rect
-		(start 86 30)
-		(end 160 70)
+		(start 86 80)
+		(end 160 120)
 		(stroke
 			(width 0.05)
 			(type default)
@@ -4230,7 +4230,7 @@
 		(uuid "7d1cb49c-8560-4c10-ac70-3aa7890290bf")
 	)
 	(gr_text "Braille Display (Pogo + Solenoid)\n2024-10-10"
-		(at 148 44.25 0)
+		(at 148 94.25 0)
 		(layer "B.SilkS")
 		(uuid "6a88f34e-0901-42ff-be9a-425867c4d836")
 		(effects
@@ -4243,7 +4243,7 @@
 		)
 	)
 	(gr_text "6.6mm Inter-Cell\n2.5mm Intra-Cell\nM2, M3, and 8mm"
-		(at 116.75 44 0)
+		(at 116.75 94 0)
 		(layer "B.SilkS")
 		(uuid "813df329-8ddc-4b87-8a9d-5201c214a9e5")
 		(effects
