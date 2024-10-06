@@ -260,6 +260,690 @@
 				)
 			)
 		)
+		(symbol "Driver_Motor:DRV8847SPWR"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -8.89 13.97 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "DRV8847SPWR"
+				(at 8.89 13.97 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Package_SO:TSSOP-16_4.4x5mm_P0.65mm"
+				(at 0 16.51 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.ti.com/lit/ds/symlink/drv8847.pdf"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Dual H-Bridge Motor Driver, 1A, I2C Interface, TSSOP-16"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "Dual H-Bridge motor driver"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "TSSOP*4.4x5mm*P0.65mm*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "DRV8847SPWR_0_1"
+				(rectangle
+					(start -10.16 -12.7)
+					(end 10.16 12.7)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "DRV8847SPWR_1_1"
+				(pin input line
+					(at -12.7 10.16 0)
+					(length 2.54)
+					(name "~{SLEEP}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 -10.16 0)
+					(length 2.54)
+					(name "IN4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 2.54 0)
+					(length 2.54)
+					(name "SCL"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 15.24 270)
+					(length 2.54)
+					(name "VM"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -15.24 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -12.7 7.62 0)
+					(length 2.54)
+					(name "SDA"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 -5.08 0)
+					(length 2.54)
+					(name "IN2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 -2.54 0)
+					(length 2.54)
+					(name "IN1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 12.7 10.16 180)
+					(length 2.54)
+					(name "OUT1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 -5.08 180)
+					(length 2.54)
+					(name "ISEN12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 12.7 7.62 180)
+					(length 2.54)
+					(name "OUT2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 12.7 0 180)
+					(length 2.54)
+					(name "OUT4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 -10.16 180)
+					(length 2.54)
+					(name "ISEN34"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 12.7 2.54 180)
+					(length 2.54)
+					(name "OUT3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin open_collector line
+					(at -12.7 5.08 0)
+					(length 2.54)
+					(name "~{FAULT}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 -7.62 0)
+					(length 2.54)
+					(name "IN3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Motor:Stepper_Motor_bipolar"
+			(pin_names
+				(offset 0) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "M"
+				(at 3.81 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Stepper_Motor_bipolar"
+				(at 3.81 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left top)
+				)
+			)
+			(property "Footprint" ""
+				(at 0.254 -0.254 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "http://www.infineon.com/dgdl/Application-Note-TLE8110EE_driving_UniPolarStepperMotor_V1.1.pdf?fileId=db3a30431be39b97011be5d0aa0a00b0"
+				(at 0.254 -0.254 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "4-wire bipolar stepper motor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "bipolar stepper motor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "PinHeader*P2.54mm*Vertical* TerminalBlock* Motor*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Stepper_Motor_bipolar_0_0"
+				(polyline
+					(pts
+						(xy -1.27 -1.778) (xy -1.27 2.032) (xy 0 -0.508) (xy 1.27 2.032) (xy 1.27 -1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Stepper_Motor_bipolar_0_1"
+				(arc
+					(start -4.445 -2.54)
+					(mid -3.8127 -1.905)
+					(end -4.445 -1.27)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -4.445 -1.27)
+					(mid -3.8127 -0.635)
+					(end -4.445 0)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -4.445 0)
+					(mid -3.8127 0.635)
+					(end -4.445 1.27)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -4.445 1.27)
+					(mid -3.8127 1.905)
+					(end -4.445 2.54)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -2.54 4.445)
+					(mid -1.905 3.8127)
+					(end -1.27 4.445)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -1.27 4.445)
+					(mid -0.635 3.8127)
+					(end 0 4.445)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -5.08 -2.54) (xy -4.445 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -5.08 2.54) (xy -4.445 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 5.08) (xy -2.54 4.445)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 5.08) (xy 2.54 4.445)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 0)
+					(radius 3.2512)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0 4.445)
+					(mid 0.635 3.8127)
+					(end 1.27 4.445)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 1.27 4.445)
+					(mid 1.905 3.8127)
+					(end 2.54 4.445)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Stepper_Motor_bipolar_1_1"
+				(pin passive line
+					(at -2.54 7.62 270)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 7.62 270)
+					(length 2.54)
+					(name "-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 -2.54 0)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 	)
 	(no_connect
 		(at 63.5 43.18)
@@ -285,6 +969,126 @@
 		(at 63.5 40.64)
 		(uuid "f1d5dd0f-83a5-489a-831e-d44bafa5c7cd")
 	)
+	(wire
+		(pts
+			(xy 93.98 116.84) (xy 99.06 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "16080e91-bf2d-4eda-828a-b86eab277f50")
+	)
+	(wire
+		(pts
+			(xy 104.14 106.68) (xy 104.14 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "28eebcd7-bf18-4c0f-a3fb-e585e32fb8ec")
+	)
+	(wire
+		(pts
+			(xy 77.47 113.03) (xy 92.71 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2bc2d0e4-7f45-45ee-b60f-71beaf0fd8b4")
+	)
+	(wire
+		(pts
+			(xy 92.71 111.76) (xy 99.06 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2cc61293-65a6-40c3-bca4-e98c8f8b3eff")
+	)
+	(wire
+		(pts
+			(xy 93.98 115.57) (xy 93.98 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3c9f7cd3-d57a-4ac5-9dac-bc6b73eb199e")
+	)
+	(wire
+		(pts
+			(xy 88.9 97.79) (xy 109.22 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "509d38f1-a5cc-42ec-8421-21303cb03942")
+	)
+	(wire
+		(pts
+			(xy 88.9 107.95) (xy 88.9 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5aa0f65d-8ad8-4f5a-959c-94fc0669c6e6")
+	)
+	(wire
+		(pts
+			(xy 77.47 105.41) (xy 104.14 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9ef5f946-06a7-40ec-931d-78da7ad7d763")
+	)
+	(wire
+		(pts
+			(xy 109.22 97.79) (xy 109.22 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b47ec4a5-808c-4975-9752-3f1c247ef17d")
+	)
+	(wire
+		(pts
+			(xy 77.47 107.95) (xy 88.9 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c8209f50-d024-4ff0-81a6-73a6942b5d7e")
+	)
+	(wire
+		(pts
+			(xy 77.47 115.57) (xy 93.98 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f1ed4f49-de35-4ea4-97ac-d444b7b18224")
+	)
+	(wire
+		(pts
+			(xy 92.71 113.03) (xy 92.71 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ff9e2286-5566-45f9-a812-c34850ed1e16")
+	)
 	(rectangle
 		(start 34.29 25.4)
 		(end 90.17 60.96)
@@ -297,6 +1101,16 @@
 		)
 		(uuid 82139d38-89db-4969-82d8-b61753065353)
 	)
+	(text "TODO: Check motor footprint (dimensions, windings)"
+		(exclude_from_sim no)
+		(at 127.762 121.92 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "35eb73f7-b106-4987-8fd2-0cfec6206868")
+	)
 	(text "Braille Cell Pogo Holder"
 		(exclude_from_sim no)
 		(at 61.214 54.61 0)
@@ -308,6 +1122,17 @@
 			)
 		)
 		(uuid "86da92d8-b66c-419a-8534-e98897086b92")
+	)
+	(text "TODO: Check datasheet to make sure part is good\nTODO: Check part availability\nTODO: Check what to do with current sense pins\n\nTODO: Try to find an I2C one"
+		(exclude_from_sim no)
+		(at 103.124 130.302 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a01c95a4-085f-4335-ae6a-f67c06026895")
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x06")
@@ -413,6 +1238,250 @@
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f8face70-f441-4019-84bb-0c3e47627462"
 					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Motor:Stepper_Motor_bipolar")
+		(at 106.68 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1b75c16d-185f-4fb8-8250-8422cfbeb360")
+		(property "Reference" "M1"
+			(at 111.76 112.179 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Stepper_Motor_bipolar"
+			(at 111.76 114.719 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MicroStepper_8mm-2mmGear"
+			(at 106.934 114.554 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.infineon.com/dgdl/Application-Note-TLE8110EE_driving_UniPolarStepperMotor_V1.1.pdf?fileId=db3a30431be39b97011be5d0aa0a00b0"
+			(at 106.934 114.554 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "4-wire bipolar stepper motor"
+			(at 106.68 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "08694ee9-9752-47c0-ba4e-06fff542ddd4")
+		)
+		(pin "2"
+			(uuid "f4ace96c-42c9-4eda-907b-37eb98af5902")
+		)
+		(pin "1"
+			(uuid "4f17247a-0c04-4ee4-bb86-ceb2896f20d2")
+		)
+		(pin "4"
+			(uuid "42684922-f204-4936-8d83-d7525210b07d")
+		)
+		(instances
+			(project ""
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/2089d862-4c1b-49f8-97ec-14140c961fc2"
+					(reference "M4")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/3a3b6a61-1db9-4754-94ae-74d8196d0c73"
+					(reference "M5")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/4a0313c1-ce96-429a-9a4d-1e3aae6805de"
+					(reference "M8")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/5518a5e4-56f7-4dac-8a38-f03c2408f867"
+					(reference "M3")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/7757496a-04de-4879-8d70-cd3ce71c2844"
+					(reference "M7")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/c70e4c97-8c02-4ec2-adf8-c68ad551c9df"
+					(reference "M1")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f1c7028b-0548-48b8-90db-1cfa05082137"
+					(reference "M6")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f8face70-f441-4019-84bb-0c3e47627462"
+					(reference "M2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Driver_Motor:DRV8847SPWR")
+		(at 64.77 115.57 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e03cb342-c05b-4d5c-8066-41dd09a7abb3")
+		(property "Reference" "U1"
+			(at 66.9641 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "DRV8847SPWR"
+			(at 66.9641 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:TSSOP-16_4.4x5mm_P0.65mm"
+			(at 64.77 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/drv8847.pdf"
+			(at 64.77 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual H-Bridge Motor Driver, 1A, I2C Interface, TSSOP-16"
+			(at 64.77 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "7"
+			(uuid "2b53974b-ee85-4c1d-b282-244471b39046")
+		)
+		(pin "4"
+			(uuid "6eac0f1a-e9c1-4edf-8665-1cb9bc1f9fec")
+		)
+		(pin "8"
+			(uuid "8246f33c-8774-4288-9acd-5b0555aaaebe")
+		)
+		(pin "5"
+			(uuid "c7643dbd-5123-478b-9f29-1652d139197c")
+		)
+		(pin "2"
+			(uuid "3630ce8a-5f9e-4666-9246-6a097738829b")
+		)
+		(pin "3"
+			(uuid "6183a02c-8e96-41fb-8f50-da907851e251")
+		)
+		(pin "6"
+			(uuid "542f2644-8cd2-4e50-a945-fe7641e3cabf")
+		)
+		(pin "9"
+			(uuid "67043bdf-eabb-40f2-ad0d-e77927bdaa66")
+		)
+		(pin "16"
+			(uuid "435a0a8a-8667-4776-9ac1-c35ac77bbc8c")
+		)
+		(pin "13"
+			(uuid "cb96cb0a-4af9-429a-95e7-8bc0193e1644")
+		)
+		(pin "1"
+			(uuid "d4b2da70-a896-4999-9aff-0000d597b581")
+		)
+		(pin "10"
+			(uuid "85ab8670-b78e-4391-b492-580b095f6422")
+		)
+		(pin "11"
+			(uuid "06304f7a-8ac7-470b-ab03-04fced2979e5")
+		)
+		(pin "12"
+			(uuid "3bf6d1a5-607e-4b0b-9df4-34dc1fcb4179")
+		)
+		(pin "14"
+			(uuid "4c99d5be-1234-4761-a2ba-90e29084970d")
+		)
+		(pin "15"
+			(uuid "53599176-1a02-4bed-a494-3e11967bc2af")
+		)
+		(instances
+			(project ""
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/2089d862-4c1b-49f8-97ec-14140c961fc2"
+					(reference "U4")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/3a3b6a61-1db9-4754-94ae-74d8196d0c73"
+					(reference "U5")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/4a0313c1-ce96-429a-9a4d-1e3aae6805de"
+					(reference "U8")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/5518a5e4-56f7-4dac-8a38-f03c2408f867"
+					(reference "U3")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/7757496a-04de-4879-8d70-cd3ce71c2844"
+					(reference "U7")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/c70e4c97-8c02-4ec2-adf8-c68ad551c9df"
+					(reference "U1")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f1c7028b-0548-48b8-90db-1cfa05082137"
+					(reference "U6")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f8face70-f441-4019-84bb-0c3e47627462"
+					(reference "U2")
 					(unit 1)
 				)
 			)
