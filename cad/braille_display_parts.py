@@ -262,7 +262,7 @@ def make_housing_chain(cell_count: int) -> bd.Part:
     logger.info(f"Making a chain of {cell_count} braille cells.")
     housing = make_housing()
     assert isinstance(housing, bd.Part), "Housing is not a Part"
-    logger.info(f"Single cell housing volume: {housing.volume}")
+    logger.info(f"Single cell housing volume: {housing.volume:.3f}")
 
     # Make a chain of cells.
     part = bd.Part()
@@ -404,6 +404,7 @@ if __name__ == "__main__":
         "pogo_pin": make_pogo_pin(),
         "housing": show(make_housing()),
         "motor_base_3x": show(make_motor_base(3)),
+        "motor_base_1x": show(make_motor_base(1)),
         "housing_chain_3x": make_housing_chain(3),
         "housing_chain_10x": make_housing_chain(10),
     }
