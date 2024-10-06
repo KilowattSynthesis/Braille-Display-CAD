@@ -1,0 +1,2443 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "f7fdfeea-4cd4-4338-ad68-f9089a17ed6f")
+	(paper "USLetter")
+	(lib_symbols
+		(symbol "Connector_Generic:Conn_01x06"
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x06"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x06_1_1"
+				(rectangle
+					(start -1.27 -7.493)
+					(end 0 -7.747)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -4.953)
+					(end 0 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 5.207)
+					(end 0 4.953)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 6.35)
+					(end 1.27 -8.89)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin passive line
+					(at -5.08 5.08 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -7.62 0)
+					(length 3.81)
+					(name "Pin_6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Mechanical:MountingHole_Pad"
+			(pin_numbers hide)
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim yes)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole_Pad"
+				(at 0 4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole with connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*Pad*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_Pad_0_1"
+				(circle
+					(center 0 1.27)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MountingHole_Pad_1_1"
+				(pin input line
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+	(no_connect
+		(at 146.05 100.33)
+		(uuid "0329c2fe-ad6e-4757-a1c6-1c49dcdde7b4")
+	)
+	(no_connect
+		(at 160.02 129.54)
+		(uuid "0917cee5-d566-4f8d-89a3-700f1d3d576e")
+	)
+	(no_connect
+		(at 118.11 105.41)
+		(uuid "0b2903ba-483a-4068-9710-7294e277e23c")
+	)
+	(no_connect
+		(at 118.11 116.84)
+		(uuid "15a96712-c335-4093-88a7-1caabcdba6f8")
+	)
+	(no_connect
+		(at 146.05 116.84)
+		(uuid "1685e4c7-f645-4da6-a8f3-418c57b6eded")
+	)
+	(no_connect
+		(at 167.64 44.45)
+		(uuid "1a38f2f2-1a47-4ae8-801d-b2db1e27305e")
+	)
+	(no_connect
+		(at 132.08 105.41)
+		(uuid "25fca981-243a-4e01-943e-8ff880d5289e")
+	)
+	(no_connect
+		(at 160.02 100.33)
+		(uuid "274ff3e9-7d2b-461c-9165-897fad88ff31")
+	)
+	(no_connect
+		(at 38.1 49.53)
+		(uuid "2c98b401-0ca3-4bd9-a841-613decc28a9d")
+	)
+	(no_connect
+		(at 160.02 119.38)
+		(uuid "375533f7-01be-451a-b604-bc4322ee905c")
+	)
+	(no_connect
+		(at 132.08 100.33)
+		(uuid "3c710d8f-11c6-4030-bf5b-4a056386dd56")
+	)
+	(no_connect
+		(at 132.08 116.84)
+		(uuid "43f7bb44-c172-4b90-92c5-27246518c17e")
+	)
+	(no_connect
+		(at 38.1 64.77)
+		(uuid "479f4f3a-8fe4-45d8-906c-5f7cc9c6b2ec")
+	)
+	(no_connect
+		(at 160.02 116.84)
+		(uuid "55dae9b8-3bb4-4123-a663-0540aa8b5c36")
+	)
+	(no_connect
+		(at 38.1 26.67)
+		(uuid "57de1df5-1d53-497a-bf6c-50d8b1ab872a")
+	)
+	(no_connect
+		(at 146.05 92.71)
+		(uuid "583ed0dc-5458-4229-ae21-afe819298c46")
+	)
+	(no_connect
+		(at 132.08 97.79)
+		(uuid "58678867-55cd-4d88-9a82-08965dec6258")
+	)
+	(no_connect
+		(at 160.02 102.87)
+		(uuid "5873ed54-bfb4-49b3-a412-fcc2e7de217d")
+	)
+	(no_connect
+		(at 118.11 124.46)
+		(uuid "59fa0e29-0bf4-480b-a066-c5b48e64ad66")
+	)
+	(no_connect
+		(at 102.87 26.67)
+		(uuid "5d27875f-5eb7-467a-9a93-99b0946872d0")
+	)
+	(no_connect
+		(at 128.27 35.56)
+		(uuid "5d345baa-3271-49b6-96ec-8fd61c17e143")
+	)
+	(no_connect
+		(at 132.08 119.38)
+		(uuid "5e4b9c7b-2783-4cf4-8126-57de63568614")
+	)
+	(no_connect
+		(at 118.11 100.33)
+		(uuid "6695f632-dd9e-45e1-94df-5492aeeb4ebf")
+	)
+	(no_connect
+		(at 146.05 119.38)
+		(uuid "68835c5c-430f-495d-be3d-fef253cc7d08")
+	)
+	(no_connect
+		(at 146.05 124.46)
+		(uuid "6ca2a465-b603-4033-a794-f59c4ec800d4")
+	)
+	(no_connect
+		(at 160.02 121.92)
+		(uuid "7504d94a-2005-4f1b-a0aa-37edeba114a9")
+	)
+	(no_connect
+		(at 146.05 102.87)
+		(uuid "7655216f-aff0-4eb5-9037-47411ddd93ce")
+	)
+	(no_connect
+		(at 38.1 57.15)
+		(uuid "77370abe-e264-49d9-961d-8117d2b82081")
+	)
+	(no_connect
+		(at 38.1 41.91)
+		(uuid "7a077bef-f455-46f5-a08a-1fb29dd920ed")
+	)
+	(no_connect
+		(at 118.11 97.79)
+		(uuid "81b765ed-52cf-4ae2-b76d-226524d615f1")
+	)
+	(no_connect
+		(at 146.05 127)
+		(uuid "81c4f0f8-8805-41a9-8580-e09c1f9445cf")
+	)
+	(no_connect
+		(at 118.11 92.71)
+		(uuid "82e359ad-56dd-4a9e-8bb5-83b2ce3b685b")
+	)
+	(no_connect
+		(at 132.08 92.71)
+		(uuid "91a03f60-5dd2-4ee1-bf30-8b2d77250ba7")
+	)
+	(no_connect
+		(at 118.11 129.54)
+		(uuid "93b930ee-dc78-409a-b328-91e27cd3980a")
+	)
+	(no_connect
+		(at 118.11 95.25)
+		(uuid "9edf49a0-c9b4-4951-87c6-df7161807444")
+	)
+	(no_connect
+		(at 118.11 121.92)
+		(uuid "a5eb58da-5714-496c-99eb-e0bbaf09927b")
+	)
+	(no_connect
+		(at 146.05 95.25)
+		(uuid "a661f262-4806-4d97-8190-6a0e7f27e748")
+	)
+	(no_connect
+		(at 102.87 35.56)
+		(uuid "a80f5e47-c5a6-4992-9fe9-9af7f224e880")
+	)
+	(no_connect
+		(at 160.02 97.79)
+		(uuid "af878ee2-0109-4c0d-ac17-f47ad4d0e2e8")
+	)
+	(no_connect
+		(at 102.87 44.45)
+		(uuid "b42d990b-ffe5-40a8-bec9-198dbbbe5d2f")
+	)
+	(no_connect
+		(at 146.05 129.54)
+		(uuid "b735cab9-be87-4c71-a836-45fb09133ab5")
+	)
+	(no_connect
+		(at 146.05 97.79)
+		(uuid "b7a80b35-504d-464e-9a2c-f8a752e439f7")
+	)
+	(no_connect
+		(at 160.02 95.25)
+		(uuid "ba918f05-77f9-4168-8174-a1c095481628")
+	)
+	(no_connect
+		(at 167.64 26.67)
+		(uuid "bb1ce718-54b0-44bd-9726-1fa5424713a6")
+	)
+	(no_connect
+		(at 160.02 124.46)
+		(uuid "c2d9941c-1362-4cc1-8fc3-03537952fc6e")
+	)
+	(no_connect
+		(at 132.08 124.46)
+		(uuid "c34f3a0b-62e9-4647-b774-99ff6e34e555")
+	)
+	(no_connect
+		(at 146.05 121.92)
+		(uuid "c3cf84dc-d45f-4b72-8fe0-02ca20565c1f")
+	)
+	(no_connect
+		(at 132.08 95.25)
+		(uuid "c4e0828b-4886-4849-840a-4cf2f9f81713")
+	)
+	(no_connect
+		(at 132.08 121.92)
+		(uuid "c56def59-1ea3-441c-8f2e-7fcfcae9aa48")
+	)
+	(no_connect
+		(at 118.11 119.38)
+		(uuid "c61b2c2e-306c-4311-9198-e0a81f0fc278")
+	)
+	(no_connect
+		(at 132.08 127)
+		(uuid "cd580c81-c144-4a7c-bc3d-4c491aacb737")
+	)
+	(no_connect
+		(at 132.08 102.87)
+		(uuid "d01e5757-ed09-450c-a114-f96c5623311a")
+	)
+	(no_connect
+		(at 102.87 53.34)
+		(uuid "d0487ed3-60c6-4518-9cb2-91e2025b04e0")
+	)
+	(no_connect
+		(at 167.64 53.34)
+		(uuid "d3173cda-0cd2-4d67-b250-23f2419e653e")
+	)
+	(no_connect
+		(at 128.27 26.67)
+		(uuid "d51dfae1-470e-4e09-85d8-a5ebfcbbc006")
+	)
+	(no_connect
+		(at 160.02 105.41)
+		(uuid "db03ac51-f8ac-495b-80a8-cdecbec9a65d")
+	)
+	(no_connect
+		(at 167.64 35.56)
+		(uuid "e4c91e93-0612-4a01-840f-422041e736d8")
+	)
+	(no_connect
+		(at 118.11 127)
+		(uuid "e9664488-a032-44d8-b1a5-b0bbcd4ff433")
+	)
+	(no_connect
+		(at 160.02 127)
+		(uuid "ea3ecf9c-f90d-4c0e-996b-7998ce556233")
+	)
+	(no_connect
+		(at 146.05 105.41)
+		(uuid "eea501f0-2dc3-45fb-8640-8db3a15c69bd")
+	)
+	(no_connect
+		(at 160.02 92.71)
+		(uuid "f147e67b-fd15-46ff-ae1b-490b51cc6236")
+	)
+	(no_connect
+		(at 118.11 102.87)
+		(uuid "f87bef74-3a2b-4ec1-85e0-97bc2e007a69")
+	)
+	(no_connect
+		(at 38.1 34.29)
+		(uuid "f9393409-a83a-4032-b181-6a1f74fba10f")
+	)
+	(no_connect
+		(at 132.08 129.54)
+		(uuid "fbc35e28-8a16-4dcd-b79e-eb09e1b753a2")
+	)
+	(rectangle
+		(start 25.4 15.24)
+		(end 87.63 77.47)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 184d4286-8bf0-46a3-85c2-995365016bd0)
+	)
+	(rectangle
+		(start 90.17 15.24)
+		(end 152.4 77.47)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 1b19e16b-9e13-4789-9dbb-634f6177607e)
+	)
+	(rectangle
+		(start 90.17 80.01)
+		(end 217.17 142.24)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 7c48ecda-da23-43c4-b9b9-a946e1e4af8e)
+	)
+	(rectangle
+		(start 154.94 15.24)
+		(end 217.17 77.47)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid ee740ae9-c2c5-4aca-b537-3f5b37ddcff0)
+	)
+	(text "Solenoid Actuator Holes (M8)"
+		(exclude_from_sim no)
+		(at 56.134 71.882 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "024cf6bb-67d4-4c61-8df5-498ca35209ed")
+	)
+	(text "Braille Cell Pogo Holders"
+		(exclude_from_sim no)
+		(at 124.206 136.906 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "89a6de09-9c4d-4534-b8d4-f867bc05dfe2")
+	)
+	(text "Corner Mounting Holes (M3)"
+		(exclude_from_sim no)
+		(at 185.674 71.882 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "afe2bd9d-a578-43cf-aa9b-cf0bfa270274")
+	)
+	(text "Cell Plastic\nMounting Holes (M2)"
+		(exclude_from_sim no)
+		(at 120.904 71.882 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "e067b45d-2043-450f-885a-61d0734fb5a6")
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 167.64 33.02 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "018747b6-1b3f-4370-be43-4141cb99b0d1")
+		(property "Reference" "H114"
+			(at 170.18 30.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 170.18 33.0199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
+			(at 167.64 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 167.64 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 167.64 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c9cf1916-ef97-4a44-9a6b-b29053237030")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H114")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 54.61 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "04f48afc-afb6-481d-a7f7-4d3e909e07ea")
+		(property "Reference" "H105"
+			(at 40.64 52.0699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 40.64 54.6099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
+			(at 38.1 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "06cdbbe8-575b-4309-a41a-6ea74fd2bc7b")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H105")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 102.87 33.02 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "118adaaa-2232-4a88-8dc5-5d7790031bd2")
+		(property "Reference" "H108"
+			(at 105.41 30.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 105.41 33.0199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
+			(at 102.87 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 102.87 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 102.87 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c10f0016-436c-41ff-a78e-e056bc5e12bb")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H108")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 167.64 41.91 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1dee2f96-69ad-499f-a14b-d01d1f4b18d1")
+		(property "Reference" "H115"
+			(at 170.18 39.3699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 170.18 41.9099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
+			(at 167.64 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 167.64 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 167.64 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "23c50a67-d633-43ed-b771-419191ac90d6")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H115")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 24.13 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "226d9229-f761-4b52-a1d5-5e0333f4883b")
+		(property "Reference" "H101"
+			(at 40.64 21.5899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 40.64 24.1299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
+			(at 38.1 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "864ffbe8-7386-48c9-9ddb-543a9253526c")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 140.97 97.79 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "26fc70f0-30ee-4294-89ec-a40728616d6d")
+		(property "Reference" "J105"
+			(at 140.97 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 140.97 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 140.97 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 140.97 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 140.97 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "7d1ddb8d-81b9-4d4f-a8c8-84d0189376c9")
+		)
+		(pin "3"
+			(uuid "7789e035-f644-44e3-a1d9-5cf98cd6e3de")
+		)
+		(pin "2"
+			(uuid "05b6c031-3312-4689-94c8-3bb0d34c3b31")
+		)
+		(pin "1"
+			(uuid "187c30ae-7c58-4100-bdd9-9797d287966d")
+		)
+		(pin "5"
+			(uuid "4f1c22dd-ff7a-49f7-a79a-d0fc2f675b67")
+		)
+		(pin "6"
+			(uuid "5271a4d6-1f78-4cfe-86cd-a909e93b05e1")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J105")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 154.94 97.79 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "33956a0e-e871-44cb-bd14-0266c5455cc3")
+		(property "Reference" "J107"
+			(at 154.94 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 154.94 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 154.94 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 154.94 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 154.94 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "beb83ee4-7719-420a-bc8c-7b7da6b014b7")
+		)
+		(pin "3"
+			(uuid "20f56ad3-1635-443d-a590-dc6244d34b5a")
+		)
+		(pin "2"
+			(uuid "7cf6d4df-dc3b-478a-9d4d-4adb64f702f9")
+		)
+		(pin "1"
+			(uuid "85ab2fc9-ffb3-4c63-a22d-685e913b0571")
+		)
+		(pin "5"
+			(uuid "74eb106d-ded1-4419-8015-410c4926c763")
+		)
+		(pin "6"
+			(uuid "f060f1be-f453-4777-8e00-259a08824365")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 128.27 24.13 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "39760f6f-5449-4b80-928e-1157602003c1")
+		(property "Reference" "H111"
+			(at 130.81 21.5899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 130.81 24.1299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
+			(at 128.27 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 128.27 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 128.27 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b5885ed0-4422-4b5d-b001-b99aa891539a")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H111")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 113.03 121.92 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "48d03584-9a31-47ca-94cf-bcd4a9ed2da5")
+		(property "Reference" "J102"
+			(at 113.03 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 113.03 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 113.03 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 113.03 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 113.03 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "78ed8f98-fabd-4d8a-a273-e6a818f36eca")
+		)
+		(pin "3"
+			(uuid "92a6639f-f11c-4a46-b87e-ca0e8536e240")
+		)
+		(pin "2"
+			(uuid "3fd0bb24-0cf0-4c8d-85ba-628a2359292f")
+		)
+		(pin "1"
+			(uuid "c4ecd8de-d365-4cdb-b206-58f290ff5b13")
+		)
+		(pin "5"
+			(uuid "41c4e4ed-d2db-4df9-be56-3e8c0a87d86c")
+		)
+		(pin "6"
+			(uuid "ef865190-efb9-481a-90ca-087af3e24e23")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 140.97 121.92 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "66bebdd8-1d06-48ec-9158-a3291db46ae5")
+		(property "Reference" "J106"
+			(at 140.97 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 140.97 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 140.97 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 140.97 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 140.97 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "f84bed6d-fabc-4ab7-9527-b290e538df40")
+		)
+		(pin "3"
+			(uuid "ab49b5d6-b63c-4700-89f2-70b1fb556081")
+		)
+		(pin "2"
+			(uuid "4f4ece61-4a0b-4e79-b15b-e672921f8089")
+		)
+		(pin "1"
+			(uuid "86da824b-1ab3-4568-95c2-f4e869a7d06f")
+		)
+		(pin "5"
+			(uuid "f3586c71-fc73-48c2-8103-3ef9586d9c6e")
+		)
+		(pin "6"
+			(uuid "42c78517-67ed-472b-a8ce-0405b76bb980")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J106")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 62.23 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "79c06166-3580-4788-bfa0-ebff6a9c3073")
+		(property "Reference" "H106"
+			(at 40.64 59.6899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 40.64 62.2299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
+			(at 38.1 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f63ed937-810c-4036-86d9-15656a7a7792")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H106")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 167.64 24.13 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "964c4a2a-ad1e-4d5f-9db0-16e32a2854a2")
+		(property "Reference" "H113"
+			(at 170.18 21.5899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 170.18 24.1299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
+			(at 167.64 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 167.64 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 167.64 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ff2ca544-7c5c-4e13-9f88-928bd2225e76")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H113")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 127 97.79 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a29bc974-85af-42a8-a2a1-ca1e0607fcc8")
+		(property "Reference" "J103"
+			(at 127 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 127 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 127 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 127 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 127 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "b7a5f59b-71bc-497b-b61f-02c3847f03da")
+		)
+		(pin "3"
+			(uuid "f03c0f1d-4fb6-4b46-87d5-7a61e74da901")
+		)
+		(pin "2"
+			(uuid "6671d0ae-b293-40ea-af8a-d2a66fd21f8a")
+		)
+		(pin "1"
+			(uuid "4d302cfc-e460-45a6-9b97-aa1cc9627cdb")
+		)
+		(pin "5"
+			(uuid "50a1a8b7-170b-48c3-a2c8-47471ff39ad2")
+		)
+		(pin "6"
+			(uuid "36a4c351-47d7-4ee6-9e30-b899c11d1e91")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J103")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 113.03 97.79 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b2143890-6b7d-45fc-9860-dbaeeed83d57")
+		(property "Reference" "J101"
+			(at 113.03 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 113.03 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 113.03 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 113.03 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 113.03 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "4362ae10-83df-4c80-976a-55e56c24fd6d")
+		)
+		(pin "3"
+			(uuid "7753db73-c00a-4236-8da8-e16cce29cfdd")
+		)
+		(pin "2"
+			(uuid "15ac9af4-afc1-432b-886e-e20a7198b509")
+		)
+		(pin "1"
+			(uuid "467bbd67-8847-4171-b25d-a34e81777ae7")
+		)
+		(pin "5"
+			(uuid "76929ae5-d878-4929-b31b-3d87793094f3")
+		)
+		(pin "6"
+			(uuid "1f2cde18-e759-436d-8f76-8ad26a6649b3")
+		)
+		(instances
+			(project ""
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 102.87 41.91 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b3a2286c-9e3f-46e5-8d05-857410b27838")
+		(property "Reference" "H109"
+			(at 105.41 39.3699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 105.41 41.9099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
+			(at 102.87 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 102.87 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 102.87 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "81440502-a662-4469-adb8-a9a425a95815")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H109")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 154.94 121.92 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b3a39514-307d-49a2-872b-a45ad1fbd4c1")
+		(property "Reference" "J108"
+			(at 154.94 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 154.94 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 154.94 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 154.94 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 154.94 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "3b9a436c-7dd8-4da9-8c44-060f4bbb46ae")
+		)
+		(pin "3"
+			(uuid "df7ccbca-bbd2-4adb-a5f2-28b800709b4b")
+		)
+		(pin "2"
+			(uuid "3b9de502-f9c0-4df0-bf88-962a623430dc")
+		)
+		(pin "1"
+			(uuid "6698f556-f2a9-4bba-a2ed-936565ccd1e3")
+		)
+		(pin "5"
+			(uuid "1414f47c-6219-46a2-b3a8-e1f5e892cd5e")
+		)
+		(pin "6"
+			(uuid "8d6f2524-ba1b-4e66-ab1e-fd946a012daf")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J108")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 39.37 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b933415f-4f65-4ba4-a207-43b443058f75")
+		(property "Reference" "H103"
+			(at 40.64 36.8299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 40.64 39.3699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
+			(at 38.1 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2d8d8233-a1fa-4057-a0bb-1bb15d45a01e")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H103")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 167.64 50.8 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bbc9810e-8afd-4a30-8b62-d46c50d634b5")
+		(property "Reference" "H116"
+			(at 170.18 48.2599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 170.18 50.7999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
+			(at 167.64 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 167.64 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 167.64 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "33f70da7-a2d3-4290-bd86-bf3e60ab438d")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H116")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 46.99 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c767895b-0c6d-4da2-9443-231bf54589b5")
+		(property "Reference" "H104"
+			(at 40.64 44.4499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 40.64 46.9899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
+			(at 38.1 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2eb01740-219d-465a-9c25-5da70647703c")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H104")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 102.87 24.13 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "caca989f-b5ee-4849-8836-dbe0405b0e7c")
+		(property "Reference" "H107"
+			(at 105.41 21.5899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 105.41 24.1299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
+			(at 102.87 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 102.87 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 102.87 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "313497e0-e8ba-458a-8776-1ed90efa5bd7")
+		)
+		(instances
+			(project ""
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 31.75 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dba5826e-a742-4a7b-afda-7fd7a920f198")
+		(property "Reference" "H102"
+			(at 40.64 29.2099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 40.64 31.7499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_8mm_Rect_NoSilk"
+			(at 38.1 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9e8b0226-9aa8-45b4-b3a8-90ab3b26effc")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 102.87 50.8 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e38dfa9d-b197-442b-99c0-f0d228091f0b")
+		(property "Reference" "H110"
+			(at 105.41 48.2599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 105.41 50.7999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
+			(at 102.87 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 102.87 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 102.87 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "401d1d4f-40ea-46f1-aea5-8a96753cd11a")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H110")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 128.27 33.02 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e8c54790-0bcf-474c-970e-f1181378e0d2")
+		(property "Reference" "H112"
+			(at 130.81 30.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 130.81 33.0199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_2.2mm_M2_Pad_NoSilk"
+			(at 128.27 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 128.27 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 128.27 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "098024e1-90db-4ae8-8152-d332d12b99dd")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "H112")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 127 121.92 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e981644b-cd44-4a84-ac1e-c45201816fe3")
+		(property "Reference" "J104"
+			(at 127 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 127 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 127 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 127 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 127 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "b4d3cc53-4ccb-407b-9ad6-eee5f1b7a21f")
+		)
+		(pin "3"
+			(uuid "25c227e2-7498-4c48-8d92-636cc7ffcb86")
+		)
+		(pin "2"
+			(uuid "346926c3-fb86-45bf-9b24-7991c0fb2a9e")
+		)
+		(pin "1"
+			(uuid "7f1eac00-c50a-47ba-a9f3-6dedf57526b5")
+		)
+		(pin "5"
+			(uuid "a191fd39-2e11-4d44-803e-7fef3af4737f")
+		)
+		(pin "6"
+			(uuid "b3cf08af-a7df-4a0e-be30-a013391146d2")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
+					(reference "J104")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
