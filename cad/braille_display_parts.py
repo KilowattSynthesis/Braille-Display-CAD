@@ -29,8 +29,8 @@ else:
 # Core braille cell dimensions.
 dot_separation_x = 2.5
 dot_separation_y = 2.5
-dot_x_count = 2
-dot_y_count = 3
+dot_x_count = 1
+dot_y_count = 2
 inter_cell_dot_pitch_x = 6.2  # 6.1 to 7.6, with 6.2 nominal in printing
 inter_cell_dot_pitch_y = 10.0
 dot_diameter_base = 1.6
@@ -46,6 +46,18 @@ lock_plate_thickness = 1.0  # <- This is the cool part that locks the dots.
 housing_cable_channel_od = 1
 housing_mounting_screw_od = 2.2
 housing_mounting_screw_sep_y = 10.1
+
+# Blocker plate.
+housing_enable_blocker_plate: bool = False
+blocker_plate_total_width_x = 3
+blocker_plate_top_thickness_z = 1.0
+blocker_plate_wall_thickness_x = 0.7  # Thickness of the rack mating surface.
+blocker_plate_wall_height_z = 1.0
+
+# Housing cap dimensions.
+housing_cap_thickness = (
+    3  # TODO: add validation that it's greater than the blocker plate Z measurements
+)
 
 # Pogo Pin Specs
 # H=8mm from https://www.aliexpress.com/item/1005003789308391.html
@@ -86,6 +98,11 @@ motor_base_plate_y_size = (
     housing_size_y + (motor_count * (motor_od + motor_space_between_motors)) + 3
 )
 
+# Calculated blocker plate dimensions.
+blocker_plate_channel_width_x = blocker_plate_total_width_x - (
+    2 * blocker_plate_wall_thickness_x
+)
+
 
 def validate_dimensions_and_info() -> None:
     """Validate that the dimensions are within the expected range.
@@ -113,6 +130,13 @@ def validate_dimensions_and_info() -> None:
     }
 
     logger.success(f"PCB Design Info: {json.dumps(pcb_design_info, indent=4)}")
+
+    # Validate: The lock plate's channel must be wider than the dot.
+    if blocker_plate_channel_width_x <= pogo_throw_tip_od:
+        logger.error(
+            "Blocker plate channel width is too small: "
+            f"{blocker_plate_channel_width_x} <= {pogo_throw_tip_od}",
+        )
 
     logger.info("Dimensions validated.")
 
@@ -252,6 +276,19 @@ def make_housing() -> bd.Part:
     assert isinstance(part, bd.Part), "Part is not a Part"
 
     return part
+
+
+# def make_housing_cap() -> bd.Part:
+#     """Make a cap for the housing, for holding the lock plate."""
+#     part = bd.Box(
+#         length=housing_size_x,
+#         width=housing_size_y,
+# FIXME: Start here.
+
+
+def make_lock_plate() -> bd.Part:
+    """Make the lock plate that locks the dots in place."""
+    # FIXME: Implement
 
 
 def make_housing_chain(cell_count: int) -> bd.Part:
