@@ -580,6 +580,42 @@
     [
       "f7fdfeea-4cd4-4338-ad68-f9089a17ed6f",
       "Root"
+    ],
+    [
+      "68ef9985-9a74-4d11-86d2-dc4810a2b95d",
+      "Mechanical_Holes"
+    ],
+    [
+      "c70e4c97-8c02-4ec2-adf8-c68ad551c9df",
+      "Braille_Cell"
+    ],
+    [
+      "f8face70-f441-4019-84bb-0c3e47627462",
+      "Braille_Cell1"
+    ],
+    [
+      "5518a5e4-56f7-4dac-8a38-f03c2408f867",
+      "Braille_Cell2"
+    ],
+    [
+      "2089d862-4c1b-49f8-97ec-14140c961fc2",
+      "Braille_Cell3"
+    ],
+    [
+      "3a3b6a61-1db9-4754-94ae-74d8196d0c73",
+      "Braille_Cell4"
+    ],
+    [
+      "f1c7028b-0548-48b8-90db-1cfa05082137",
+      "Braille_Cell5"
+    ],
+    [
+      "7757496a-04de-4879-8d70-cd3ce71c2844",
+      "Braille_Cell6"
+    ],
+    [
+      "4a0313c1-ce96-429a-9a4d-1e3aae6805de",
+      "Braille_Cell7"
     ]
   ],
   "text_variables": {}

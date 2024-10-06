@@ -1,0 +1,421 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "d3cbee0c-f64e-4154-bf22-60ee8f65a426")
+	(paper "USLetter")
+	(lib_symbols
+		(symbol "Connector_Generic:Conn_01x06"
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x06"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x06_1_1"
+				(rectangle
+					(start -1.27 -7.493)
+					(end 0 -7.747)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -4.953)
+					(end 0 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 5.207)
+					(end 0 4.953)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 6.35)
+					(end 1.27 -8.89)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin passive line
+					(at -5.08 5.08 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -7.62 0)
+					(length 3.81)
+					(name "Pin_6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+	(no_connect
+		(at 63.5 43.18)
+		(uuid "2e833d71-5dbb-434e-806d-baa21b7c0fce")
+	)
+	(no_connect
+		(at 63.5 45.72)
+		(uuid "76d59ba8-3de9-4b77-8f9e-63811ea5a78e")
+	)
+	(no_connect
+		(at 63.5 38.1)
+		(uuid "8c5f7388-56dd-42af-9f9f-50c28a453cc1")
+	)
+	(no_connect
+		(at 63.5 35.56)
+		(uuid "904f271a-34af-45c0-a1b2-0b5564a03551")
+	)
+	(no_connect
+		(at 63.5 48.26)
+		(uuid "cd9cb96f-eb08-4fdb-b203-6a71c3d14870")
+	)
+	(no_connect
+		(at 63.5 40.64)
+		(uuid "f1d5dd0f-83a5-489a-831e-d44bafa5c7cd")
+	)
+	(rectangle
+		(start 34.29 25.4)
+		(end 90.17 60.96)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 82139d38-89db-4969-82d8-b61753065353)
+	)
+	(text "Braille Cell Pogo Holder"
+		(exclude_from_sim no)
+		(at 61.214 54.61 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "86da92d8-b66c-419a-8534-e98897086b92")
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 58.42 40.64 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0e981857-42e2-4332-a6eb-07e71a69eb03")
+		(property "Reference" "J1"
+			(at 58.42 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x06"
+			(at 58.42 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:Braille_Cell_Pogos_Solder_2.5mmIntra_6.6x10mmInter"
+			(at 58.42 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 58.42 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 58.42 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "376b5275-edbd-4e15-a642-a3d8abd0a6aa")
+		)
+		(pin "3"
+			(uuid "5d9f64b0-53af-4813-8d07-3864591e702d")
+		)
+		(pin "2"
+			(uuid "be61b729-60b1-423b-9300-d81a1a013786")
+		)
+		(pin "1"
+			(uuid "9fe929de-5ed3-4eaa-a74c-6805aa0fd323")
+		)
+		(pin "5"
+			(uuid "db124ed7-e230-4bd5-8943-f3bbe3c4c269")
+		)
+		(pin "6"
+			(uuid "cf8315ce-8af0-4954-a25c-d987e6db4929")
+		)
+		(instances
+			(project "Braille-Pogo-Frame"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/2089d862-4c1b-49f8-97ec-14140c961fc2"
+					(reference "J4")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/3a3b6a61-1db9-4754-94ae-74d8196d0c73"
+					(reference "J5")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/4a0313c1-ce96-429a-9a4d-1e3aae6805de"
+					(reference "J8")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/5518a5e4-56f7-4dac-8a38-f03c2408f867"
+					(reference "J3")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/7757496a-04de-4879-8d70-cd3ce71c2844"
+					(reference "J7")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/c70e4c97-8c02-4ec2-adf8-c68ad551c9df"
+					(reference "J1")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f1c7028b-0548-48b8-90db-1cfa05082137"
+					(reference "J6")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f8face70-f441-4019-84bb-0c3e47627462"
+					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+)
