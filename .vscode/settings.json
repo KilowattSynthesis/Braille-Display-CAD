@@ -15,7 +15,6 @@
         "editor.insertSpaces": true,
         "editor.tabSize": 2
     },
-    "python.analysis.diagnosticSeverityOverrides": {},
     "python.analysis.diagnosticMode": "workspace",
     "python.languageServer": "Pylance",
 }
