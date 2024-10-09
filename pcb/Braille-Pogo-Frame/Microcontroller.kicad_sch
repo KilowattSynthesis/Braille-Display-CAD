@@ -974,36 +974,16 @@
 		)
 	)
 	(no_connect
-		(at 123.19 97.79)
-		(uuid "1babc074-aa53-4117-93a0-9b5cb7a98573")
-	)
-	(no_connect
-		(at 118.11 97.79)
-		(uuid "4330a46e-3d9a-4f83-95c1-7fa68e1f0cfa")
-	)
-	(no_connect
 		(at 102.87 88.9)
 		(uuid "94110809-bddb-48b8-ac0b-e653f6bd73b1")
-	)
-	(no_connect
-		(at 115.57 97.79)
-		(uuid "97b658a6-b529-477b-94fe-4e24f035c9b0")
 	)
 	(no_connect
 		(at 102.87 86.36)
 		(uuid "9eff8fa6-87ee-4bd7-b068-8c9568bd5450")
 	)
 	(no_connect
-		(at 113.03 97.79)
-		(uuid "a4611e2a-3de9-45cd-9fd3-baf076cd43ad")
-	)
-	(no_connect
 		(at 133.35 88.9)
 		(uuid "b44f4571-1691-401b-a30c-6ba653920086")
-	)
-	(no_connect
-		(at 120.65 97.79)
-		(uuid "dca0af43-a918-411c-933b-80ac0096b614")
 	)
 	(wire
 		(pts
@@ -1117,6 +1097,26 @@
 	)
 	(wire
 		(pts
+			(xy 120.65 101.6) (xy 120.65 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "43987c8f-eb51-4438-9e6b-723d8b57405c")
+	)
+	(wire
+		(pts
+			(xy 115.57 101.6) (xy 115.57 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b3e6f6d-a98a-49cd-819c-dc7cd3116b8d")
+	)
+	(wire
+		(pts
 			(xy 96.52 68.58) (xy 102.87 68.58)
 		)
 		(stroke
@@ -1134,6 +1134,16 @@
 			(type default)
 		)
 		(uuid "795f8f1d-720b-4698-90db-dbae91c3cfe5")
+	)
+	(wire
+		(pts
+			(xy 118.11 101.6) (xy 118.11 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "85d3cc9c-05b3-480b-abd3-28972b81db8f")
 	)
 	(wire
 		(pts
@@ -1194,6 +1204,16 @@
 			(type default)
 		)
 		(uuid "dcaba1f1-fcb6-41b3-8890-80b052a44d9e")
+	)
+	(wire
+		(pts
+			(xy 123.19 101.6) (xy 123.19 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ec4e746b-cbfa-41fc-856d-a1dbead88473")
 	)
 	(wire
 		(pts
@@ -1317,6 +1337,18 @@
 		)
 		(uuid "6c2083dc-e36d-42f3-b556-d15a1c6cbc90")
 	)
+	(hierarchical_label "~{SLEEP_CELL0}"
+		(shape input)
+		(at 123.19 101.6 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "81bc156a-1dc6-4340-9129-1137042d84e1")
+	)
 	(hierarchical_label "CELL0_IN4"
 		(shape output)
 		(at 137.16 86.36 0)
@@ -1328,6 +1360,18 @@
 			(justify left)
 		)
 		(uuid "969a1926-26cc-4423-a2ee-b60efe11c324")
+	)
+	(hierarchical_label "~{SLEEP_CELL3}"
+		(shape input)
+		(at 115.57 101.6 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "adc536e0-8b56-440b-b1f2-369ff75fc4ad")
 	)
 	(hierarchical_label "~{FAULT_CELL2}"
 		(shape input)
@@ -1353,6 +1397,18 @@
 		)
 		(uuid "c08b99c3-12bf-4aed-ac03-0f4a45950bd3")
 	)
+	(hierarchical_label "~{SLEEP_CELL1}"
+		(shape input)
+		(at 120.65 101.6 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "cd560044-e558-42c0-8ea7-1363c3b55572")
+	)
 	(hierarchical_label "~{FAULT_CELL3}"
 		(shape input)
 		(at 137.16 76.2 0)
@@ -1364,6 +1420,18 @@
 			(justify left)
 		)
 		(uuid "e0be6678-01c6-43b6-924f-b9d502e825fb")
+	)
+	(hierarchical_label "~{SLEEP_CELL2}"
+		(shape input)
+		(at 118.11 101.6 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ec5930b5-532f-4684-90f4-ce8893b04f17")
 	)
 	(symbol
 		(lib_id "power:GND")

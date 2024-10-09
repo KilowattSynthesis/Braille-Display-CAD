@@ -989,6 +989,26 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 152.4) (xy 113.03 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1f95a130-4a91-4c3b-a164-53c795d8bca7")
+	)
+	(wire
+		(pts
+			(xy 113.03 86.36) (xy 124.46 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "23ceeef9-4468-4d58-a95e-27bf3a6d5e64")
+	)
+	(wire
+		(pts
 			(xy 49.53 144.78) (xy 49.53 149.86)
 		)
 		(stroke
@@ -1006,6 +1026,16 @@
 			(type default)
 		)
 		(uuid "2fbccc0b-fa71-48a6-ae30-ad53e83cbcbc")
+	)
+	(wire
+		(pts
+			(xy 124.46 86.36) (xy 124.46 172.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "33056339-d8d7-47b2-9290-b0c14e1fc292")
 	)
 	(wire
 		(pts
@@ -1079,6 +1109,16 @@
 	)
 	(wire
 		(pts
+			(xy 119.38 172.72) (xy 119.38 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6a29076a-c85f-4da1-8f47-0085966b3063")
+	)
+	(wire
+		(pts
 			(xy 132.08 172.72) (xy 132.08 46.99)
 		)
 		(stroke
@@ -1086,6 +1126,16 @@
 			(type default)
 		)
 		(uuid "784eb915-57ac-447e-862f-43dd9d12ec6e")
+	)
+	(wire
+		(pts
+			(xy 127 53.34) (xy 127 172.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7c3f75df-35ed-433f-b6d7-306730c9cf20")
 	)
 	(wire
 		(pts
@@ -1109,6 +1159,16 @@
 	)
 	(wire
 		(pts
+			(xy 121.92 172.72) (xy 121.92 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92679d1f-feb5-4854-866a-959d701b81ea")
+	)
+	(wire
+		(pts
 			(xy 29.21 110.49) (xy 29.21 107.95)
 		)
 		(stroke
@@ -1116,6 +1176,16 @@
 			(type default)
 		)
 		(uuid "968b973b-b56d-44c9-82a7-3b178269c8fa")
+	)
+	(wire
+		(pts
+			(xy 121.92 119.38) (xy 113.03 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "97b57161-8959-4231-aad3-f30085537c92")
 	)
 	(wire
 		(pts
@@ -1226,6 +1296,16 @@
 			(type default)
 		)
 		(uuid "d9587dde-6c74-4f13-8d71-bdd76da25a92")
+	)
+	(wire
+		(pts
+			(xy 127 53.34) (xy 113.03 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e4cd1300-6fcb-48f5-a52d-7ea4135e17a8")
 	)
 	(wire
 		(pts
@@ -1353,7 +1433,7 @@
 	)
 	(text "MCU Sheet"
 		(exclude_from_sim no)
-		(at 110.998 188.468 0)
+		(at 103.886 189.738 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -2323,86 +2403,20 @@
 			)
 			(uuid "595890e7-6d9a-46a3-8416-53cf4072980a")
 		)
+		(pin "~{SLEEP}" input
+			(at 113.03 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "1bfecbf1-c9ab-45f0-a4a1-ce8498816792")
+		)
 		(instances
 			(project "Braille-Pogo-Frame"
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
 					(page "6")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 194.31 33.02)
-		(size 22.86 27.94)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "3a3b6a61-1db9-4754-94ae-74d8196d0c73")
-		(property "Sheetname" "Braille_Cell4"
-			(at 194.31 32.3084 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "Braille_Cell.kicad_sch"
-			(at 194.31 61.5446 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "Braille-Pogo-Frame"
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
-					(page "7")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 194.31 133.35)
-		(size 22.86 27.94)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "4a0313c1-ce96-429a-9a4d-1e3aae6805de")
-		(property "Sheetname" "Braille_Cell7"
-			(at 194.31 132.6384 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "Braille_Cell.kicad_sch"
-			(at 194.31 161.8746 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "Braille-Pogo-Frame"
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
-					(page "10")
 				)
 			)
 		)
@@ -2447,6 +2461,16 @@
 			)
 			(uuid "de88afb8-f290-4c8a-8a88-edeccac6b408")
 		)
+		(pin "~{SLEEP}" input
+			(at 113.03 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "05573948-564f-4b96-9d12-cb0e2449c242")
+		)
 		(instances
 			(project "Braille-Pogo-Frame"
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
@@ -2489,44 +2513,6 @@
 			(project "Braille-Pogo-Frame"
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
 					(page "2")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 194.31 100.33)
-		(size 22.86 27.94)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "7757496a-04de-4879-8d70-cd3ce71c2844")
-		(property "Sheetname" "Braille_Cell6"
-			(at 194.31 99.6184 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "Braille_Cell.kicad_sch"
-			(at 194.31 128.8546 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "Braille-Pogo-Frame"
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
-					(page "9")
 				)
 			)
 		)
@@ -2611,48 +2597,20 @@
 			)
 			(uuid "ae8817ad-9b3a-4cb8-8dfc-85bc25955503")
 		)
+		(pin "~{SLEEP}" input
+			(at 113.03 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "bf2cc460-ec06-42fd-947f-beeff65f5192")
+		)
 		(instances
 			(project "Braille-Pogo-Frame"
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
 					(page "3")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 194.31 67.31)
-		(size 22.86 27.94)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "f1c7028b-0548-48b8-90db-1cfa05082137")
-		(property "Sheetname" "Braille_Cell5"
-			(at 194.31 66.5984 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "Braille_Cell.kicad_sch"
-			(at 194.31 95.8346 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "Braille-Pogo-Frame"
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
-					(page "8")
 				)
 			)
 		)
@@ -2767,6 +2725,46 @@
 			)
 			(uuid "41879311-b4ee-43b4-a092-165cacf54212")
 		)
+		(pin "~{SLEEP_CELL1}" input
+			(at 124.46 172.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "9fe41c29-50a3-4dc1-b450-28a5efa8023c")
+		)
+		(pin "~{SLEEP_CELL2}" input
+			(at 121.92 172.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "93652020-4f92-441b-bae0-0398b47a52c2")
+		)
+		(pin "~{SLEEP_CELL0}" input
+			(at 127 172.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "8da9def7-d6e3-48bc-858d-25e3de48b909")
+		)
+		(pin "~{SLEEP_CELL3}" input
+			(at 119.38 172.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "aac914f4-acef-4d8d-9973-2cf840371d77")
+		)
 		(instances
 			(project "Braille-Pogo-Frame"
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f"
@@ -2814,6 +2812,16 @@
 				(justify left)
 			)
 			(uuid "ff606978-e502-456a-9fb5-c07dec8351a3")
+		)
+		(pin "~{SLEEP}" input
+			(at 113.03 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "1222d9cc-6e2e-4f1a-b5df-4bc49383ea4b")
 		)
 		(instances
 			(project "Braille-Pogo-Frame"
