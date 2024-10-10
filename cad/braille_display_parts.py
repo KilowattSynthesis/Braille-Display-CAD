@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 import build123d as bd
+from bd_warehouse.gear import InvoluteToothProfile, SpurGear, SpurGearPlan
 from cad_lib import make_curved_bent_cylinder
 from loguru import logger
 
@@ -397,14 +398,83 @@ def make_motor_base(cell_count: int) -> bd.Part:
     return part
 
 
+def make_horizontal_bar_holder() -> bd.Part:
+    """Make horizontal bar holder for holding the screws."""
+    peg_d = 1.9
+    peg_len = 1.6
+
+    anchor_bolt_d = 1.85  # 1.85mm for thread-forming M2.
+    anchor_bolt_sep_x = 5
+    anchor_bolt_sep_y = 8
+
+    horiz_bolt_d = 3.2
+    horiz_bolt_center_z = 8
+
+    box_width_x = 10 - 0.8
+    box_length_y = 13 - 0.8
+    box_height_z = 12
+
+    part = bd.Part()
+
+    part += bd.Box(
+        box_width_x,
+        box_length_y,
+        box_height_z,
+        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+    )
+
+    # Remove horiz bolt in middle
+    part -= bd.Cylinder(
+        radius=horiz_bolt_d / 2,
+        height=box_width_x,
+        rotation=(0, 90, 0),
+    ).translate((0, 0, horiz_bolt_center_z))
+
+    # Remove anchor bolts
+    for x_sign, y_sign in [(1, 1), (-1, -1)]:
+        part -= bd.Cylinder(
+            radius=anchor_bolt_d / 2,
+            height=box_height_z,
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        ).translate(
+            (
+                x_sign * anchor_bolt_sep_x / 2,
+                y_sign * anchor_bolt_sep_y / 2,
+                0,
+            ),
+        )
+
+    # Add the anchor peg additions
+    for x_sign, y_sign in [(1, -1), (-1, 1)]:
+        peg_cyl = bd.Part() + bd.Cylinder(
+            radius=peg_d / 2,
+            height=peg_len,
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
+        ).translate(
+            (
+                x_sign * anchor_bolt_sep_x / 2,
+                y_sign * anchor_bolt_sep_y / 2,
+                0,
+            ),
+        )
+
+        part += peg_cyl.fillet(
+            radius=peg_d * 0.4,
+            edge_list=list(peg_cyl.faces().sort_by(bd.Axis.Z)[0].edges()),
+        )
+
+    return part
+
+
 if __name__ == "__main__":
     validate_dimensions_and_info()
 
     parts = {
+        "horizontal_bar_holder": show(make_horizontal_bar_holder()),
         "pogo_pin": make_pogo_pin(),
-        "housing": show(make_housing()),
-        "motor_base_3x": show(make_motor_base(3)),
-        "motor_base_1x": show(make_motor_base(1)),
+        "housing": (make_housing()),
+        "motor_base_3x": (make_motor_base(3)),
+        "motor_base_1x": (make_motor_base(1)),
         "housing_chain_3x": make_housing_chain(3),
         "housing_chain_10x": make_housing_chain(10),
     }
