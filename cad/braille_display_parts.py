@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 import build123d as bd
-from bd_warehouse.gear import InvoluteToothProfile, SpurGear, SpurGearPlan
+from bd_warehouse.gear import SpurGear
 from cad_lib import make_curved_bent_cylinder
 from loguru import logger
 
@@ -466,11 +466,91 @@ def make_horizontal_bar_holder() -> bd.Part:
     return part
 
 
+def make_gear_spool() -> bd.Part:
+    """Make spool with gear."""
+    # Note: Known issue - The pulley and gear is too wide to fit the pitch. See log.
+    spool_pulley_od = 6
+    spool_pulley_width = 4
+
+    # Bearing (603zz = 3mm ID, 9mm OD, 5mm thickness)
+    spool_bearing_od = 9
+    spool_bearing_recess = 1
+    spool_bearing_thickness = 5
+
+    # Gear specs.
+    gear_module = 0.2
+    gear_teeth = 52
+    gear_thickness = 1.5
+    # Separation for 0.2 module; 52 teeth + 8 teeth = 6mm = 0.2 * (52+8)/2
+
+    bolt_d = 3.2
+
+    spool_total_width = 2 * gear_thickness + spool_pulley_width
+
+    part = bd.Part()
+
+    # Spool pulley (in x axis).
+    part += bd.Cylinder(
+        radius=spool_pulley_od / 2,
+        height=spool_pulley_width,
+        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.CENTER),
+        rotation=(0, 90, 0),
+    )
+
+    # Add gears.
+    for rot in [0, 180]:
+        gear = (
+            SpurGear(
+                module=gear_module,
+                tooth_count=gear_teeth,
+                thickness=gear_thickness,
+                pressure_angle=14.5,  # Controls tooth length.
+                root_fillet=0.001,  # Rounding at base of each tooth.
+                rotation=(0, 90, 0),
+                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            )
+            .translate((spool_pulley_width / 2, 0, 0))
+            .rotate(angle=rot, axis=bd.Axis.Y)
+        )
+
+        part += gear
+
+        # Remove bearing.
+        part -= (
+            bd.Cylinder(
+                radius=spool_bearing_od / 2,
+                height=spool_bearing_recess,
+                rotation=(0, -90, 0),
+                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            )
+            .translate((spool_total_width / 2, 0, 0))
+            .rotate(angle=rot, axis=bd.Axis.Y)
+        )
+
+    # Remove center bolt hole.
+    part -= bd.Cylinder(
+        radius=bolt_d / 2,
+        height=100,
+        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.CENTER),
+        rotation=(0, 90, 0),
+    )
+
+    # Log the envelope.
+    logger.info(f"Spool envelope: {part.bounding_box()}")
+    min_supported_pitch_x = (
+        spool_total_width - (spool_bearing_recess * 2) + (2 * spool_bearing_thickness)
+    )
+    logger.info(f"Min supported pitch (X, inter-cell): {min_supported_pitch_x:.3f}")
+
+    return part
+
+
 if __name__ == "__main__":
     validate_dimensions_and_info()
 
     parts = {
         "horizontal_bar_holder": show(make_horizontal_bar_holder()),
+        "spool": show(make_gear_spool()),
         "pogo_pin": make_pogo_pin(),
         "housing": (make_housing()),
         "motor_base_3x": (make_motor_base(3)),

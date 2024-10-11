@@ -143,4 +143,15 @@
 		(remove_unused_layers no)
 		(uuid "71d2c3c9-f457-44e7-9c85-4d1d439cc7d1")
 	)
+	(model "${KIPRJMOD}/lib-cad/horizontal_bar_holder.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )
