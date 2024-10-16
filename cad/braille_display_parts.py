@@ -70,9 +70,8 @@ spool_bearing_recess = 1
 spool_bearing_thickness = 5
 # Gear specs.
 gear_module = 0.2
-spool_gear_teeth = 52
+spool_gear_tooth_count = 52
 spool_gear_thickness = 1.5
-# Separation for 0.2 module; 52 teeth + 8 teeth = 6mm = 0.2 * (52+8)/2
 spool_bolt_d = 3.2
 # end region
 
@@ -88,7 +87,6 @@ motor_shaft_diameter = 0.8
 motor_shaft_length = 4  # Including gear.
 motor_shaft_z = 6
 motor_gear_tooth_count = 8
-motor_gear_module = 0.2
 motor_gear_length = 2
 
 
@@ -101,6 +99,11 @@ housing_size_x = inter_cell_dot_pitch_x
 housing_size_y = inter_cell_dot_pitch_y + 3.3
 # Includes roof and basement.
 housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
+
+# Separation for 0.2 module; 52 teeth + 8 teeth = 6mm = 0.2 * (52+8)/2
+spool_to_motor_shaft_separation = (
+    gear_module * (motor_gear_tooth_count + spool_gear_tooth_count) / 2
+)
 
 
 def validate_dimensions_and_info() -> None:
@@ -116,6 +119,9 @@ def validate_dimensions_and_info() -> None:
             "diameter": housing_mounting_screw_od,
             "separation_x": dot_separation_x,
             "separation_y": housing_mounting_screw_sep_y,
+        },
+        "gears": {
+            "spool_to_motor_shaft_separation": spool_to_motor_shaft_separation,
         },
     }
 
@@ -133,7 +139,7 @@ def make_motor_model() -> bd.Part:
     part = bd.Part()
 
     # Add tiny ball at origin for tracking.
-    part += bd.Sphere(radius=0.5) & bd.Box(
+    part += bd.Sphere(radius=0.25) & bd.Box(
         10,
         10,
         10,
@@ -188,6 +194,8 @@ def make_motor_model() -> bd.Part:
         .rotate(angle=-90, axis=bd.Axis.Y)
         .translate((0, 0, motor_shaft_z))
     )
+
+    logger.info(f"Motor model bounding box: {part.bounding_box()}")
 
     return part
 
@@ -452,7 +460,7 @@ def make_gear_spool() -> bd.Part:
         gear = (
             SpurGear(
                 module=gear_module,
-                tooth_count=spool_gear_teeth,
+                tooth_count=spool_gear_tooth_count,
                 thickness=spool_gear_thickness,
                 pressure_angle=14.5,  # Controls tooth length.
                 root_fillet=0.001,  # Rounding at base of each tooth.
@@ -495,13 +503,32 @@ def make_gear_spool() -> bd.Part:
     return part
 
 
+def make_spool_motor_assembly() -> bd.Part:
+    """Create a spool+motor assembly."""
+    p = bd.Part()
+
+    p += make_motor_model()
+
+    gear_part = make_gear_spool()
+    p += gear_part.translate(
+        (
+            -gear_part.faces().sort_by(bd.Axis.X)[-1].center().X,
+            spool_to_motor_shaft_separation,
+            motor_shaft_z,
+        ),
+    )
+
+    return p
+
+
 if __name__ == "__main__":
     validate_dimensions_and_info()
 
     parts = {
         "horizontal_bar_holder": (make_horizontal_bar_holder()),
         "spool": (make_gear_spool()),
-        "motor_model": show(make_motor_model()),
+        "motor_model": (make_motor_model()),
+        "spool_motor_assembly": show(make_spool_motor_assembly()),
         "pogo_pin": make_pogo_pin(),
         "housing": (make_housing()),
         "housing_chain_3x": make_housing_chain(3),
