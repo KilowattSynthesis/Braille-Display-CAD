@@ -60,6 +60,37 @@ pogo_flange_length = 0.5  # Estimated. Not specified.
 pogo_below_flange_od = 0.8
 pogo_below_flange_length = 2.0  # Ambiguous, 2mm is the longest option.
 
+# region Spool Specs
+# Note: Known issue - The pulley and gear is too wide to fit the pitch. See log.
+spool_pulley_od = 6
+spool_pulley_width = 4
+# Bearing (603zz = 3mm ID, 9mm OD, 5mm thickness)
+spool_bearing_od = 9
+spool_bearing_recess = 1
+spool_bearing_thickness = 5
+# Gear specs.
+gear_module = 0.2
+spool_gear_teeth = 52
+spool_gear_thickness = 1.5
+# Separation for 0.2 module; 52 teeth + 8 teeth = 6mm = 0.2 * (52+8)/2
+spool_bolt_d = 3.2
+# end region
+
+# Motor Model Specs.
+motor_pin_sep_x = 6  # TODO: Check this.
+motor_pin_sep_y = 6
+motor_pin_diameter = 1
+motor_pin_length = 2
+motor_body_width_x = 8
+motor_body_width_y = 8
+motor_body_height_z = 6.8
+motor_shaft_diameter = 0.8
+motor_shaft_length = 4  # Including gear.
+motor_shaft_z = 6
+motor_gear_tooth_count = 8
+motor_gear_module = 0.2
+motor_gear_length = 2
+
 
 ##############################
 ##### CALCULATED VALUES ######
@@ -91,6 +122,74 @@ def validate_dimensions_and_info() -> None:
     logger.success(f"PCB Design Info: {json.dumps(pcb_design_info, indent=4)}")
 
     logger.info("Dimensions validated.")
+
+
+def make_motor_model() -> bd.Part:
+    """Make a motor model for rendering, mostly.
+
+    Origin plane is at PCB.
+    Origin (XY): Tip of the motor shaft/gear.
+    """
+    part = bd.Part()
+
+    # Add tiny ball at origin for tracking.
+    part += bd.Sphere(radius=0.5) & bd.Box(
+        10,
+        10,
+        10,
+        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+    )
+
+    motor_body_center_x = -motor_shaft_length - motor_body_width_x / 2
+
+    # Add the motor body.
+    part += bd.Box(
+        motor_body_width_x,
+        motor_body_width_y,
+        motor_body_height_z,
+        align=(bd.Align.MAX, bd.Align.CENTER, bd.Align.MIN),
+    ).translate((-motor_shaft_length, 0, 0))
+
+    # Add the motor PCB pins.
+    for x_sign, y_sign in [(1, 1), (-1, 1), (1, -1), (-1, -1)]:
+        part += bd.Cylinder(
+            radius=motor_pin_diameter / 2,
+            height=motor_pin_length,
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
+        ).translate(
+            (
+                motor_body_center_x + (x_sign * motor_pin_sep_x / 2),
+                y_sign * motor_pin_sep_y / 2,
+                0,
+            ),
+        )
+
+    # Add the motor shaft.
+    part += (
+        bd.Cylinder(
+            radius=motor_shaft_diameter / 2,
+            height=motor_shaft_length,
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
+        )
+        .rotate(bd.Axis.Y, angle=90)
+        .translate((0, 0, motor_shaft_z))
+    )
+
+    # Add the gear.
+    part += (
+        SpurGear(
+            module=gear_module,
+            tooth_count=motor_gear_tooth_count,
+            thickness=motor_gear_length,
+            pressure_angle=14.5,  # Controls tooth length.
+            root_fillet=0.001,  # Rounding at base of each tooth.
+            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        )
+        .rotate(angle=-90, axis=bd.Axis.Y)
+        .translate((0, 0, motor_shaft_z))
+    )
+
+    return part
 
 
 def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
@@ -275,8 +374,8 @@ def make_horizontal_bar_holder() -> bd.Part:
     anchor_bolt_sep_x = 5
     anchor_bolt_sep_y = 8
 
-    horiz_bolt_d = 3.2
-    horiz_bolt_center_z = 8
+    horizontal_bolt_d = 3.2
+    horizontal_bolt_center_z = 8
 
     box_width_x = 10 - 0.8
     box_length_y = 13 - 0.8
@@ -291,12 +390,12 @@ def make_horizontal_bar_holder() -> bd.Part:
         align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
     )
 
-    # Remove horiz bolt in middle
+    # Remove horizontal bolt in middle
     part -= bd.Cylinder(
-        radius=horiz_bolt_d / 2,
+        radius=horizontal_bolt_d / 2,
         height=box_width_x,
         rotation=(0, 90, 0),
-    ).translate((0, 0, horiz_bolt_center_z))
+    ).translate((0, 0, horizontal_bolt_center_z))
 
     # Remove anchor bolts
     for x_sign, y_sign in [(1, 1), (-1, -1)]:
@@ -336,24 +435,7 @@ def make_horizontal_bar_holder() -> bd.Part:
 
 def make_gear_spool() -> bd.Part:
     """Make spool with gear."""
-    # Note: Known issue - The pulley and gear is too wide to fit the pitch. See log.
-    spool_pulley_od = 6
-    spool_pulley_width = 4
-
-    # Bearing (603zz = 3mm ID, 9mm OD, 5mm thickness)
-    spool_bearing_od = 9
-    spool_bearing_recess = 1
-    spool_bearing_thickness = 5
-
-    # Gear specs.
-    gear_module = 0.2
-    gear_teeth = 52
-    gear_thickness = 1.5
-    # Separation for 0.2 module; 52 teeth + 8 teeth = 6mm = 0.2 * (52+8)/2
-
-    bolt_d = 3.2
-
-    spool_total_width = 2 * gear_thickness + spool_pulley_width
+    spool_total_width = 2 * spool_gear_thickness + spool_pulley_width
 
     part = bd.Part()
 
@@ -370,8 +452,8 @@ def make_gear_spool() -> bd.Part:
         gear = (
             SpurGear(
                 module=gear_module,
-                tooth_count=gear_teeth,
-                thickness=gear_thickness,
+                tooth_count=spool_gear_teeth,
+                thickness=spool_gear_thickness,
                 pressure_angle=14.5,  # Controls tooth length.
                 root_fillet=0.001,  # Rounding at base of each tooth.
                 rotation=(0, 90, 0),
@@ -397,7 +479,7 @@ def make_gear_spool() -> bd.Part:
 
     # Remove center bolt hole.
     part -= bd.Cylinder(
-        radius=bolt_d / 2,
+        radius=spool_bolt_d / 2,
         height=100,
         align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.CENTER),
         rotation=(0, 90, 0),
@@ -417,8 +499,9 @@ if __name__ == "__main__":
     validate_dimensions_and_info()
 
     parts = {
-        "horizontal_bar_holder": show(make_horizontal_bar_holder()),
-        "spool": show(make_gear_spool()),
+        "horizontal_bar_holder": (make_horizontal_bar_holder()),
+        "spool": (make_gear_spool()),
+        "motor_model": show(make_motor_model()),
         "pogo_pin": make_pogo_pin(),
         "housing": (make_housing()),
         "housing_chain_3x": make_housing_chain(3),
@@ -436,3 +519,5 @@ if __name__ == "__main__":
 
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
+
+    logger.info("Done")
