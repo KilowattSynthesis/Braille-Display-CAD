@@ -4,7 +4,7 @@
 	(generator_version "8.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0 5 0)
+		(at 0 3.8 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "6dafb988-45b3-4610-8ea1-e9efa841dde8")
@@ -68,8 +68,8 @@
 	)
 	(attr through_hole)
 	(fp_rect
-		(start -4 -3.75)
-		(end 3.75 3.75)
+		(start -4 -2.75)
+		(end 3.75 2.75)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -101,8 +101,8 @@
 		(uuid "73725e40-abe1-4cbd-a159-10ddc5429a29")
 	)
 	(fp_rect
-		(start -4.25 -4)
-		(end 4 4)
+		(start -4.25 -3)
+		(end 4 3)
 		(stroke
 			(width 0.05)
 			(type default)
@@ -124,7 +124,7 @@
 		)
 	)
 	(pad "1" thru_hole circle
-		(at -3 -2.2)
+		(at -3 -1.5)
 		(size 1.524 1.524)
 		(drill 0.762)
 		(layers "*.Cu" "*.Mask")
@@ -132,7 +132,7 @@
 		(uuid "05eeaca4-4316-42a1-9feb-e6b54bc4623d")
 	)
 	(pad "2" thru_hole circle
-		(at -3 2.2)
+		(at -3 1.5)
 		(size 1.524 1.524)
 		(drill 0.762)
 		(layers "*.Cu" "*.Mask")
@@ -140,7 +140,7 @@
 		(uuid "231bcdbf-83d2-4b9b-b5be-0c80836bb38a")
 	)
 	(pad "3" thru_hole circle
-		(at 1.2 -2.2)
+		(at 0 -1.5)
 		(size 1.524 1.524)
 		(drill 0.762)
 		(layers "*.Cu" "*.Mask")
@@ -148,7 +148,7 @@
 		(uuid "d324ca23-fc92-49b9-9de6-07dd31668570")
 	)
 	(pad "4" thru_hole circle
-		(at 1.2 2.2)
+		(at 0 1.5)
 		(size 1.524 1.524)
 		(drill 0.762)
 		(layers "*.Cu" "*.Mask")

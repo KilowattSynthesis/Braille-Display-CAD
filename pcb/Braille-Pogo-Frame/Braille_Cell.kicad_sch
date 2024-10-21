@@ -2148,16 +2148,6 @@
 		)
 		(uuid "19fe5fe7-5bf0-4c07-82c3-e157ce16e9d0")
 	)
-	(text "TODO: Check motor footprint (dimensions, windings)"
-		(exclude_from_sim no)
-		(at 149.86 135.636 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "35eb73f7-b106-4987-8fd2-0cfec6206868")
-	)
 	(text "TODO: Calculate best current sense value."
 		(exclude_from_sim no)
 		(at 146.558 143.51 0)

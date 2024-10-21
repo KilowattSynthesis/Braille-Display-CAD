@@ -76,18 +76,18 @@ spool_bolt_d = 3.2
 # end region
 
 # Motor Model Specs.
-motor_pin_sep_x = 6  # TODO: Check this.
-motor_pin_sep_y = 6
-motor_pin_diameter = 1
-motor_pin_length = 2
-motor_body_width_x = 8
-motor_body_width_y = 8
-motor_body_height_z = 6.8
+motor_pin_sep_x = 3
+motor_pin_sep_y = 3
+motor_pin_diameter = 0.5
+motor_pin_length = 2  # Really closer to 1.5mm.
+motor_body_width_x = 7.4  # Axial.
+motor_body_width_y = 6  # Radial.
+motor_body_height_z = 5.9
 motor_shaft_diameter = 0.8
-motor_shaft_length = 4  # Including gear.
-motor_shaft_z = 6
+motor_shaft_length = 1.5  # Including gear.
+motor_shaft_z = 3.0
 motor_gear_tooth_count = 8
-motor_gear_length = 2
+motor_gear_length = 0.85
 
 
 ##############################
