@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 import build123d as bd
+import build123d_ease as bde
 from bd_warehouse.gear import SpurGear
 from cad_lib import make_curved_bent_cylinder
 from loguru import logger
@@ -70,16 +71,17 @@ spool_bearing_recess = 1
 spool_bearing_thickness = 5
 # Gear specs.
 gear_module = 0.2
-spool_gear_tooth_count = 52
+spool_gear_tooth_count = 80
 spool_gear_thickness = 1.5
 spool_bolt_d = 3.2
+spool_bearing_border_thickness = 0.7  # Border around the bearing on non-gear side.
 # end region
 
 # Motor Model Specs.
 motor_pin_sep_x = 3
 motor_pin_sep_y = 3
 motor_pin_diameter = 0.5
-motor_pin_length = 2  # Really closer to 1.5mm.
+motor_pin_length = 1
 motor_body_width_x = 7.4  # Axial.
 motor_body_width_y = 6  # Radial.
 motor_body_height_z = 5.9
@@ -123,6 +125,11 @@ def validate_dimensions_and_info() -> None:
         "gears": {
             "spool_to_motor_shaft_separation": spool_to_motor_shaft_separation,
         },
+        "spool_assembly": {
+            "shift_motor_assembly_x": (
+                motor_shaft_length + motor_body_width_x / 2 - motor_pin_sep_x / 2
+            ),
+        },
     }
 
     logger.success(f"PCB Design Info: {json.dumps(pcb_design_info, indent=4)}")
@@ -143,18 +150,32 @@ def make_motor_model() -> bd.Part:
         10,
         10,
         10,
-        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        align=bde.align.BOTTOM,
     )
 
     motor_body_center_x = -motor_shaft_length - motor_body_width_x / 2
 
-    # Add the motor body.
+    # Add the motor body (box part, esp at bottom).
     part += bd.Box(
-        motor_body_width_x,
-        motor_body_width_y,
-        motor_body_height_z,
+        motor_body_width_x - 2,
+        motor_pin_sep_y * 1.2,
+        1,
         align=(bd.Align.MAX, bd.Align.CENTER, bd.Align.MIN),
-    ).translate((-motor_shaft_length, 0, 0))
+    ).translate((-motor_shaft_length - 1, 0, 0))
+
+    # Add the motor body (round part, esp at top).
+    part += bd.Cylinder(
+        radius=motor_body_width_y / 2,
+        height=motor_body_width_x,
+        align=bde.align.BOTTOM,  # Align pre-rotation.
+        rotation=bde.rotation.NEG_X,
+    ).translate(
+        (
+            -motor_shaft_length,
+            0,
+            motor_body_width_y / 2,
+        ),
+    )
 
     # Add the motor PCB pins.
     for x_sign, y_sign in [(1, 1), (-1, 1), (1, -1), (-1, -1)]:
@@ -189,7 +210,7 @@ def make_motor_model() -> bd.Part:
             thickness=motor_gear_length,
             pressure_angle=14.5,  # Controls tooth length.
             root_fillet=0.001,  # Rounding at base of each tooth.
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            align=bde.align.BOTTOM,
         )
         .rotate(angle=-90, axis=bd.Axis.Y)
         .translate((0, 0, motor_shaft_z))
@@ -218,14 +239,14 @@ def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
         bd.Cylinder(
             radius=pogo_flange_od / 2,
             height=pogo_flange_length,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            align=bde.align.BOTTOM,
         )
 
         # Shaft.
         bd.Cylinder(
             radius=pogo_shaft_od / 2,
             height=pogo_shaft_length,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            align=bde.align.BOTTOM,
         )
 
         # Throw/tip.
@@ -233,7 +254,7 @@ def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
             bd.Cylinder(
                 radius=(pogo_throw_tip_od + pogo_throw_tip_od_delta) / 2,
                 height=pogo_throw_length,
-                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+                align=bde.align.BOTTOM,
             )
 
     return pogo_pin_part.part
@@ -323,7 +344,7 @@ def make_housing() -> bd.Part:
         part -= bd.Cylinder(
             radius=housing_mounting_screw_od / 2,
             height=housing_size_z,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            align=bde.align.BOTTOM,
         ).translate(
             (
                 offset * (dot_separation_x / 2),  # Align to avoid cable channels.
@@ -395,7 +416,7 @@ def make_horizontal_bar_holder() -> bd.Part:
         box_width_x,
         box_length_y,
         box_height_z,
-        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        align=bde.align.BOTTOM,
     )
 
     # Remove horizontal bolt in middle
@@ -410,7 +431,7 @@ def make_horizontal_bar_holder() -> bd.Part:
         part -= bd.Cylinder(
             radius=anchor_bolt_d / 2,
             height=box_height_z,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            align=bde.align.BOTTOM,
         ).translate(
             (
                 x_sign * anchor_bolt_sep_x / 2,
@@ -457,19 +478,32 @@ def make_gear_spool() -> bd.Part:
 
     # Add gears.
     for rot in [0, 180]:
-        gear = (
-            SpurGear(
-                module=gear_module,
-                tooth_count=spool_gear_tooth_count,
-                thickness=spool_gear_thickness,
-                pressure_angle=14.5,  # Controls tooth length.
-                root_fillet=0.001,  # Rounding at base of each tooth.
-                rotation=(0, 90, 0),
-                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+        if rot == 0:
+            gear = (
+                SpurGear(
+                    module=gear_module,
+                    tooth_count=spool_gear_tooth_count,
+                    thickness=spool_gear_thickness,
+                    pressure_angle=14.5,  # Controls tooth length.
+                    root_fillet=0.001,  # Rounding at base of each tooth.
+                    rotation=(0, 90, 0),
+                    align=bde.align.BOTTOM,
+                )
+                .translate((spool_pulley_width / 2, 0, 0))
+                .rotate(angle=rot, axis=bd.Axis.Y)
             )
-            .translate((spool_pulley_width / 2, 0, 0))
-            .rotate(angle=rot, axis=bd.Axis.Y)
-        )
+        else:
+            # For the rot==180, make the gear just be a cylinder.
+            gear = (
+                bd.Cylinder(
+                    radius=(spool_bearing_od + spool_bearing_border_thickness * 2) / 2,
+                    height=spool_gear_thickness,
+                    rotation=(0, 90, 0),
+                    align=bde.align.BOTTOM,
+                )
+                .translate((spool_pulley_width / 2, 0, 0))
+                .rotate(angle=rot, axis=bd.Axis.Y)
+            )
 
         part += gear
 
@@ -479,7 +513,7 @@ def make_gear_spool() -> bd.Part:
                 radius=spool_bearing_od / 2,
                 height=spool_bearing_recess,
                 rotation=(0, -90, 0),
-                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+                align=bde.align.BOTTOM,
             )
             .translate((spool_total_width / 2, 0, 0))
             .rotate(angle=rot, axis=bd.Axis.Y)
@@ -528,8 +562,8 @@ if __name__ == "__main__":
         "horizontal_bar_holder": (make_horizontal_bar_holder()),
         "spool": (make_gear_spool()),
         "motor_model": (make_motor_model()),
-        "spool_motor_assembly": show(make_spool_motor_assembly()),
-        "pogo_pin": make_pogo_pin(),
+        "spool_motor_assembly": (make_spool_motor_assembly()),
+        "pogo_pin": show(make_pogo_pin()),
         "housing": (make_housing()),
         "housing_chain_3x": make_housing_chain(3),
         "housing_chain_10x": make_housing_chain(10),

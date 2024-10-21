@@ -155,4 +155,15 @@
 		(remove_unused_layers no)
 		(uuid "5f65b742-3465-4f1c-a712-2431a63fa856")
 	)
+	(model "${KIPRJMOD}/lib-cad/spool_motor_assembly.step"
+		(offset
+			(xyz 3.7 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )
