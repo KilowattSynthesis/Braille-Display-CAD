@@ -63,18 +63,29 @@ pogo_below_flange_length = 2.0  # Ambiguous, 2mm is the longest option.
 
 # region Spool Specs
 # Note: Known issue - The pulley and gear is too wide to fit the pitch. See log.
-spool_pulley_od = 6
-spool_pulley_width = 4
+spool_pulley_od = 7
+spool_pulley_width = 5  # Width of the tape part.
+
 # Bearing (603zz = 3mm ID, 9mm OD, 5mm thickness)
-spool_bearing_od = 9
-spool_bearing_recess = 1
-spool_bearing_thickness = 5
+# spool_bearing_od = 9
+# spool_bearing_thickness = 5
+
+# Bearing (MR63 ZZ 3x6x2.5mm)
+spool_bearing_od = 6
+spool_bearing_thickness = 2.5
+
+# Other bearing options:
+# 681 1mm * 3mm * 1mm L-415ZZ 681X -> https://www.aliexpress.com/item/4000449063951.html
+# Full list -> https://www.aliexpress.com/item/1005006599062930.html
+
 # Gear specs.
 gear_module = 0.2
-spool_gear_tooth_count = 80
-spool_gear_thickness = 1.5
+spool_gear_tooth_count = 64
+spool_gear_thickness = 1.1
+spool_flange_thickness = 0.5
+spool_flange_od = 8
 spool_bolt_d = 3.2
-spool_bearing_border_thickness = 0.7  # Border around the bearing on non-gear side.
+spool_bearing_border_thickness = 0.1  # Border around the bearing on non-gear side.
 # end region
 
 # Motor Model Specs.
@@ -114,6 +125,9 @@ def validate_dimensions_and_info() -> None:
     Also, print out sizing info for PCB design.
     """
     logger.info("Validating dimensions.")
+
+    assert spool_pulley_od > spool_bearing_od
+    assert spool_flange_od > spool_bearing_od
 
     # Print mounting screw hole info.
     pcb_design_info = {
@@ -464,7 +478,9 @@ def make_horizontal_bar_holder() -> bd.Part:
 
 def make_gear_spool() -> bd.Part:
     """Make spool with gear."""
-    spool_total_width = 2 * spool_gear_thickness + spool_pulley_width
+    spool_total_width = (
+        spool_gear_thickness + spool_flange_thickness + spool_pulley_width
+    )
 
     part = bd.Part()
 
@@ -476,48 +492,40 @@ def make_gear_spool() -> bd.Part:
         rotation=(0, 90, 0),
     )
 
-    # Add gears.
-    for rot in [0, 180]:
-        if rot == 0:
-            gear = (
-                SpurGear(
-                    module=gear_module,
-                    tooth_count=spool_gear_tooth_count,
-                    thickness=spool_gear_thickness,
-                    pressure_angle=14.5,  # Controls tooth length.
-                    root_fillet=0.001,  # Rounding at base of each tooth.
-                    rotation=(0, 90, 0),
-                    align=bde.align.BOTTOM,
-                )
-                .translate((spool_pulley_width / 2, 0, 0))
-                .rotate(angle=rot, axis=bd.Axis.Y)
-            )
-        else:
-            # For the rot==180, make the gear just be a cylinder.
-            gear = (
-                bd.Cylinder(
-                    radius=(spool_bearing_od + spool_bearing_border_thickness * 2) / 2,
-                    height=spool_gear_thickness,
-                    rotation=(0, 90, 0),
-                    align=bde.align.BOTTOM,
-                )
-                .translate((spool_pulley_width / 2, 0, 0))
-                .rotate(angle=rot, axis=bd.Axis.Y)
-            )
+    # Add gear (on POS_X side).
+    part += SpurGear(
+        module=gear_module,
+        tooth_count=spool_gear_tooth_count,
+        thickness=spool_gear_thickness,
+        pressure_angle=14.5,  # Controls tooth length.
+        root_fillet=0.001,  # Rounding at base of each tooth.
+        rotation=bde.rotation.POS_X,
+        align=bde.align.BOTTOM,  # Normal mode.
+    ).translate((part.bounding_box().max.X, 0, 0))
 
-        part += gear
+    # Add flange (on NEG_X side).
+    part += bd.Cylinder(
+        radius=spool_flange_od / 2,
+        height=spool_flange_thickness,
+        rotation=bde.rotation.NEG_X,
+        align=bde.align.BOTTOM,  # Normal mode.
+    ).translate((part.bounding_box().min.X, 0, 0))
 
-        # Remove bearing.
-        part -= (
-            bd.Cylinder(
-                radius=spool_bearing_od / 2,
-                height=spool_bearing_recess,
-                rotation=(0, -90, 0),
-                align=bde.align.BOTTOM,
-            )
-            .translate((spool_total_width / 2, 0, 0))
-            .rotate(angle=rot, axis=bd.Axis.Y)
-        )
+    # Remove bearing (gear side, POS_X).
+    part -= bd.Cylinder(
+        radius=spool_bearing_od / 2,
+        height=spool_bearing_thickness,
+        rotation=bde.rotation.NEG_X,
+        align=bde.align.BOTTOM,
+    ).translate((part.bounding_box().max.X, 0, 0))
+
+    # Remove bearing (non-gear side, NEG_X).
+    part -= bd.Cylinder(
+        radius=spool_bearing_od / 2,
+        height=spool_bearing_thickness,
+        rotation=bde.rotation.POS_X,
+        align=bde.align.BOTTOM,
+    ).translate((part.bounding_box().min.X, 0, 0))
 
     # Remove center bolt hole.
     part -= bd.Cylinder(
@@ -529,9 +537,7 @@ def make_gear_spool() -> bd.Part:
 
     # Log the envelope.
     logger.info(f"Spool envelope: {part.bounding_box()}")
-    min_supported_pitch_x = (
-        spool_total_width - (spool_bearing_recess * 2) + (2 * spool_bearing_thickness)
-    )
+    min_supported_pitch_x = spool_total_width  # Way simpler now.
     logger.info(f"Min supported pitch (X, inter-cell): {min_supported_pitch_x:.3f}")
 
     return part
@@ -562,8 +568,8 @@ if __name__ == "__main__":
         "horizontal_bar_holder": (make_horizontal_bar_holder()),
         "spool": (make_gear_spool()),
         "motor_model": (make_motor_model()),
-        "spool_motor_assembly": (make_spool_motor_assembly()),
-        "pogo_pin": show(make_pogo_pin()),
+        "spool_motor_assembly": show(make_spool_motor_assembly()),
+        "pogo_pin": (make_pogo_pin()),
         "housing": (make_housing()),
         "housing_chain_3x": make_housing_chain(3),
         "housing_chain_10x": make_housing_chain(10),
