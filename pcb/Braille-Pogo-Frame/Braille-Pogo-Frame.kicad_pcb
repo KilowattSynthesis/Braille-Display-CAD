@@ -1520,7 +1520,7 @@
 	(footprint "00-lib-footprints:HorizMounting_4x_M2_and_M3_Middle"
 		(layer "F.Cu")
 		(uuid "195f04af-de1c-4ad0-b2b8-dcd578929990")
-		(at 136.6 116)
+		(at 136.6 114.91)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H19"
@@ -2298,7 +2298,7 @@
 			)
 		)
 		(property "Footprint" "00-lib-footprints:RP2040 Zero"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "aaa14a4b-8953-4a7d-9545-f14e80f5aac4")
@@ -2310,7 +2310,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "50be5f10-546a-4ec3-9180-2d754bf1d95a")
@@ -2322,7 +2322,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b2a19edd-8c5a-41e3-a130-68ffcc62196a")
@@ -9163,7 +9163,7 @@
 	(footprint "00-lib-footprints:HorizMounting_4x_M2_and_M3_Middle"
 		(layer "F.Cu")
 		(uuid "c1b51ebb-ecd4-4871-a313-c4ed568f8b13")
-		(at 90 146)
+		(at 90 144.91)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H18"
@@ -9335,7 +9335,7 @@
 	(footprint "00-lib-footprints:HorizMounting_4x_M2_and_M3_Middle"
 		(layer "F.Cu")
 		(uuid "c9da2e8d-90e4-49f9-b081-61ef4e4ac119")
-		(at 130 146)
+		(at 130 144.91)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H20"
@@ -10681,7 +10681,7 @@
 	(footprint "00-lib-footprints:HorizMounting_4x_M2_and_M3_Middle"
 		(layer "F.Cu")
 		(uuid "e685692f-991f-49e1-b156-c02132590ee9")
-		(at 96.6 116)
+		(at 96.6 114.91)
 		(descr "Mounting Hole 3.2mm, M3")
 		(tags "mounting hole 3.2mm m3")
 		(property "Reference" "H17"

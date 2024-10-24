@@ -86,6 +86,9 @@ spool_flange_thickness = 0.5
 spool_flange_od = 8
 spool_bolt_d = 3.2
 spool_bearing_border_thickness = 0.1  # Border around the bearing on non-gear side.
+
+# Assembly planning.
+spool_mounting_angle = 45  # 0 means motor_shaft_z==spool_shaft_z. >0 moves it up.
 # end region
 
 # Motor Model Specs.
@@ -102,6 +105,20 @@ motor_shaft_z = 3.0
 motor_gear_tooth_count = 8
 motor_gear_length = 0.85
 
+# region Horizontal Bar Holder
+bar_holder_peg_d = 1.9
+bar_holder_peg_len = 1.6
+
+bar_holder_anchor_bolt_d = 1.85  # 1.85mm for thread-forming M2.
+bar_holder_anchor_bolt_sep_x = 5
+bar_holder_anchor_bolt_sep_y = 8
+
+bar_holder_horizontal_bolt_d = 3.2
+
+bar_holder_box_width_x = 10 - 0.8
+bar_holder_box_length_y = 13 - 0.8
+bar_holder_box_height_z = 12
+# end region
 
 ##############################
 ##### CALCULATED VALUES ######
@@ -117,6 +134,15 @@ housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thick
 spool_to_motor_shaft_separation = (
     gear_module * (motor_gear_tooth_count + spool_gear_tooth_count) / 2
 )
+
+spool_vs_motor_delta_y = (
+    math.cos(math.radians(spool_mounting_angle)) * spool_to_motor_shaft_separation
+)
+spool_vs_motor_delta_z = (
+    math.sin(math.radians(spool_mounting_angle)) * spool_to_motor_shaft_separation
+)
+
+bar_holder_horizontal_bolt_center_z = motor_shaft_z + spool_vs_motor_delta_z
 
 
 def validate_dimensions_and_info() -> None:
@@ -143,6 +169,9 @@ def validate_dimensions_and_info() -> None:
             "shift_motor_assembly_x": (
                 motor_shaft_length + motor_body_width_x / 2 - motor_pin_sep_x / 2
             ),
+            "y_dist_motor_shaft_to_spool_shaft": spool_vs_motor_delta_y,
+            "z_dist_motor_shaft_to_spool_shaft": spool_vs_motor_delta_z,
+            "bar_holder_horizontal_bolt_center_z": bar_holder_horizontal_bolt_center_z,
         },
     }
 
@@ -410,46 +439,32 @@ def make_housing_chain(cell_count: int) -> bd.Part:
 
 def make_horizontal_bar_holder() -> bd.Part:
     """Make horizontal bar holder for holding the screws."""
-    peg_d = 1.9
-    peg_len = 1.6
-
-    anchor_bolt_d = 1.85  # 1.85mm for thread-forming M2.
-    anchor_bolt_sep_x = 5
-    anchor_bolt_sep_y = 8
-
-    horizontal_bolt_d = 3.2
-    horizontal_bolt_center_z = 8
-
-    box_width_x = 10 - 0.8
-    box_length_y = 13 - 0.8
-    box_height_z = 12
-
     part = bd.Part()
 
     part += bd.Box(
-        box_width_x,
-        box_length_y,
-        box_height_z,
+        bar_holder_box_width_x,
+        bar_holder_box_length_y,
+        bar_holder_box_height_z,
         align=bde.align.BOTTOM,
     )
 
     # Remove horizontal bolt in middle
     part -= bd.Cylinder(
-        radius=horizontal_bolt_d / 2,
-        height=box_width_x,
+        radius=bar_holder_horizontal_bolt_d / 2,
+        height=bar_holder_box_width_x,
         rotation=(0, 90, 0),
-    ).translate((0, 0, horizontal_bolt_center_z))
+    ).translate((0, 0, bar_holder_horizontal_bolt_center_z))
 
     # Remove anchor bolts
     for x_sign, y_sign in [(1, 1), (-1, -1)]:
         part -= bd.Cylinder(
-            radius=anchor_bolt_d / 2,
-            height=box_height_z,
+            radius=bar_holder_anchor_bolt_d / 2,
+            height=bar_holder_box_height_z,
             align=bde.align.BOTTOM,
         ).translate(
             (
-                x_sign * anchor_bolt_sep_x / 2,
-                y_sign * anchor_bolt_sep_y / 2,
+                x_sign * bar_holder_anchor_bolt_sep_x / 2,
+                y_sign * bar_holder_anchor_bolt_sep_y / 2,
                 0,
             ),
         )
@@ -457,19 +472,19 @@ def make_horizontal_bar_holder() -> bd.Part:
     # Add the anchor peg additions
     for x_sign, y_sign in [(1, -1), (-1, 1)]:
         peg_cyl = bd.Part() + bd.Cylinder(
-            radius=peg_d / 2,
-            height=peg_len,
+            radius=bar_holder_peg_d / 2,
+            height=bar_holder_peg_len,
             align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
         ).translate(
             (
-                x_sign * anchor_bolt_sep_x / 2,
-                y_sign * anchor_bolt_sep_y / 2,
+                x_sign * bar_holder_anchor_bolt_sep_x / 2,
+                y_sign * bar_holder_anchor_bolt_sep_y / 2,
                 0,
             ),
         )
 
         part += peg_cyl.fillet(
-            radius=peg_d * 0.4,
+            radius=bar_holder_peg_d * 0.4,
             edge_list=list(peg_cyl.faces().sort_by(bd.Axis.Z)[0].edges()),
         )
 
@@ -549,14 +564,22 @@ def make_spool_motor_assembly() -> bd.Part:
 
     p += make_motor_model()
 
-    gear_part = make_gear_spool()
-    p += gear_part.translate(
+    spool = make_gear_spool()
+    spool = spool.translate(
         (
-            -gear_part.faces().sort_by(bd.Axis.X)[-1].center().X,
-            spool_to_motor_shaft_separation,
-            motor_shaft_z,
+            -spool.faces().sort_by(bd.Axis.X)[-1].center().X,
+            spool_vs_motor_delta_y,
+            motor_shaft_z + spool_vs_motor_delta_z,
         ),
     )
+    p += spool
+
+    if spool.bounding_box().min.Z < 0:
+        logger.warning(
+            f"Bounding box min Z is below 0: {spool.bounding_box().min.Z:,.3f}. "
+            "Gear is probably dipping into the PCB. "
+            "Adjust `spool_mounting_angle`, probably.",
+        )
 
     return p
 
