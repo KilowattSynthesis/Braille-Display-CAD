@@ -472,6 +472,23 @@
       },
       {
         "bus_width": 12,
+        "clearance": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.5,
+        "via_diameter": 0.7,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
         "clearance": 0.11,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
@@ -492,8 +509,60 @@
       "version": 3
     },
     "net_colors": null,
-    "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_assignments": {
+      "/Braille_Cell/DOT1_A": "Tight",
+      "/Braille_Cell/DOT2_A": "Tight",
+      "/Braille_Cell/DOT3_A": "Tight",
+      "/Braille_Cell/DOT3_B": "Tight",
+      "/Braille_Cell/DOT6_A": "Tight",
+      "/Braille_Cell1/DOT1_A": "Tight",
+      "/Braille_Cell1/DOT2_A": "Tight",
+      "/Braille_Cell1/DOT3_A": "Tight",
+      "/Braille_Cell1/DOT3_B": "Tight",
+      "/Braille_Cell1/DOT6_A": "Tight",
+      "/Braille_Cell2/DOT1_A": "Tight",
+      "/Braille_Cell2/DOT2_A": "Tight",
+      "/Braille_Cell2/DOT3_A": "Tight",
+      "/Braille_Cell2/DOT3_B": "Tight",
+      "/Braille_Cell2/DOT6_A": "Tight",
+      "Net-(J3-Pin_1)": "Power",
+      "Net-(L1-Pad2)": "Tight",
+      "Net-(L10-Pad2)": "Tight",
+      "Net-(L11-Pad2)": "Tight",
+      "Net-(L12-Pad2)": "Tight",
+      "Net-(L13-Pad2)": "Tight",
+      "Net-(L14-Pad2)": "Tight",
+      "Net-(L15-Pad2)": "Tight",
+      "Net-(L16-Pad2)": "Tight",
+      "Net-(L17-Pad2)": "Tight",
+      "Net-(L18-Pad2)": "Tight",
+      "Net-(L2-Pad2)": "Tight",
+      "Net-(L3-Pad2)": "Tight",
+      "Net-(L4-Pad2)": "Tight",
+      "Net-(L5-Pad2)": "Tight",
+      "Net-(L6-Pad2)": "Tight",
+      "Net-(L7-Pad2)": "Tight",
+      "Net-(L8-Pad2)": "Tight",
+      "Net-(L9-Pad2)": "Tight"
+    },
+    "netclass_patterns": [
+      {
+        "netclass": "Power",
+        "pattern": "+5V"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "+3V3"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VDC"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
