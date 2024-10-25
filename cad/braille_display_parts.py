@@ -8,7 +8,6 @@ from pathlib import Path
 import build123d as bd
 import build123d_ease as bde
 from bd_warehouse.gear import SpurGear
-from cad_lib import make_curved_bent_cylinder
 from loguru import logger
 
 if os.getenv("CI"):
@@ -37,13 +36,11 @@ inter_cell_dot_pitch_x = 6.2  # 6.1 to 7.6, with 6.2 nominal in printing
 inter_cell_dot_pitch_y = 10.0
 dot_diameter_base = 1.6
 dot_diameter_top = 1.2
-dot_height = 0.8
+dot_height = 0.8  # Amount to stick out above the housing.
 
 # Housing dimensions.
 min_wall_thickness = 1.0
 housing_roof_thickness = 1.0
-# Thickness of the part that holds the spring and routes the string.
-housing_basement_thickness = 0
 lock_plate_thickness = 1.0  # <- This is the cool part that locks the dots.
 housing_cable_channel_od = 1
 housing_mounting_screw_od = 2.2
@@ -128,7 +125,7 @@ bar_holder_box_height_z = 12
 housing_size_x = inter_cell_dot_pitch_x
 housing_size_y = inter_cell_dot_pitch_y + 3.3
 # Includes roof and basement.
-housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
+housing_size_z = pogo_length - dot_height
 
 # Separation for 0.2 module; 52 teeth + 8 teeth = 6mm = 0.2 * (52+8)/2
 spool_to_motor_shaft_separation = (
@@ -316,10 +313,9 @@ def make_housing() -> bd.Part:
         length=housing_size_x,
         width=housing_size_y,
         height=housing_size_z,
-        align=bd.Align.CENTER,
+        align=bde.align.BOTTOM,
     )
     box_top_face = part.faces().sort_by(bd.Axis.Z)[-1]
-    box_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
 
     # Remove the pogo pin holes. Set the Z by making the pogo pin stick out
     # the perfect amount to get `dot_height` above the top face.
@@ -333,68 +329,13 @@ def make_housing() -> bd.Part:
         ),
     )
 
-    # Remove small cable channels which go all the way to the roof.
-    for idx1, grid_pos in enumerate(dot_center_grid_locations):
-        for offset in (-1, 1):
-            # Create a channel out through the bottom.
-            # Do this `idx * 0.0001` to avoid overlapping/self-intersecting geometry.
-            cable_channel = make_curved_bent_cylinder(
-                diameter=housing_cable_channel_od + (idx1 * 0.0001),
-                vertical_seg_length=(pogo_length - dot_height) + (idx1 * 0.0001),
-                horizontal_seg_length=housing_size_y,
-                bend_radius=3 + (idx1 * 0.0001),
-            )
-
-            part -= grid_pos * cable_channel.translate(
-                (
-                    offset * math.cos(45) * dot_separation_x,
-                    offset * math.cos(45) * dot_separation_y,
-                    box_top_face.center().Z,
-                ),
-            )
-
-            logger.info(f"Cable channel {idx1} added.")
-
-    # Remove the channels out the bottom.
-    for x_multiplier in [-1, 0, 1]:
-        channel_center_x = x_multiplier * math.cos(45) * dot_separation_x * 2
-
-        part -= bd.Box(
-            housing_cable_channel_od + 0.01,
-            (
-                housing_size_y / 2  # Get to middle of housing
-                + (
-                    # Get to the center of the dot
-                    dot_separation_y if x_multiplier != 1 else 0
-                )
-                + (
-                    # Get to the center of the channel
-                    math.cos(45) * dot_separation_y
-                )
-            ),
-            housing_size_z - pogo_length + dot_height + housing_cable_channel_od * 0.4,
-            align=(bd.Align.CENTER, bd.Align.MAX, bd.Align.MIN),
-        ).translate(
-            (
-                box_bottom_face.center().X + channel_center_x,
-                box_bottom_face.bounding_box().max.Y,
-                box_bottom_face.center().Z,
-            ),
-        )
-
-    # Add mounting screw holes.
-    for offset in (-1, 1):
-        part -= bd.Cylinder(
-            radius=housing_mounting_screw_od / 2,
-            height=housing_size_z,
-            align=bde.align.BOTTOM,
-        ).translate(
-            (
-                offset * (dot_separation_x / 2),  # Align to avoid cable channels.
-                offset * housing_mounting_screw_sep_y / 2,
-                box_bottom_face.center().Z,
-            ),
-        )
+    # Remove the tape.
+    part -= bd.Box(
+        4,  # Width of the tape.
+        100,
+        0.5,  # Thickness of tape passage.
+        align=bde.align.CENTER,
+    ).translate((0, 0, box_top_face.center().Z - 1))
 
     assert isinstance(part, bd.Part), "Part is not a Part"
 
@@ -426,6 +367,7 @@ def make_housing_chain(cell_count: int) -> bd.Part:
     chain_min_x = part.faces().sort_by(bd.Axis.X)[0].center().X
     chain_max_x = part.faces().sort_by(bd.Axis.X)[-1].center().X
 
+    # TODO: Check that alignment is still okay.
     for x, mount_align in ((chain_min_x, bd.Align.MAX), (chain_max_x, bd.Align.MIN)):
         part += bd.Box(
             length=1,
@@ -512,7 +454,7 @@ def make_gear_spool() -> bd.Part:
         module=gear_module,
         tooth_count=spool_gear_tooth_count,
         thickness=spool_gear_thickness,
-        pressure_angle=14.5,  # Controls tooth length.
+        pressure_angle=14.5,  # Controls tooth length. # FIXME: Might not be right. Maybe a bad random number picked.
         root_fillet=0.001,  # Rounding at base of each tooth.
         rotation=bde.rotation.POS_X,
         align=bde.align.BOTTOM,  # Normal mode.
@@ -588,14 +530,14 @@ if __name__ == "__main__":
     validate_dimensions_and_info()
 
     parts = {
+        "spool_motor_assembly": (make_spool_motor_assembly()),
+        "pogo_pin": (make_pogo_pin()),
+        "housing": show(make_housing()),
+        "housing_chain_3x": make_housing_chain(3),
+        "housing_chain_10x": make_housing_chain(10),
         "horizontal_bar_holder": (make_horizontal_bar_holder()),
         "spool": (make_gear_spool()),
         "motor_model": (make_motor_model()),
-        "spool_motor_assembly": show(make_spool_motor_assembly()),
-        "pogo_pin": (make_pogo_pin()),
-        "housing": (make_housing()),
-        "housing_chain_3x": make_housing_chain(3),
-        "housing_chain_10x": make_housing_chain(10),
     }
 
     logger.info("Showing CAD model(s)")
