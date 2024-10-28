@@ -25,24 +25,28 @@ else:
 
 
 # region Constants
+crazy_scale_factor = 1  # Normally 1x, but 2x is good for FDM testing.
 # Core braille cell dimensions.
-dot_separation_x = 2.5
-dot_separation_y = 2.5
+dot_separation_x = 2.5 * crazy_scale_factor
+dot_separation_y = 2.5 * crazy_scale_factor
 dot_x_count = 2
 dot_y_count = 3
-inter_cell_dot_pitch_x = 6.4  # 6.1 to 7.6, with 6.2 nominal in printing
-inter_cell_dot_pitch_y = 10.0
-dot_diameter_base = 1.6
-dot_diameter_top = 1.2
-dot_height = 0.8
+inter_cell_dot_pitch_x = (
+    # 6.1 to 7.6, with 6.2 nominal in printing.
+    6.4 * crazy_scale_factor
+)
+inter_cell_dot_pitch_y = 10.0 * crazy_scale_factor
+# dot_diameter_base = 1.6
+# dot_diameter_top = 1.2
+# dot_height = 0.8
 
-cell_count_x = 2
+cell_count_x = 3
 cell_count_y = 1
 
 sheet_border = 10
 sheet_thickness = 0.3
 
-dome_od = 1.9
+dome_od = 1.9 * crazy_scale_factor
 dome_thickness = 0.4
 
 mold_plate_t = 5
@@ -50,7 +54,6 @@ mold_side_wall_t = 6
 mold_screw_d = 3.2
 mold_screw_standoff_od = 6
 mold_screw_margin = 4
-
 # end region
 
 # region Calculated dimensions
@@ -131,7 +134,7 @@ def make_silicone_sheet_positive() -> bd.Part:
         # Remove the dot.
         p -= bd.Cylinder(
             radius=dome_od / 2,
-            height=dot_height * 2,
+            height=sheet_thickness * 10,
         ).translate((dot_x, dot_y, 0))
 
         # Create a bump there.
@@ -236,7 +239,10 @@ if __name__ == "__main__":
 
     logger.info(f"Done showing {len(parts)} part(s)")
 
-    (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
+    (export_folder := Path(__file__).parent.parent / "build/silicone_sheet").mkdir(
+        exist_ok=True,
+        parents=True,
+    )
     for name, part in parts.items():
         assert isinstance(part, bd.Part), f"{name} is not a Part"
         # assert part.is_manifold is True, f"{name} is not manifold"
