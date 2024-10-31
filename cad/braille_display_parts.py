@@ -12,42 +12,20 @@ Future options:
 
 import itertools
 import json
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
 import build123d as bd
 import build123d_ease as bde
+from build123d_ease import show
 from loguru import logger
-
-if os.getenv("CI"):
-
-    def show(*args: object) -> bd.Part:
-        """Do nothing (dummy function) to skip showing the CAD model in CI."""
-        logger.info(f"Skipping show({args}) in CI")
-        return args[0]
-else:
-    import ocp_vscode
-
-    def show(*args: object) -> bd.Part:
-        """Show the CAD model in the CAD viewer."""
-        ocp_vscode.show(*args)
-        return args[0]
-
 
 # Constants. All distances are in mm.
 
-# Core braille cell dimensions.
-inter_cell_dot_pitch_x = 6.2  # 6.1 to 7.6, with 6.2 nominal in printing
-inter_cell_dot_pitch_y = 10.0
-dot_diameter_base = 1.6
-dot_diameter_top = 1.2
-dot_height = 0.8
-
 
 @dataclass
-class Nut:
+class NutSpec:
     """Dimensions for any nut."""
 
     width: float
@@ -55,15 +33,15 @@ class Nut:
     m_diameter: float
 
 
-m2p5_nut = Nut(width=4.9, thickness=1.8, m_diameter=2.5)
-m1p6_nut = Nut(width=3.1, thickness=1.2, m_diameter=1.6)
+m2p5_nut = NutSpec(width=4.9, thickness=1.8, m_diameter=2.5)
+m1p6_nut = NutSpec(width=3.1, thickness=1.2, m_diameter=1.6)
 
 
 @dataclass
-class NutHolder:
+class NutHolderSpec:
     """Dimensions and generator for the nut holder."""
 
-    nut: Nut
+    nut: NutSpec
 
     # Whether the bottom-most nut should be placed with its opening facing the top or
     # bottom. For all nuts on the same side, the opening should face "top".
@@ -83,6 +61,8 @@ class NutHolder:
     dot_separation_y = 2.5
     dot_x_count: int = 2
     dot_y_count: int = 3
+    inter_cell_dot_pitch_x: float = 6.2  # 6.1 to 7.6, with 6.2 nominal in printing
+    inter_cell_dot_pitch_y: float = 10.0
 
     cell_count_x: int = 8
     cell_count_y: int = 2
@@ -140,8 +120,8 @@ class NutHolder:
         """Get the centers of the cells."""
         return [
             (
-                inter_cell_dot_pitch_x * (x_num - (self.cell_count_x - 1) / 2),
-                inter_cell_dot_pitch_y * (y_num - (self.cell_count_y - 1) / 2),
+                self.inter_cell_dot_pitch_x * (x_num - (self.cell_count_x - 1) / 2),
+                self.inter_cell_dot_pitch_y * (y_num - (self.cell_count_y - 1) / 2),
             )
             for y_num in range(self.cell_count_y)
             for x_num in range(self.cell_count_x)
@@ -202,104 +182,117 @@ class NutHolder:
 
         logger.success(f"Dimensions validated: {json.dumps(data, indent=4)}")
 
-    def make_part(self) -> bd.Part:
-        """Make the nut holder part."""
-        self.validate()
 
-        p = bd.Part()
+def make_nut_holder(nut_holder_spec: NutHolderSpec) -> bd.Part:
+    """Make the nut holder part."""
+    nut_holder_spec.validate()
 
-        # Make the body.
-        p += bd.Box(
-            self.total_width,
-            self.total_height,
-            self.total_thickness,
+    p = bd.Part()
+
+    # Make the body.
+    p += bd.Box(
+        nut_holder_spec.total_width,
+        nut_holder_spec.total_height,
+        nut_holder_spec.total_thickness,
+    )
+
+    box_bottom_z = bde.bottom_face_of(p).center().Z
+
+    # Make the nuts.
+    for x, y, dot_num in nut_holder_spec.dot_centers:
+        nut_center_z = (
+            box_bottom_z
+            + nut_holder_spec.bottom_thickness
+            + (nut_holder_spec.nut.thickness / 2)
+        )
+        rotate_nut_direction = 0
+
+        if dot_num % 2 == 0:
+            nut_center_z += (
+                nut_holder_spec.nut.thickness
+                + nut_holder_spec.separation_between_nuts_z
+            )
+        elif nut_holder_spec.nut_from_top_or_bottom == "bottom":
+            rotate_nut_direction = 180
+
+        # Remove the nut.
+        p -= (
+            bd.extrude(
+                bd.RegularPolygon(
+                    radius=nut_holder_spec.nut.width / 2,
+                    side_count=6,
+                    major_radius=False,
+                ),
+                amount=nut_holder_spec.total_thickness
+                * 2,  # Extrude it through the brick.
+            )
+            .translate((0, 0, -nut_holder_spec.nut.thickness / 2))  # Center the nut.
+            .rotate(axis=bd.Axis.Z, angle=nut_holder_spec.nut_rotate_z)
+            .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
+            .translate((x, y, nut_center_z))
         )
 
-        box_bottom_z = bde.bottom_face_of(p).center().Z
-
-        # Make the nuts.
-        for x, y, dot_num in self.dot_centers:
-            nut_center_z = (
-                box_bottom_z + self.bottom_thickness + (self.nut.thickness / 2)
-            )
-            rotate_nut_direction = 0
-
-            if dot_num % 2 == 0:
-                nut_center_z += self.nut.thickness + self.separation_between_nuts_z
-            elif self.nut_from_top_or_bottom == "bottom":
-                rotate_nut_direction = 180
-
-            # Remove the nut.
-            p -= (
-                bd.extrude(
-                    bd.RegularPolygon(
-                        radius=self.nut.width / 2,
-                        side_count=6,
-                        major_radius=False,
-                    ),
-                    amount=self.total_thickness * 2,  # Extrude it through the brick.
+        # Remove the screw hole.
+        p -= (
+            bd.Cylinder(
+                radius=(
+                    nut_holder_spec.nut.m_diameter
+                    + nut_holder_spec.screw_extra_diameter
                 )
-                .translate((0, 0, -self.nut.thickness / 2))  # Center the nut.
-                .rotate(axis=bd.Axis.Z, angle=self.nut_rotate_z)
-                .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
-                .translate((x, y, nut_center_z))
+                / 2,
+                height=nut_holder_spec.total_thickness
+                * 2.5,  # Extrude it through the brick.
             )
+            .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
+            .translate((x, y, nut_center_z))
+        )
 
-            # Remove the screw hole.
-            p -= (
-                bd.Cylinder(
-                    radius=(self.nut.m_diameter + self.screw_extra_diameter) / 2,
-                    height=self.total_thickness * 2.5,  # Extrude it through the brick.
-                )
-                .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
-                .translate((x, y, nut_center_z))
+    # Add the standoffs out the bottom.
+    for x, y in itertools.product([-1, 1], [-1, 1]):
+        p += bd.Cylinder(
+            radius=nut_holder_spec.mount_screw_standoff_d / 2,
+            height=nut_holder_spec.mount_screw_standoff_height,
+            align=bde.align.BOTTOM,  # Normal.
+            rotation=bde.rotation.NEG_Z,
+        ).translate(
+            (
+                x * nut_holder_spec.mounting_hole_sep_x / 2,
+                y * nut_holder_spec.mounting_hole_sep_y / 2,
+                box_bottom_z,
             )
+        )
 
-        # Add the standoffs out the bottom.
-        for x, y in itertools.product([-1, 1], [-1, 1]):
-            p += bd.Cylinder(
-                radius=self.mount_screw_standoff_d / 2,
-                height=self.mount_screw_standoff_height,
-                align=bde.align.BOTTOM,  # Normal.
-                rotation=bde.rotation.NEG_Z,
-            ).translate(
-                (
-                    x * self.mounting_hole_sep_x / 2,
-                    y * self.mounting_hole_sep_y / 2,
-                    box_bottom_z,
-                )
+        p -= bd.Cylinder(
+            radius=nut_holder_spec.mount_screw_d / 2, height=100
+        ).translate(
+            (
+                x * nut_holder_spec.mounting_hole_sep_x / 2,
+                y * nut_holder_spec.mounting_hole_sep_y / 2,
+                0,
             )
+        )
 
-            p -= bd.Cylinder(radius=self.mount_screw_d / 2, height=100).translate(
-                (
-                    x * self.mounting_hole_sep_x / 2,
-                    y * self.mounting_hole_sep_y / 2,
-                    0,
-                )
-            )
-
-        return p
-
-
-##############################
-##### CALCULATED VALUES ######
-##############################
+    return p
 
 
 if __name__ == "__main__":
     parts = {
         "nut_holder_M1p6_From_Top": (
-            NutHolder(
-                nut=m1p6_nut,
-            ).make_part()
+            make_nut_holder(
+                NutHolderSpec(
+                    nut=m1p6_nut,
+                )
+            )
         ),
         "nut_holder_M1p6_From_Bottom": show(
-            NutHolder(
-                nut=m1p6_nut,
-                nut_from_top_or_bottom="bottom",
-                separation_between_nuts_z=1,
-                bottom_thickness=0,
-            ).make_part()
+            make_nut_holder(
+                NutHolderSpec(
+                    nut=m1p6_nut,
+                    nut_from_top_or_bottom="bottom",
+                    separation_between_nuts_z=1,
+                    bottom_thickness=0,
+                )
+            )
         ),
     }
 

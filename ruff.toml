@@ -3,6 +3,8 @@ target-version = "py311"
 [lint]
 select = ["ALL"]
 ignore = [
+    "D203", # No blank line before class docstring.
+    "D213", # Fix bad default.
     "ERA001",  # Commented-out code.
     
     "S101",  # Use of `assert` statement.
@@ -13,7 +15,6 @@ ignore = [
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = [
     "ALL",
-    "COM812", # Add missing commas automatically.
 ]
 unfixable = []
 
