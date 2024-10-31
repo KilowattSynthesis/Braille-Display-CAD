@@ -39,7 +39,17 @@ Experimental design for a braille display using build123d CAD in Python
     * Spring pushing on pogo pin flange, on solenoid-relieved cell frame.
 
 * Use CNC plotter to turn pins/bolts for placement. Use hex drive, plus solenoid to mate/un-mate. Build the plotter on a PCB with 3mm linear rails, belts, etc.
-    * Bolt options - Search "M2 plunger"
+    * Bolt options - Search "M2.5 plunger"
+    * Best option: M1.6 Grub Screw, probably.
+    * Create top plate with Z-stacked nuts on it.
+    * Screw driver or nut will move up and down and turn screws.
+    * Search "Micro Linear Motor" for gantry.
+    * BOM:
+        * LM3UU linear bearings (ID=3mm, OD=7mm, L=10mm)
+        * 3mm Rod x 100mm
+        * PM15S Stepper Motors: https://www.aliexpress.com/item/1005005152436475.html
+        * GT2 belt
+        * GT2 pulley, custom to mate with stepper motor's gear.
 
 * Motors mounted on orthogonal PCBs, with rotating slanted plate to push on the pins.
     * Use magnets as the mating, somehow.
@@ -47,6 +57,13 @@ Experimental design for a braille display using build123d CAD in Python
 * Use CNC plotter to manipulate a silicone sheet which can pop up and down.
 
 * Microfluidics as valves.
+
+* MEMS on-chip stepper motor:
+    * https://www.youtube.com/watch?v=n3YMjgbhvTA
+    * Could be useful 
+
+* Double screw with balls and weird geometry.
+
 
 ### Tested Ideas
 
