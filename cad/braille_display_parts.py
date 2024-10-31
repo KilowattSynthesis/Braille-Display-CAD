@@ -367,7 +367,6 @@ def make_housing_chain(cell_count: int) -> bd.Part:
     chain_min_x = part.faces().sort_by(bd.Axis.X)[0].center().X
     chain_max_x = part.faces().sort_by(bd.Axis.X)[-1].center().X
 
-    # TODO: Check that alignment is still okay.
     for x, mount_align in ((chain_min_x, bd.Align.MAX), (chain_max_x, bd.Align.MIN)):
         part += bd.Box(
             length=1,
@@ -454,7 +453,8 @@ def make_gear_spool() -> bd.Part:
         module=gear_module,
         tooth_count=spool_gear_tooth_count,
         thickness=spool_gear_thickness,
-        pressure_angle=14.5,  # Controls tooth length. # FIXME: Might not be right. Maybe a bad random number picked.
+        # TODO: Pressure angle might not be right. Was sorta random.  # noqa: FIX002
+        pressure_angle=14.5,  # Controls tooth length.
         root_fillet=0.001,  # Rounding at base of each tooth.
         rotation=bde.rotation.POS_X,
         align=bde.align.BOTTOM,  # Normal mode.
@@ -532,17 +532,15 @@ if __name__ == "__main__":
     parts = {
         "spool_motor_assembly": (make_spool_motor_assembly()),
         "pogo_pin": (make_pogo_pin()),
-        "housing": show(make_housing()),
+        "housing": (make_housing()),
         "housing_chain_3x": make_housing_chain(3),
         "housing_chain_10x": make_housing_chain(10),
         "horizontal_bar_holder": (make_horizontal_bar_holder()),
-        "spool": (make_gear_spool()),
+        "spool": show(make_gear_spool()),
         "motor_model": (make_motor_model()),
     }
 
-    logger.info("Showing CAD model(s)")
-    # show(parts["pogo_pin"])
-    # show(parts["housing"])
+    logger.info("Saving CAD model(s)")
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     for name, part in parts.items():

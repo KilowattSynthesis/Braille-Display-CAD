@@ -9,7 +9,8 @@ ignore = [
     
     "S101",  # Use of `assert` statement.
     "RET504",  # Assignment right before return.
-    
+    "TD002", # `TODO` missing author.
+    "TD003", # `TODO` missing issue link.
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
