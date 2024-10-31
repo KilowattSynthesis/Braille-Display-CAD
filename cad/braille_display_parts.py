@@ -10,6 +10,7 @@ Future options:
 
 """
 
+import itertools
 import json
 import os
 from dataclasses import dataclass
@@ -43,16 +44,6 @@ inter_cell_dot_pitch_y = 10.0
 dot_diameter_base = 1.6
 dot_diameter_top = 1.2
 dot_height = 0.8
-
-# Housing dimensions.
-min_wall_thickness = 1.0
-housing_roof_thickness = 1.0
-# Thickness of the part that holds the spring and routes the string.
-housing_basement_thickness = 0
-lock_plate_thickness = 1.0  # <- This is the cool part that locks the dots.
-housing_cable_channel_od = 1
-housing_mounting_screw_od = 2.2
-housing_mounting_screw_sep_y = 10.1
 
 
 @dataclass
@@ -100,8 +91,9 @@ class NutHolder:
 
     screw_extra_diameter: float = 0.2
 
-    # mount_screw_d: float = 3.2
-    # mount_screw_standoff_d: float = 6
+    mount_screw_d: float = 3.2
+    mount_screw_standoff_d: float = 6
+    mount_screw_standoff_height: float = 5
 
     @property
     def min_max_x_dot_center(self) -> tuple[float, float]:
@@ -179,6 +171,16 @@ class NutHolder:
             for cell_coord in self.cell_centers
         ]
 
+    @property
+    def mounting_hole_sep_x(self) -> float:
+        """Get the x separation between the centers of the mounting holes."""
+        return self.total_width - self.mount_screw_standoff_d
+
+    @property
+    def mounting_hole_sep_y(self) -> float:
+        """Get the y separation between the centers of the mounting holes."""
+        return self.total_height - self.mount_screw_standoff_d
+
     def validate(self) -> None:
         """Validate the dimensions."""
         assert self.min_max_x_dot_center[1] == -self.min_max_x_dot_center[0]
@@ -194,6 +196,8 @@ class NutHolder:
             "total_thickness": self.total_thickness,
             # "cell_centers": self.cell_centers,
             # "dot_centers": self.dot_centers,
+            "mounting_hole_sep_x": self.mounting_hole_sep_x,
+            "mounting_hole_sep_y": self.mounting_hole_sep_y,
         }
 
         logger.success(f"Dimensions validated: {json.dumps(data, indent=4)}")
@@ -249,6 +253,29 @@ class NutHolder:
                 )
                 .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
                 .translate((x, y, nut_center_z))
+            )
+
+        # Add the standoffs out the bottom.
+        for x, y in itertools.product([-1, 1], [-1, 1]):
+            p += bd.Cylinder(
+                radius=self.mount_screw_standoff_d / 2,
+                height=self.mount_screw_standoff_height,
+                align=bde.align.BOTTOM,  # Normal.
+                rotation=bde.rotation.NEG_Z,
+            ).translate(
+                (
+                    x * self.mounting_hole_sep_x / 2,
+                    y * self.mounting_hole_sep_y / 2,
+                    box_bottom_z,
+                )
+            )
+
+            p -= bd.Cylinder(radius=self.mount_screw_d / 2, height=100).translate(
+                (
+                    x * self.mounting_hole_sep_x / 2,
+                    y * self.mounting_hole_sep_y / 2,
+                    0,
+                )
             )
 
         return p
