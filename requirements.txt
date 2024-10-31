@@ -3,4 +3,4 @@ loguru
 build123d
 ocp_vscode
 git+https://github.com/gumyr/bd_warehouse
-build123d-ease==0.1.1
+build123d-ease~=0.1.2
