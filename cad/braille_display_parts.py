@@ -1,12 +1,23 @@
-"""Create CAD models for the braille display parts."""
+"""Create CAD models for the braille display parts.
+
+BOM:
+- M1.6 Nuts
+- M1.6 x 6mm grub screws
+
+Future options:
+- Try M1.4 x 6mm grub screws and nuts for a little better fit.
+- Try creating the nut holder so it's a smooth surface on the top.
+
+"""
 
 import json
-import math
 import os
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 import build123d as bd
-from cad_lib import make_curved_bent_cylinder
+import build123d_ease as bde
 from loguru import logger
 
 if os.getenv("CI"):
@@ -27,10 +38,6 @@ else:
 # Constants. All distances are in mm.
 
 # Core braille cell dimensions.
-dot_separation_x = 2.5
-dot_separation_y = 2.5
-dot_x_count = 2
-dot_y_count = 3
 inter_cell_dot_pitch_x = 6.2  # 6.1 to 7.6, with 6.2 nominal in printing
 inter_cell_dot_pitch_y = 10.0
 dot_diameter_base = 1.6
@@ -47,372 +54,229 @@ housing_cable_channel_od = 1
 housing_mounting_screw_od = 2.2
 housing_mounting_screw_sep_y = 10.1
 
-# Pogo Pin Specs
-# H=8mm from https://www.aliexpress.com/item/1005003789308391.html
-pogo_length = 8.0  # Excludes the male pin below the flange.
-pogo_throw_tip_od = 0.9
-pogo_throw_length = 2.0
-pogo_shaft_od = 1.5
-pogo_shaft_length = 6.0
-pogo_flange_od = 2.0
-pogo_flange_length = 0.5  # Estimated. Not specified.
-pogo_below_flange_od = 0.8
-pogo_below_flange_length = 2.0  # Ambiguous, 2mm is the longest option.
+
+@dataclass
+class Nut:
+    """Dimensions for any nut."""
+
+    width: float
+    thickness: float
+    m_diameter: float
 
 
-# Base Plate Specs
-motor_base_plate_thickness = 3
-motor_od = 4.0
-motor_length = 8.0
-motor_count = dot_x_count * dot_y_count
-motor_raise_from_bottom_of_base = 1
-motor_hold_material_on_top_thickness_z = 1
-motor_space_between_motors = 0.7
-motor_holder_thickness = 2
+m2p5_nut = Nut(width=4.9, thickness=1.8, m_diameter=2.5)
+m1p6_nut = Nut(width=3.1, thickness=1.2, m_diameter=1.6)
+
+
+@dataclass
+class NutHolder:
+    """Dimensions and generator for the nut holder."""
+
+    nut: Nut
+
+    # Whether the bottom-most nut should be placed with its opening facing the top or
+    # bottom. For all nuts on the same side, the opening should face "top".
+    nut_from_top_or_bottom: Literal["top", "bottom"] = "top"
+
+    # Separation between nuts in the Z direction.
+    # Set to 0 if `nut_from_top_or_bottom == "top"`.
+    separation_between_nuts_z: float = 0
+
+    # Set to 0 if `nut_from_top_or_bottom == "bottom"`.
+    bottom_thickness: float = 1
+    top_thickness_above_nut: float = 0
+
+    border_thickness_xy: float = 10
+
+    dot_separation_x = 2.5
+    dot_separation_y = 2.5
+    dot_x_count: int = 2
+    dot_y_count: int = 3
+
+    cell_count_x: int = 8
+    cell_count_y: int = 2
+
+    nut_rotate_z: float = 15  # 0-30 is the range. Half that fits magically.
+
+    screw_extra_diameter: float = 0.2
+
+    # mount_screw_d: float = 3.2
+    # mount_screw_standoff_d: float = 6
+
+    @property
+    def min_max_x_dot_center(self) -> tuple[float, float]:
+        """Get the min and max x values for the dot centers."""
+        return (
+            min(x[0] for x in self.dot_centers),
+            max(x[0] for x in self.dot_centers),
+        )
+
+    @property
+    def min_max_y_dot_center(self) -> tuple[float, float]:
+        """Get the min and max y values for the dot centers."""
+        return (
+            min(x[1] for x in self.dot_centers),
+            max(x[1] for x in self.dot_centers),
+        )
+
+    @property
+    def total_width(self) -> float:
+        """Total width of the nut holder."""
+        return self.border_thickness_xy * 2 + (
+            self.min_max_x_dot_center[1] - self.min_max_x_dot_center[0]
+        )
+
+    @property
+    def total_height(self) -> float:
+        """Total height of the nut holder."""
+        return self.border_thickness_xy * 2 + (
+            self.min_max_y_dot_center[1] - self.min_max_y_dot_center[0]
+        )
+
+    @property
+    def total_thickness(self) -> float:
+        """Total thickness of the nut holder."""
+        return (
+            self.bottom_thickness
+            + self.top_thickness_above_nut
+            + self.separation_between_nuts_z
+            + 2 * self.nut.thickness
+        )
+
+    @property
+    def cell_centers(self) -> list[tuple[float, float]]:
+        """Get the centers of the cells."""
+        return [
+            (
+                inter_cell_dot_pitch_x * (x_num - (self.cell_count_x - 1) / 2),
+                inter_cell_dot_pitch_y * (y_num - (self.cell_count_y - 1) / 2),
+            )
+            for y_num in range(self.cell_count_y)
+            for x_num in range(self.cell_count_x)
+        ]
+
+    @property
+    def dot_centers(self) -> list[tuple[float, float, int]]:
+        """Get the centers of the dots.
+
+        Returns a list of (x, y, dot_num) tuples.
+        """
+        dot_nums = [
+            (-0.5, -1, 1),
+            (-0.5, 0, 2),
+            (-0.5, 1, 3),
+            (0.5, -1, 4),
+            (0.5, 0, 5),
+            (0.5, 1, 6),
+        ]
+        return [
+            (
+                self.dot_separation_x * x + cell_coord[0],
+                self.dot_separation_y * y + cell_coord[1],
+                dot_num,
+            )
+            for x, y, dot_num in dot_nums
+            for cell_coord in self.cell_centers
+        ]
+
+    def validate(self) -> None:
+        """Validate the dimensions."""
+        assert self.min_max_x_dot_center[1] == -self.min_max_x_dot_center[0]
+        assert self.min_max_y_dot_center[1] == -self.min_max_y_dot_center[0]
+
+        assert self.total_width > 0
+        assert self.total_height > 0
+        assert self.total_thickness > 0
+
+        data = {
+            "total_width": self.total_width,
+            "total_height": self.total_height,
+            "total_thickness": self.total_thickness,
+            # "cell_centers": self.cell_centers,
+            # "dot_centers": self.dot_centers,
+        }
+
+        logger.success(f"Dimensions validated: {json.dumps(data, indent=4)}")
+
+    def make_part(self) -> bd.Part:
+        """Make the nut holder part."""
+        self.validate()
+
+        p = bd.Part()
+
+        # Make the body.
+        p += bd.Box(
+            self.total_width,
+            self.total_height,
+            self.total_thickness,
+        )
+
+        box_bottom_z = bde.bottom_face_of(p).center().Z
+
+        # Make the nuts.
+        for x, y, dot_num in self.dot_centers:
+            nut_center_z = (
+                box_bottom_z + self.bottom_thickness + (self.nut.thickness / 2)
+            )
+            rotate_nut_direction = 0
+
+            if dot_num % 2 == 0:
+                nut_center_z += self.nut.thickness + self.separation_between_nuts_z
+            elif self.nut_from_top_or_bottom == "bottom":
+                rotate_nut_direction = 180
+
+            # Remove the nut.
+            p -= (
+                bd.extrude(
+                    bd.RegularPolygon(
+                        radius=self.nut.width / 2,
+                        side_count=6,
+                        major_radius=False,
+                    ),
+                    amount=self.total_thickness * 2,  # Extrude it through the brick.
+                )
+                .translate((0, 0, -self.nut.thickness / 2))  # Center the nut.
+                .rotate(axis=bd.Axis.Z, angle=self.nut_rotate_z)
+                .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
+                .translate((x, y, nut_center_z))
+            )
+
+            # Remove the screw hole.
+            p -= (
+                bd.Cylinder(
+                    radius=(self.nut.m_diameter + self.screw_extra_diameter) / 2,
+                    height=self.total_thickness * 2.5,  # Extrude it through the brick.
+                )
+                .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
+                .translate((x, y, nut_center_z))
+            )
+
+        return p
+
 
 ##############################
 ##### CALCULATED VALUES ######
 ##############################
 
-# Calculated housing dimensions.
-housing_size_x = inter_cell_dot_pitch_x
-housing_size_y = inter_cell_dot_pitch_y + 3.3
-# Includes roof and basement.
-housing_size_z = pogo_length + pogo_below_flange_length + housing_basement_thickness
-
-
-# Calculated motor base plate dimensions.
-motor_base_plate_y_size = (
-    housing_size_y + (motor_count * (motor_od + motor_space_between_motors)) + 3
-)
-
-
-def validate_dimensions_and_info() -> None:
-    """Validate that the dimensions are within the expected range.
-
-    Also, print out sizing info for PCB design.
-    """
-    logger.info("Validating dimensions.")
-
-    # Print mounting screw hole info.
-    pcb_design_info = {
-        "mounting_screw_hole": {
-            "diameter": housing_mounting_screw_od,
-            "separation_x": dot_separation_x,
-            "separation_y": housing_mounting_screw_sep_y,
-        },
-        "motor_base_plate": {
-            "thickness": motor_base_plate_thickness,
-            "motor_count": motor_count,
-            "motor_od": motor_od,
-            "motor_length": motor_length,
-            "motor_space_between_motors": motor_space_between_motors,
-            "total_y_size": housing_size_y
-            + (motor_count * (motor_od + motor_space_between_motors)),
-        },
-    }
-
-    logger.success(f"PCB Design Info: {json.dumps(pcb_design_info, indent=4)}")
-
-    logger.info("Dimensions validated.")
-
-
-def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
-    """Make a pogo pin to act as a negative for the print-in-place surrounding part.
-
-    * Orientation: Pin extends up.
-    * Origin (XY): Center of bottom of flange. `pogo_length` extends up.
-    """
-    with bd.BuildPart() as pogo_pin_part:
-        # Below flange.
-        bd.Cylinder(
-            radius=pogo_below_flange_od / 2,
-            height=pogo_below_flange_length,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
-        )
-
-        # Flange.
-        bd.Cylinder(
-            radius=pogo_flange_od / 2,
-            height=pogo_flange_length,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
-        )
-
-        # Shaft.
-        bd.Cylinder(
-            radius=pogo_shaft_od / 2,
-            height=pogo_shaft_length,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
-        )
-
-        # Throw/tip.
-        with bd.Locations(pogo_pin_part.faces().sort_by(bd.Axis.Z)[-1]):
-            bd.Cylinder(
-                radius=(pogo_throw_tip_od + pogo_throw_tip_od_delta) / 2,
-                height=pogo_throw_length,
-                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
-            )
-
-    return pogo_pin_part.part
-
-
-def make_housing() -> bd.Part:
-    """Make a housing for a single braille cell."""
-    dot_center_grid_locations = bd.GridLocations(
-        x_spacing=dot_separation_x,
-        y_spacing=dot_separation_y,
-        x_count=dot_x_count,
-        y_count=dot_y_count,
-    )
-
-    part = bd.Box(
-        length=housing_size_x,
-        width=housing_size_y,
-        height=housing_size_z,
-        align=bd.Align.CENTER,
-    )
-    box_top_face = part.faces().sort_by(bd.Axis.Z)[-1]
-    box_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
-
-    # Remove the pogo pin holes. Set the Z by making the pogo pin stick out
-    # the perfect amount to get `dot_height` above the top face.
-    part -= dot_center_grid_locations * make_pogo_pin(
-        pogo_throw_tip_od_delta=0.5,
-    ).translate(
-        (
-            0,
-            0,
-            box_top_face.center().Z - pogo_length + dot_height,
-        ),
-    )
-
-    # Remove small cable channels which go all the way to the roof.
-    for idx1, grid_pos in enumerate(dot_center_grid_locations):
-        for offset in (-1, 1):
-            # Create a channel out through the bottom.
-            # Do this `idx * 0.0001` to avoid overlapping/self-intersecting geometry.
-            cable_channel = make_curved_bent_cylinder(
-                diameter=housing_cable_channel_od + (idx1 * 0.0001),
-                vertical_seg_length=(pogo_length - dot_height) + (idx1 * 0.0001),
-                horizontal_seg_length=housing_size_y,
-                bend_radius=3 + (idx1 * 0.0001),
-            )
-
-            part -= grid_pos * cable_channel.translate(
-                (
-                    offset * math.cos(45) * dot_separation_x,
-                    offset * math.cos(45) * dot_separation_y,
-                    box_top_face.center().Z,
-                ),
-            )
-
-            logger.info(f"Cable channel {idx1} added.")
-
-    # Remove the channels out the bottom.
-    for x_multiplier in [-1, 0, 1]:
-        channel_center_x = x_multiplier * math.cos(45) * dot_separation_x * 2
-
-        part -= bd.Box(
-            housing_cable_channel_od + 0.01,
-            (
-                housing_size_y / 2  # Get to middle of housing
-                + (
-                    # Get to the center of the dot
-                    dot_separation_y if x_multiplier != 1 else 0
-                )
-                + (
-                    # Get to the center of the channel
-                    math.cos(45) * dot_separation_y
-                )
-            ),
-            housing_size_z - pogo_length + dot_height + housing_cable_channel_od * 0.4,
-            align=(bd.Align.CENTER, bd.Align.MAX, bd.Align.MIN),
-        ).translate(
-            (
-                box_bottom_face.center().X + channel_center_x,
-                box_bottom_face.bounding_box().max.Y,
-                box_bottom_face.center().Z,
-            ),
-        )
-
-    # Add mounting screw holes.
-    for offset in (-1, 1):
-        part -= bd.Cylinder(
-            radius=housing_mounting_screw_od / 2,
-            height=housing_size_z,
-            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
-        ).translate(
-            (
-                offset * (dot_separation_x / 2),  # Align to avoid cable channels.
-                offset * housing_mounting_screw_sep_y / 2,
-                box_bottom_face.center().Z,
-            ),
-        )
-
-    assert isinstance(part, bd.Part), "Part is not a Part"
-
-    return part
-
-
-def make_housing_chain(cell_count: int) -> bd.Part:
-    """Make a chain of `cell_count` braille cells.
-
-    Generates the chain in the X direction.
-    """
-    logger.info(f"Making a chain of {cell_count} braille cells.")
-    housing = make_housing()
-    assert isinstance(housing, bd.Part), "Housing is not a Part"
-    logger.info(f"Single cell housing volume: {housing.volume:.3f}")
-
-    # Make a chain of cells.
-    part = bd.Part()
-    for cell_num in range(cell_count):
-        part += housing.translate(
-            (
-                cell_num * inter_cell_dot_pitch_x,
-                0,
-                0,
-            ),
-        )
-
-    # Add on edge plates.
-    chain_min_x = part.faces().sort_by(bd.Axis.X)[0].center().X
-    chain_max_x = part.faces().sort_by(bd.Axis.X)[-1].center().X
-
-    for x, mount_align in ((chain_min_x, bd.Align.MAX), (chain_max_x, bd.Align.MIN)):
-        part += bd.Box(
-            length=1,
-            width=housing_size_y,
-            height=housing_size_z,
-            align=(mount_align, bd.Align.CENTER, bd.Align.CENTER),
-        ).translate((x, 0, 0))
-
-    return part
-
-
-def make_motor_base(cell_count: int) -> bd.Part:
-    """Make a chain of braille cells with a motor base out the end."""
-    logger.info(f"Making a chain of {cell_count} braille cells with a motor base.")
-
-    # Make the base.
-    part = bd.Box(
-        cell_count * inter_cell_dot_pitch_x + 10,
-        motor_base_plate_y_size,
-        motor_base_plate_thickness,
-        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX),
-    )
-
-    base_bottom_face = part.faces().sort_by(bd.Axis.Z)[0]
-    base_back_face = part.faces().sort_by(bd.Axis.Y)[-1]
-    base_front_face = part.faces().sort_by(bd.Axis.Y)[0]
-
-    # Add mounting holes for the cells.
-    cell_num_offset = -((cell_count / 2) - 0.5)
-    for cell_num in range(cell_count):
-        center_of_cell_x = (
-            # Get to the center of the box
-            base_bottom_face.center().X
-            # Then move to the center of the cell
-            + (cell_num_offset + cell_num) * inter_cell_dot_pitch_x
-        )
-
-        for offset in (-1, 1):
-            part -= (
-                bd.Cylinder(
-                    radius=housing_mounting_screw_od / 2,
-                    height=housing_size_z,
-                    align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
-                )
-                .translate(
-                    (
-                        offset * (dot_separation_x / 2),
-                        offset * housing_mounting_screw_sep_y / 2,
-                        base_bottom_face.center().Z,
-                    ),
-                )
-                .translate(
-                    (
-                        (center_of_cell_x),
-                        (
-                            # Get to the back of the box
-                            base_back_face.center().Y
-                            # Then move forward to the center of the cell
-                            - (housing_size_y / 2)
-                        ),
-                        0,
-                    ),
-                )
-            )
-
-        logger.debug(f"Mounting holes added for cell {cell_num}.")
-
-        # Add motor gripper.
-        part += bd.Box(
-            inter_cell_dot_pitch_x - 1,
-            (motor_count * (motor_od + motor_space_between_motors)),
-            (
-                motor_od
-                + motor_hold_material_on_top_thickness_z  # Amount on top
-                + motor_raise_from_bottom_of_base  # Amount on bottom
-            ),
-            align=(bd.Align.CENTER, bd.Align.MIN, bd.Align.MIN),
-        ).translate(
-            (
-                center_of_cell_x,
-                base_front_face.center().Y,
-                base_bottom_face.center().Z + motor_raise_from_bottom_of_base,
-            ),
-        )
-
-        # Add motor mount locations, for each cell.
-        for motor_num in range(motor_count):
-            part -= bd.Cylinder(
-                radius=motor_od / 2,
-                height=motor_length + 15,
-                rotation=(0, 90, 0),
-                align=(bd.Align.MAX, bd.Align.CENTER, bd.Align.CENTER),
-            ).translate(
-                (
-                    center_of_cell_x,
-                    (
-                        # Get to the front of the box.
-                        base_front_face.center().Y
-                        # Then move backwards by the motor count.
-                        + ((motor_num + 0.5) * (motor_od + motor_space_between_motors))
-                    ),
-                    (
-                        base_bottom_face.center().Z
-                        + motor_raise_from_bottom_of_base
-                        + (0.0001 * motor_num)  # Avoid overlapping geometry.
-                    ),
-                ),
-            )
-
-        logger.debug(f"Motor mounts added for cell {cell_num}.")
-
-    assert isinstance(part, bd.Part), "Part is not a Part"
-
-    logger.info(f"Motor base volume: {part.volume:.2f} mm^3 for {cell_count} cells.")
-
-    return part
-
 
 if __name__ == "__main__":
-    validate_dimensions_and_info()
-
     parts = {
-        "pogo_pin": make_pogo_pin(),
-        "housing": show(make_housing()),
-        "motor_base_3x": show(make_motor_base(3)),
-        "motor_base_1x": show(make_motor_base(1)),
-        "housing_chain_3x": make_housing_chain(3),
-        "housing_chain_10x": make_housing_chain(10),
+        "nut_holder_M1p6_From_Top": (
+            NutHolder(
+                nut=m1p6_nut,
+            ).make_part()
+        ),
+        "nut_holder_M1p6_From_Bottom": show(
+            NutHolder(
+                nut=m1p6_nut,
+                nut_from_top_or_bottom="bottom",
+                separation_between_nuts_z=1,
+                bottom_thickness=0,
+            ).make_part()
+        ),
     }
 
     logger.info("Showing CAD model(s)")
-    # show(parts["pogo_pin"])
-    # show(parts["housing"])
-    # show(parts["motor_base_3x"])
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     for name, part in parts.items():

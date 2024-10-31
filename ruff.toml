@@ -7,7 +7,7 @@ ignore = [
     
     "S101",  # Use of `assert` statement.
     "RET504",  # Assignment right before return.
-    
+    "COM812", # Missing comma at the end of a function call. Bad in show() call.
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
