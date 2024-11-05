@@ -8,12 +8,12 @@ ignore = [
     "S101",  # Use of `assert` statement.
     "RET504",  # Assignment right before return.
     
+    "COM812", # Missing commas.
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = [
     "ALL",
-    "COM812", # Add missing commas automatically.
 ]
 unfixable = []
 
