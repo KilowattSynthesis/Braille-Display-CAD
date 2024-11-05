@@ -21,11 +21,14 @@ class ScrewSpec:
 
     screw_pitch: float = 2.5
     screw_od: float = 2.4  # Just under 2.5mm
-    screw_length: float = 2.5 * 5
+    screw_length: float = 2.5 * 4
 
     ball_points_per_turn: int = 32
 
     demo_ball_count_per_turn: int = 0
+
+    gripper_length: float = 6
+    gripper_od: float = 2.2
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
@@ -152,7 +155,7 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         radius=spec.screw_od / 2,
         height=spec.screw_length,
         align=bde.align.BOTTOM,
-    )
+    ).translate((0, 0, -spec.ball_od / 2))  # Move down by jamming prevention amount.
 
     # sections = [
     #     (helix_part ^ 1000) * bd.Circle(radius=spec.ball_od / 2)
@@ -174,7 +177,8 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         start_radius=_min_radius,
         max_radius=_max_radius,
         pitch=spec.screw_pitch,
-        height=spec.screw_length,
+        # On height, subtract ball_od to prevent jamming/wedging.
+        height=spec.screw_length - spec.ball_od,
         points_per_turn=spec.ball_points_per_turn,
     )
 
@@ -212,6 +216,19 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         )
         for point in helix_demo_points:
             p += bd.Sphere(radius=(spec.ball_od - 0.1) / 2).translate(point)
+
+    # Add on gripper bearing spots.
+    p += bd.Cylinder(
+        radius=spec.gripper_od / 2,
+        height=spec.gripper_length,
+        align=bde.align.BOTTOM,
+    ).translate((0, 0, bde.top_face_of(p).center().Z))
+    p += bd.Cylinder(
+        radius=spec.gripper_od / 2,
+        height=spec.gripper_length,
+        align=bde.align.BOTTOM,
+        rotation=bde.rotation.NEG_Z,
+    ).translate((0, 0, bde.bottom_face_of(p).center().Z))
 
     logger.success(f"Final bounding box: {p.bounding_box()}")
 
