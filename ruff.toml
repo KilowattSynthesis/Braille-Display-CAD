@@ -19,7 +19,6 @@ ignore = [
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = [
     "ALL",
-    "COM812", # Add missing commas automatically.
 ]
 unfixable = []
 
