@@ -1,8 +1,10 @@
 """Ball screw design with variable diameter for a Braille display."""
 
+import copy
 import json
 import math
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 import build123d as bd
@@ -13,21 +15,27 @@ from loguru import logger
 
 @dataclass
 class ScrewSpec:
-    """Specification for part1."""
+    """Specification for wavy ball screw."""
 
     ball_od: float = 1.588 + 0.1
 
     screw_pitch: float = 2.5
     screw_od: float = 2.4  # Just under 2.5mm
-    screw_length: float = 10
+    screw_length: float = 2.5 * 5
 
-    cone_angle_deg: float = 0  # Default: 0
+    ball_points_per_turn: int = 32
+
+    demo_ball_count_per_turn: int = 0
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
 
+    def deep_copy(self) -> "ScrewSpec":
+        """Copy the current spec."""
+        return copy.deepcopy(self)
 
-def make_basic_screw(spec: ScrewSpec) -> bd.Part:
+
+def make_basic_ball_screw(spec: ScrewSpec) -> bd.Part:
     """Create a CAD model of the screw."""
     p = bd.Part()
 
@@ -102,44 +110,6 @@ def insane_helix_points(
     return points
 
 
-def insane_helix(
-    *,
-    start_radius: float,
-    max_radius: float,
-    pitch: float,
-    height: float,
-    points_per_turn: int = 100,
-) -> bd.Polyline:
-    """Create a helix with a periodically varying radius.
-
-    Varies twice-per-pitch from start_radius to max_radius and back.
-
-    Args:
-        start_radius (float): Starting radius of the helix.
-        max_radius (float): Maximum radius reached at halfway through the pitch.
-        pitch (float): Pitch of the helix (distance between turns).
-        height (float): Total height of the helix.
-        points_per_turn (int): Number of points per turn for generating the helix path.
-
-    Returns:
-        bd.Sweep: A Polyline of the helix with a varying radius.
-
-    """
-    # TODO(KilowattSynthesis): Opportunity to create a version of this function
-    # that doesn't use `points_per_turn`.
-    points = insane_helix_points(
-        start_radius=start_radius,
-        max_radius=max_radius,
-        pitch=pitch,
-        height=height,
-        points_per_turn=points_per_turn,
-    )
-
-    # Create the helix path
-    helix_path = bd.Polyline(*points)
-    return helix_path
-
-
 def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     """Make the wavy screw that can raise and lower the balls.
 
@@ -151,7 +121,7 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     """
     p = bd.Part()
 
-    _min_radius = spec.ball_od / 2  # - 0.5
+    _min_radius = spec.ball_od / 2 + 0.1  # - 0.5
     _max_radius = spec.screw_od / 2 + spec.ball_od / 2 - 0.2
     # _max_radius = _min_radius + 0.1
     assert _min_radius < _max_radius
@@ -176,14 +146,6 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         "cone_angle_deg": cone_angle_deg,
     }
     logger.success(f"Crazy helix sizing: {json.dumps(info, indent=2)}")
-
-    helix = insane_helix(
-        start_radius=_min_radius,
-        max_radius=_max_radius,
-        pitch=spec.screw_pitch,
-        height=spec.screw_length,
-    )
-    show(helix)
 
     # Create main screw shaft.
     p += bd.Cylinder(
@@ -213,23 +175,75 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         max_radius=_max_radius,
         pitch=spec.screw_pitch,
         height=spec.screw_length,
-        points_per_turn=40,
+        points_per_turn=spec.ball_points_per_turn,
     )
 
+    # # Debugging: Helpful demo view.
+    # show(bd.Polyline(*helix_points))
+
     for point in helix_points:
-        p -= bd.Sphere(radius=spec.ball_od / 2).translate(point)
+        # Must remove outward-pointing cylinder if _min_radius < ball_od/2.
+        # Must go in a separate loop as the spheres, or it fails.
+        p -= (
+            bd.Part()
+            + bd.Sphere(radius=spec.ball_od / 2).translate(point)
+            + (
+                bd.Cylinder(
+                    radius=spec.ball_od / 2 - 0.1,
+                    height=spec.screw_od,
+                    align=bde.align.BOTTOM,
+                    rotation=bde.rotation.POS_X,
+                )
+                # Rotate to point outwards (based on angle from Z-axis to `point`).
+                .rotate(
+                    axis=bd.Axis.Z, angle=math.degrees(math.atan2(point[1], point[0]))
+                )
+                .translate(point)
+            )
+        )
+
+    if spec.demo_ball_count_per_turn:
+        helix_demo_points = insane_helix_points(
+            start_radius=_min_radius,
+            max_radius=_max_radius,
+            pitch=spec.screw_pitch,
+            height=spec.screw_pitch * 2,
+            points_per_turn=spec.demo_ball_count_per_turn,
+        )
+        for point in helix_demo_points:
+            p += bd.Sphere(radius=(spec.ball_od - 0.1) / 2).translate(point)
 
     logger.success(f"Final bounding box: {p.bounding_box()}")
 
     return p
 
 
+def make_2x_wavy_screw(spec: ScrewSpec) -> bd.Part:
+    """Make 2x wavy screws side-by-side for imaging."""
+    p = bd.Part()
+
+    spec_with_demo_balls = spec.deep_copy()
+    spec_with_demo_balls.demo_ball_count_per_turn = 4
+
+    p += make_wavy_screw(spec).translate((-spec.screw_od, 0, 0))
+    p += (
+        make_wavy_screw(spec_with_demo_balls)
+        # .rotate(axis=bd.Axis.Z, angle=180)
+        .translate((spec.screw_od, 0, 0))
+    )
+
+    return p
+
+
 if __name__ == "__main__":
-    logger.info(f"Running {__file__}")
+    start_time = datetime.now(UTC)
+    py_file_name = Path(__file__).name
+    logger.info(f"Running {py_file_name}")
 
     parts = {
-        "basic_screw": (make_basic_screw(ScrewSpec())),
+        "basic_ball_screw": (make_basic_ball_screw(ScrewSpec())),
         "wavy_screw": show(make_wavy_screw(ScrewSpec())),
+        # "demo_2x_wavy_screw": show(make_2x_wavy_screw(ScrewSpec())),
     }
 
     logger.info("Showing CAD model(s)")
@@ -242,4 +256,4 @@ if __name__ == "__main__":
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
 
-    logger.info(f"Done running {__file__}")
+    logger.info(f"Done running {py_file_name} in {datetime.now(UTC) - start_time}")
