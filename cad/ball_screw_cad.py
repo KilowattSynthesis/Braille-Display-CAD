@@ -217,6 +217,19 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         for point in helix_demo_points:
             p += bd.Sphere(radius=(spec.ball_od - 0.1) / 2).translate(point)
 
+    # Check cross-sectional area. Doesn't work.
+    # cross_areas: list[float] = []
+    # z = bde.bottom_face_of(p).center().Z + 0.1
+    # while z < bde.top_face_of(p).center().Z:
+    #     cross_section = p.cut(bd.Plane.XY.offset(z))
+    #     cross_areas.append(cross_section.area)
+    #     z += 0.1
+    # logger.info(
+    #     f"Cross-sectional areas: min={min(cross_areas)} mm^2, "
+    #     f"max={max(cross_areas)} mm^2, "
+    #     f"mean={sum(cross_areas) / len(cross_areas)} mm^2"
+    # )
+
     # Add on gripper bearing spots.
     p += bd.Cylinder(
         radius=spec.gripper_od / 2,
