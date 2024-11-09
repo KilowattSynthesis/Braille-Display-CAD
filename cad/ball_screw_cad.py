@@ -23,7 +23,7 @@ class ScrewSpec:
     screw_od: float = 2.4  # Just under 2.5mm
     screw_length: float = 2.5 * 4
 
-    ball_points_per_turn: int = 32
+    ball_points_per_turn: int = 5
 
     demo_ball_count_per_turn: int = 0
 
@@ -65,23 +65,27 @@ def make_basic_ball_screw(spec: ScrewSpec) -> bd.Part:
     return p
 
 
-# Define the varying radius function
 def radius_function(
     z: float, *, pitch: float, start_radius: float, max_radius: float
 ) -> float:
-    """Calculate the radius of a helix with a periodically varying radius."""
+    """Calculate the radius of a helix with a periodically varying radius.
+
+    Starts at `r(z=0) = start_radius`.
+    """
     # TODO(KilowattSynthesis): Consider adding an argument to support various functions,
     # like sine instead of linear.
 
+    radius_diff = max_radius - start_radius
+
     # Calculate position within a single pitch period
     z_normalized = z % pitch
-    if z_normalized <= pitch / 2:
-        return start_radius + (max_radius - start_radius) * (2 * z_normalized / pitch)
+    # `z_normalized` is now between 0 and pitch/2
+    sin_part = math.sin(math.pi * (z_normalized / pitch))
+    assert 0 <= sin_part <= 1
+    radius = start_radius + (sin_part * radius_diff)
+    assert start_radius <= radius <= max_radius
 
-    # else:
-    return max_radius - (max_radius - start_radius) * (
-        2 * (z_normalized - pitch / 2) / pitch
-    )
+    return radius
 
 
 def insane_helix_points(
@@ -90,7 +94,7 @@ def insane_helix_points(
     max_radius: float,
     pitch: float,
     height: float,
-    points_per_turn: int = 100,
+    points_per_turn: int,
 ) -> list[tuple[float, float, float]]:
     """Generate points along a helix with a periodically varying radius."""
     # Number of turns
@@ -157,22 +161,6 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         align=bde.align.BOTTOM,
     ).translate((0, 0, -spec.ball_od / 2))  # Move down by jamming prevention amount.
 
-    # sections = [
-    #     (helix_part ^ 1000) * bd.Circle(radius=spec.ball_od / 2)
-    #     for helix_part in helix.wires()
-    # ]
-    # p += bd.sweep(
-    #     path=helix,
-    #     sections=sections,
-    #     multisection=True,
-    # )
-
-    # p += bd.sweep(
-    #     path=helix,
-    #     sections=(helix ^ 0) * bd.Circle(radius=spec.ball_od / 2),
-    #     multisection=True,
-    # )
-
     helix_points = insane_helix_points(
         start_radius=_min_radius,
         max_radius=_max_radius,
@@ -183,28 +171,29 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     )
 
     # # Debugging: Helpful demo view.
-    # show(bd.Polyline(*helix_points))
+    show(bd.Polyline(*helix_points))
 
-    for point in helix_points:
-        # Must remove outward-pointing cylinder if _min_radius < ball_od/2.
-        # Must go in a separate loop as the spheres, or it fails.
-        p -= (
-            bd.Part()
-            + bd.Sphere(radius=spec.ball_od / 2).translate(point)
-            + (
-                bd.Cylinder(
-                    radius=spec.ball_od / 2 - 0.1,
-                    height=spec.screw_od,
-                    align=bde.align.BOTTOM,
-                    rotation=bde.rotation.POS_X,
-                )
-                # Rotate to point outwards (based on angle from Z-axis to `point`).
-                .rotate(
-                    axis=bd.Axis.Z, angle=math.degrees(math.atan2(point[1], point[0]))
-                )
-                .translate(point)
-            )
+    helix_path_chunks: list[bd.LineType] = [
+        bd.ThreePointArc(point_0, point_1, point_2)
+        for point_0, point_1, point_2 in zip(
+            helix_points[:-2],
+            helix_points[1:-1],
+            helix_points[2:],
+            strict=True,
         )
+    ]
+
+    helix_part = bd.Part()
+    for helix_path_chunk in helix_path_chunks:
+        helix_part += bd.sweep(
+            path=helix_path_chunk,
+            sections=(helix_path_chunk ^ 0)
+            * bd.Circle(radius=1),  # FIXME: Should be spec.ball_od / 2, too small.
+        )
+    p -= helix_part
+    # for helix_point in helix_points[1:-1]:
+    #     # Remove the little "orange slices" that show up.
+    #     p -= bd.Sphere(radius=spec.ball_od / 2).translate(helix_point)
 
     if spec.demo_ball_count_per_turn:
         helix_demo_points = insane_helix_points(
@@ -216,19 +205,6 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         )
         for point in helix_demo_points:
             p += bd.Sphere(radius=(spec.ball_od - 0.1) / 2).translate(point)
-
-    # Check cross-sectional area. Doesn't work.
-    # cross_areas: list[float] = []
-    # z = bde.bottom_face_of(p).center().Z + 0.1
-    # while z < bde.top_face_of(p).center().Z:
-    #     cross_section = p.cut(bd.Plane.XY.offset(z))
-    #     cross_areas.append(cross_section.area)
-    #     z += 0.1
-    # logger.info(
-    #     f"Cross-sectional areas: min={min(cross_areas)} mm^2, "
-    #     f"max={max(cross_areas)} mm^2, "
-    #     f"mean={sum(cross_areas) / len(cross_areas)} mm^2"
-    # )
 
     # Add on gripper bearing spots.
     p += bd.Cylinder(
