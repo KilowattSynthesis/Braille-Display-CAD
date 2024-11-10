@@ -27,8 +27,12 @@ class ScrewSpec:
 
     demo_ball_count_per_turn: int = 0
 
-    gripper_length: float = 6
+    gripper_length: float = 2.3
     gripper_od: float = 2.2
+
+    # TODO(KilowattSynthesis): Consider making these cones instead of cylinders.
+    gripper_groove_length = 1
+    gripper_groove_depth = 0.5
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
@@ -157,22 +161,6 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         align=bde.align.BOTTOM,
     ).translate((0, 0, -spec.ball_od / 2))  # Move down by jamming prevention amount.
 
-    # sections = [
-    #     (helix_part ^ 1000) * bd.Circle(radius=spec.ball_od / 2)
-    #     for helix_part in helix.wires()
-    # ]
-    # p += bd.sweep(
-    #     path=helix,
-    #     sections=sections,
-    #     multisection=True,
-    # )
-
-    # p += bd.sweep(
-    #     path=helix,
-    #     sections=(helix ^ 0) * bd.Circle(radius=spec.ball_od / 2),
-    #     multisection=True,
-    # )
-
     helix_points = insane_helix_points(
         start_radius=_min_radius,
         max_radius=_max_radius,
@@ -217,31 +205,32 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         for point in helix_demo_points:
             p += bd.Sphere(radius=(spec.ball_od - 0.1) / 2).translate(point)
 
-    # Check cross-sectional area. Doesn't work.
-    # cross_areas: list[float] = []
-    # z = bde.bottom_face_of(p).center().Z + 0.1
-    # while z < bde.top_face_of(p).center().Z:
-    #     cross_section = p.cut(bd.Plane.XY.offset(z))
-    #     cross_areas.append(cross_section.area)
-    #     z += 0.1
-    # logger.info(
-    #     f"Cross-sectional areas: min={min(cross_areas)} mm^2, "
-    #     f"max={max(cross_areas)} mm^2, "
-    #     f"mean={sum(cross_areas) / len(cross_areas)} mm^2"
-    # )
-
     # Add on gripper bearing spots.
+    screw_top_z = bde.top_face_of(p).center().Z
+    screw_bottom_z = bde.bottom_face_of(p).center().Z
     p += bd.Cylinder(
         radius=spec.gripper_od / 2,
         height=spec.gripper_length,
         align=bde.align.BOTTOM,
-    ).translate((0, 0, bde.top_face_of(p).center().Z))
+    ).translate((0, 0, screw_top_z))
     p += bd.Cylinder(
         radius=spec.gripper_od / 2,
         height=spec.gripper_length,
         align=bde.align.BOTTOM,
         rotation=bde.rotation.NEG_Z,
-    ).translate((0, 0, bde.bottom_face_of(p).center().Z))
+    ).translate((0, 0, screw_bottom_z))
+
+    # Remove the gripper bearing parts.
+    gripper_groove = (
+        bd.Part()
+        + bd.Cylinder(radius=spec.gripper_od / 2, height=spec.gripper_groove_length)
+        - bd.Cylinder(
+            radius=(spec.gripper_od - 2 * spec.gripper_groove_depth) / 2,
+            height=spec.gripper_groove_length,
+        )
+    )
+    p -= gripper_groove.translate((0, 0, screw_bottom_z - spec.gripper_length / 2))
+    p -= gripper_groove.translate((0, 0, screw_top_z + spec.gripper_length / 2))
 
     logger.success(f"Final bounding box: {p.bounding_box()}")
 
