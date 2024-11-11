@@ -23,7 +23,7 @@ class ScrewSpec:
     screw_od: float = 2.4  # Just under 2.5mm
     screw_length: float = 2.5 * 4
 
-    ball_points_per_turn: int = 5
+    ball_points_per_turn: int = 32
 
     demo_ball_count_per_turn: int = 0
 
@@ -170,30 +170,19 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         points_per_turn=spec.ball_points_per_turn,
     )
 
-    # # Debugging: Helpful demo view.
-    show(bd.Polyline(*helix_points))
+    helix_path = bd.Polyline(*helix_points)
 
-    helix_path_chunks: list[bd.LineType] = [
-        bd.ThreePointArc(point_0, point_1, point_2)
-        for point_0, point_1, point_2 in zip(
-            helix_points[:-2],
-            helix_points[1:-1],
-            helix_points[2:],
-            strict=True,
-        )
-    ]
+    # Debugging: Helpful demo view.
+    show(helix_path)
 
-    helix_part = bd.Part()
-    for helix_path_chunk in helix_path_chunks:
-        helix_part += bd.sweep(
-            path=helix_path_chunk,
-            sections=(helix_path_chunk ^ 0)
-            * bd.Circle(radius=1),  # FIXME: Should be spec.ball_od / 2, too small.
-        )
+    helix_part = bd.Part() + bd.sweep(
+        path=helix_path,
+        sections=(helix_path ^ 0) * bd.Circle(radius=spec.ball_od / 2),
+        transition=bd.Transition.RIGHT,  # Use RIGHT because ROUND is not manifold.
+    )
+    show(helix_part)
+    assert helix_part.is_manifold, "Helix part is not manifold"
     p -= helix_part
-    # for helix_point in helix_points[1:-1]:
-    #     # Remove the little "orange slices" that show up.
-    #     p -= bd.Sphere(radius=spec.ball_od / 2).translate(helix_point)
 
     if spec.demo_ball_count_per_turn:
         helix_demo_points = insane_helix_points(
