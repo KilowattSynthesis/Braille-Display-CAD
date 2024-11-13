@@ -42,31 +42,50 @@ class ScrewSpec:
         return copy.deepcopy(self)
 
 
-def make_basic_ball_screw(spec: ScrewSpec) -> bd.Part:
-    """Create a CAD model of the screw."""
-    p = bd.Part()
+@dataclass(kw_only=True)
+class HousingSpec:
+    """Specification for braille cell housing."""
 
-    # Create main screw shaft.
-    p += bd.Cylinder(
-        radius=spec.screw_od / 2,
-        height=spec.screw_length,
-        align=bde.align.BOTTOM,
-    )
+    dot_pitch_x: float = 2.5
+    dot_pitch_y: float = 2.5
+    inter_cell_pitch_x: float = 6
+    inter_cell_pitch_y: float = 10  # Unused.
 
-    helix = bd.Helix(
-        radius=spec.screw_od / 2,
-        pitch=spec.screw_pitch,
-        height=spec.screw_length,
-        # cone_angle=spec.cone_angle_deg,
-        # cone_angle=5,
-    )
+    # Wall thickness>1.2mm, thinnest part≥0.8mm, hole size≥1.5mm.
+    top_face_thickness: float = 0.4
+    wall_thickness: float = 1.2
 
-    p -= bd.sweep(
-        path=helix,
-        sections=(helix ^ 0) * bd.Circle(radius=spec.ball_od / 2),
-    )
+    # housing_size_x: float = inter_cell_dot_pitch_x
+    # housing_size_y = inter_cell_dot_pitch_y + 3.3
 
-    return p
+    screw_spec: ScrewSpec
+
+    def __post_init__(self) -> None:
+        """Post initialization checks."""
+
+    def deep_copy(self) -> "HousingSpec":
+        """Copy the current spec."""
+        return copy.deepcopy(self)
+
+    @property
+    def body_height_where_screw_goes(self) -> float:
+        """Height of the housing where the screw goes."""
+        return self.screw_spec.screw_od + 0.1
+
+    @property
+    def total_z(self) -> float:
+        """Total Z height of the housing."""
+        return self.top_face_thickness + self.body_height_where_screw_goes
+
+    @property
+    def total_x(self) -> float:
+        """Total X width of the housing."""
+        return self.dot_pitch_x
+
+    @property
+    def total_y(self) -> float:
+        """Total Y width of the housing."""
+        return self.dot_pitch_y + self.wall_thickness * 2
 
 
 def radius_function(
@@ -155,14 +174,15 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
         "pitch": spec.screw_pitch,
         "pitch/2": spec.screw_pitch / 2,
         "cone_angle_deg": cone_angle_deg,
+        "total_length": spec.screw_length + 2 * spec.gripper_length,
     }
-    logger.success(f"Crazy helix sizing: {json.dumps(info, indent=2)}")
+    logger.success(f"Wavy screw specs: {json.dumps(info, indent=2)}")
 
     # Create main screw shaft.
     p += bd.Cylinder(
         radius=spec.screw_od / 2,
         height=spec.screw_length,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     ).translate((0, 0, -spec.ball_od / 2))  # Move down by jamming prevention amount.
 
     helix_points = insane_helix_points(
@@ -205,12 +225,12 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     p += bd.Cylinder(
         radius=spec.gripper_od / 2,
         height=spec.gripper_length,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     ).translate((0, 0, screw_top_z))
     p += bd.Cylinder(
         radius=spec.gripper_od / 2,
         height=spec.gripper_length,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
         rotation=bde.rotation.NEG_Z,
     ).translate((0, 0, screw_bottom_z))
 
@@ -227,6 +247,23 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     p -= gripper_groove.translate((0, 0, screw_top_z + spec.gripper_length / 2))
 
     logger.success(f"Final bounding box: {p.bounding_box()}")
+
+    return p
+
+
+def make_housing(spec: HousingSpec) -> bd.Part:
+    """Make the housing that the screw fits into."""
+    p = bd.Part()
+
+    # Create the top face.
+    p += bd.Box(
+        spec.dot_pitch_x,
+        spec.dot_pitch_y,
+        spec.top_face_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    raise NotImplementedError("Finish implementing housing")
 
     return p
 
@@ -254,9 +291,9 @@ if __name__ == "__main__":
     logger.info(f"Running {py_file_name}")
 
     parts = {
-        "basic_ball_screw": (make_basic_ball_screw(ScrewSpec())),
         "wavy_screw": show(make_wavy_screw(ScrewSpec())),
-        # "demo_2x_wavy_screw": show(make_2x_wavy_screw(ScrewSpec())),
+        "housing": show(make_housing(HousingSpec(screw_spec=ScrewSpec()))),
+        "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
     }
 
     logger.info("Showing CAD model(s)")
