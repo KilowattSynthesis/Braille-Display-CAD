@@ -5,6 +5,7 @@ import json
 import math
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from itertools import product
 from pathlib import Path
 
 import build123d as bd
@@ -42,6 +43,14 @@ class ScrewSpec:
         return copy.deepcopy(self)
 
 
+def evenly_space_with_center(
+    center: float = 0, *, count: int, spacing: float
+) -> list[float]:
+    """Evenly space `count` items around `center` with `spacing`."""
+    half_spacing = (count - 1) * spacing / 2
+    return [center - half_spacing + i * spacing for i in range(count)]
+
+
 @dataclass(kw_only=True)
 class HousingSpec:
     """Specification for braille cell housing."""
@@ -49,11 +58,16 @@ class HousingSpec:
     dot_pitch_x: float = 2.5
     dot_pitch_y: float = 2.5
     inter_cell_pitch_x: float = 6
-    inter_cell_pitch_y: float = 10  # Unused.
+    inter_cell_pitch_y: float = 10
 
     # Wall thickness>1.2mm, thinnest part≥0.8mm, hole size≥1.5mm.
     top_face_thickness: float = 0.4
     wall_thickness: float = 1.2
+
+    cell_count_x: int = 3
+
+    # Suspend the screw by this much.
+    dist_bottom_of_housing_to_bottom_of_screw: float = 1
 
     # housing_size_x: float = inter_cell_dot_pitch_x
     # housing_size_y = inter_cell_dot_pitch_y + 3.3
@@ -69,23 +83,38 @@ class HousingSpec:
 
     @property
     def body_height_where_screw_goes(self) -> float:
-        """Height of the housing where the screw goes."""
-        return self.screw_spec.screw_od + 0.1
+        """Height of the inside of the housing where the screw goes."""
+        return (
+            self.dist_bottom_of_housing_to_bottom_of_screw
+            + self.screw_spec.screw_od
+            + 0.1  # Extra space for jamming prevention (on top side).
+        )
 
     @property
     def total_z(self) -> float:
         """Total Z height of the housing."""
-        return self.top_face_thickness + self.body_height_where_screw_goes
+        return (
+            self.top_face_thickness
+            + self.body_height_where_screw_goes
+            + self.dist_bottom_of_housing_to_bottom_of_screw
+        )
 
     @property
     def total_x(self) -> float:
         """Total X width of the housing."""
-        return self.dot_pitch_x
+        return (self.inter_cell_pitch_x * self.cell_count_x) + (2 * self.wall_thickness)
 
     @property
     def total_y(self) -> float:
         """Total Y width of the housing."""
-        return self.dot_pitch_y + self.wall_thickness * 2
+        return self.inter_cell_pitch_y + self.wall_thickness * 2
+
+    def get_x_of_center_of_cells(self) -> list[float]:
+        """Get the X coordinate of the center of each cell."""
+        return evenly_space_with_center(
+            count=self.cell_count_x,
+            spacing=self.inter_cell_pitch_x,
+        )
 
 
 def radius_function(
@@ -255,15 +284,55 @@ def make_housing(spec: HousingSpec) -> bd.Part:
     """Make the housing that the screw fits into."""
     p = bd.Part()
 
-    # Create the top face.
+    # Create the main outer shell.
     p += bd.Box(
-        spec.dot_pitch_x,
-        spec.dot_pitch_y,
-        spec.top_face_thickness,
+        spec.total_x,
+        spec.total_y,
+        spec.total_z,
         align=bde.align.ANCHOR_BOTTOM,
     )
 
-    raise NotImplementedError("Finish implementing housing")
+    # Remove the inside of the housing.
+    p -= bd.Box(
+        spec.total_x - 2 * spec.wall_thickness,
+        spec.total_y - 2 * spec.wall_thickness,
+        spec.body_height_where_screw_goes,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Remove the dots.
+    for _cell_num, cell_center_x in enumerate(spec.get_x_of_center_of_cells()):
+        for dot_x, dot_y in product(
+            evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+            evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
+        ):
+            p -= bd.Cylinder(
+                radius=spec.screw_spec.ball_od / 2,
+                height=10,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).translate(((cell_center_x + dot_x), dot_y, 0))
+
+    # Remove the ball screw holes.
+    for cell_center_x in spec.get_x_of_center_of_cells():
+        for dot_x in evenly_space_with_center(count=2, spacing=spec.dot_pitch_x):
+            p -= (
+                bd.Cylinder(
+                    radius=spec.screw_spec.screw_od / 2,
+                    height=spec.total_y,
+                    align=bde.align.ANCHOR_CENTER,
+                )
+                .rotate(axis=bd.Axis.X, angle=90)
+                .translate(
+                    (
+                        cell_center_x + dot_x,
+                        0,
+                        (
+                            spec.dist_bottom_of_housing_to_bottom_of_screw
+                            + spec.screw_spec.screw_od / 2
+                        ),
+                    )
+                )
+            )
 
     return p
 
@@ -293,7 +362,7 @@ if __name__ == "__main__":
     parts = {
         "wavy_screw": show(make_wavy_screw(ScrewSpec())),
         "housing": show(make_housing(HousingSpec(screw_spec=ScrewSpec()))),
-        "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
+        # "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
     }
 
     logger.info("Showing CAD model(s)")
