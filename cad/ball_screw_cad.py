@@ -95,14 +95,18 @@ class HousingSpec:
         """Height of the inside of the housing where the screw goes."""
         return (
             self.dist_bottom_of_housing_to_bottom_of_screw
-            + self.screw_spec.screw_od
-            + self.dist_top_of_screw_to_housing_top_face
+            + self.screw_spec.screw_od * 0.5
         )
 
     @property
     def total_z(self) -> float:
         """Total Z height of the housing."""
-        return self.top_face_thickness + self.body_height_where_screw_goes
+        return (
+            self.top_face_thickness
+            + self.body_height_where_screw_goes
+            + self.screw_spec.screw_od * 0.5
+            + self.dist_top_of_screw_to_housing_top_face
+        )
 
     @property
     def total_x(self) -> float:
@@ -339,6 +343,26 @@ def make_housing(spec: HousingSpec) -> bd.Part:
                         + spec.gripper_interface_freedom_radius
                     ),
                     height=spec.total_y,
+                    align=bde.align.ANCHOR_CENTER,
+                )
+                .rotate(axis=bd.Axis.X, angle=90)
+                .translate(
+                    (
+                        cell_center_x + dot_x,
+                        0,
+                        z_center_of_screw,
+                    )
+                )
+            )
+
+            # Screw OD.
+            p -= (
+                bd.Cylinder(
+                    radius=(
+                        spec.screw_spec.screw_od / 2
+                        + spec.gripper_interface_freedom_radius
+                    ),
+                    height=spec.screw_spec.screw_length,
                     align=bde.align.ANCHOR_CENTER,
                 )
                 .rotate(axis=bd.Axis.X, angle=90)
