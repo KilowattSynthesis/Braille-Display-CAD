@@ -35,6 +35,11 @@ class ScrewSpec:
     gripper_groove_length = 1
     gripper_groove_depth = 0.5
 
+    @property
+    def gripper_groove_shoulder_length(self) -> float:
+        """Length of each shoulder on the sides of the groove."""
+        return (self.gripper_length - self.gripper_groove_length) / 2
+
     def __post_init__(self) -> None:
         """Post initialization checks."""
 
@@ -67,7 +72,11 @@ class HousingSpec:
     cell_count_x: int = 3
 
     # Suspend the screw by this much.
+    dist_top_of_screw_to_housing_top_face: float = 0.1
     dist_bottom_of_housing_to_bottom_of_screw: float = 1
+
+    gripper_interface_freedom_radius: float = 0.1
+    gripper_interface_freedom_length: float = 0.1
 
     # housing_size_x: float = inter_cell_dot_pitch_x
     # housing_size_y = inter_cell_dot_pitch_y + 3.3
@@ -87,17 +96,13 @@ class HousingSpec:
         return (
             self.dist_bottom_of_housing_to_bottom_of_screw
             + self.screw_spec.screw_od
-            + 0.1  # Extra space for jamming prevention (on top side).
+            + self.dist_top_of_screw_to_housing_top_face
         )
 
     @property
     def total_z(self) -> float:
         """Total Z height of the housing."""
-        return (
-            self.top_face_thickness
-            + self.body_height_where_screw_goes
-            + self.dist_bottom_of_housing_to_bottom_of_screw
-        )
+        return self.top_face_thickness + self.body_height_where_screw_goes
 
     @property
     def total_x(self) -> float:
@@ -107,7 +112,8 @@ class HousingSpec:
     @property
     def total_y(self) -> float:
         """Total Y width of the housing."""
-        return self.inter_cell_pitch_y + self.wall_thickness * 2
+        # return self.inter_cell_pitch_y + self.wall_thickness * 2
+        return self.screw_spec.screw_length + 2 * self.screw_spec.gripper_length
 
     def get_x_of_center_of_cells(self) -> list[float]:
         """Get the X coordinate of the center of each cell."""
@@ -115,6 +121,11 @@ class HousingSpec:
             count=self.cell_count_x,
             spacing=self.inter_cell_pitch_x,
         )
+
+    @property
+    def sep_between_centers_of_gripper_grooves(self) -> float:
+        """Separation between the centers of the gripper grooves."""
+        return self.screw_spec.screw_length + self.screw_spec.gripper_length
 
 
 def radius_function(
@@ -295,7 +306,8 @@ def make_housing(spec: HousingSpec) -> bd.Part:
     # Remove the inside of the housing.
     p -= bd.Box(
         spec.total_x - 2 * spec.wall_thickness,
-        spec.total_y - 2 * spec.wall_thickness,
+        # spec.total_y - 2 * spec.wall_thickness,
+        spec.screw_spec.screw_length,
         spec.body_height_where_screw_goes,
         align=bde.align.ANCHOR_BOTTOM,
     )
@@ -312,12 +324,20 @@ def make_housing(spec: HousingSpec) -> bd.Part:
                 align=bde.align.ANCHOR_BOTTOM,
             ).translate(((cell_center_x + dot_x), dot_y, 0))
 
-    # Remove the ball screw holes.
+    # For each ball screw, remove the gripper holders.
+    z_center_of_screw = (
+        spec.dist_bottom_of_housing_to_bottom_of_screw + spec.screw_spec.screw_od / 2
+    )
     for cell_center_x in spec.get_x_of_center_of_cells():
         for dot_x in evenly_space_with_center(count=2, spacing=spec.dot_pitch_x):
+            # Small hole through the whole thing.
             p -= (
                 bd.Cylinder(
-                    radius=spec.screw_spec.screw_od / 2,
+                    radius=(
+                        spec.screw_spec.gripper_od / 2
+                        - spec.screw_spec.gripper_groove_depth
+                        + spec.gripper_interface_freedom_radius
+                    ),
                     height=spec.total_y,
                     align=bde.align.ANCHOR_CENTER,
                 )
@@ -326,13 +346,67 @@ def make_housing(spec: HousingSpec) -> bd.Part:
                     (
                         cell_center_x + dot_x,
                         0,
-                        (
-                            spec.dist_bottom_of_housing_to_bottom_of_screw
-                            + spec.screw_spec.screw_od / 2
-                        ),
+                        z_center_of_screw,
                     )
                 )
             )
+
+            # Large hole parts for the gripper.
+            for y_side, y_offset in product([1, -1], [1, -1]):
+                p -= (
+                    bd.Cylinder(
+                        radius=(
+                            spec.screw_spec.gripper_od / 2
+                            + spec.gripper_interface_freedom_radius
+                        ),
+                        height=(
+                            spec.screw_spec.gripper_groove_shoulder_length
+                            + 2 * spec.gripper_interface_freedom_length
+                        ),
+                    )
+                    .rotate(bd.Axis.X, 90)
+                    .translate(
+                        (
+                            cell_center_x + dot_x,
+                            (
+                                y_side
+                                * (
+                                    spec.total_y / 2
+                                    - spec.screw_spec.gripper_length / 2
+                                    + y_offset
+                                    * (
+                                        0.5 * spec.screw_spec.gripper_groove_length
+                                        + 0.5
+                                        * spec.screw_spec.gripper_groove_shoulder_length
+                                    )
+                                )
+                            ),
+                            z_center_of_screw,
+                        )
+                    )
+                )
+
+        # Remove the insertion slot from the bottom.
+        # One per cell.
+        p -= bd.Box(
+            spec.screw_spec.gripper_od + spec.dot_pitch_x,
+            spec.total_y,
+            z_center_of_screw,
+            align=bde.align.ANCHOR_BOTTOM,
+        ).translate((cell_center_x, 0, 0))
+
+    # Preview: Add the screw to the housing.
+    wavy_screw = make_wavy_screw(spec.screw_spec).rotate(bd.Axis.X, 90)
+    p += wavy_screw.translate(
+        (
+            spec.dot_pitch_x / 2 + 0.01,
+            -wavy_screw.bounding_box().center().Y,
+            (
+                spec.dist_bottom_of_housing_to_bottom_of_screw
+                + spec.screw_spec.screw_od / 2
+            ),
+        )
+    )
 
     return p
 
