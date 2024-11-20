@@ -13,6 +13,11 @@ import build123d_ease as bde
 from build123d_ease import show
 from loguru import logger
 
+# TODO: I think you need to make the top face >ball_od thick, and then
+# have pegs that go down into where the balls are. Then you can have
+# the smooth varying radius channel that guides the balls through the
+# ball screw.
+
 
 @dataclass
 class ScrewSpec:
