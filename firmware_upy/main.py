@@ -1,20 +1,12 @@
-import array
 import time
 
-import rp2
 from machine import I2C, Pin
-from rp2 import PIO, StateMachine, asm_pio
+from neopixel import NeoPixel
 
-# Add type hints for the rp2.PIO Instructions
-try:
-    from typing_extensions import TYPE_CHECKING  # type: ignore
-except ImportError:
-    TYPE_CHECKING = False
-if TYPE_CHECKING:
-    from rp2.asm_pio import *
-
-# Configure the number of WS2812 LEDs.
 PIN_ONBOARD_LED = 16
+onboard_led_pin = Pin(PIN_ONBOARD_LED, Pin.OUT)
+
+
 PIN_I2C_SDA = 26
 PIN_I2C_SCL = 27
 PIN_N_SLEEP_CELL_0 = 9
@@ -93,27 +85,6 @@ def drive_motor(step_period, step_count, step_seq = HALF_STEP_SEQUENCE, i2c_addr
                 return
 
 
-@asm_pio(
-    sideset_init=PIO.OUT_LOW,
-    out_shiftdir=PIO.SHIFT_LEFT,
-    autopull=True,
-    pull_thresh=24,
-)
-def ws2812() -> None:
-    T1 = 2
-    T2 = 5
-    T3 = 3
-    label("bitloop")
-    out(x, 1).side(0)[T3 - 1]
-    jmp(not_x, "do_zero").side(1)[T1 - 1]
-    jmp("bitloop").side(1)[T2 - 1]
-    label("do_zero")
-    nop().side(0)[T2 - 1]
-
-
-# Create the StateMachine with the ws2812 program.
-sm = StateMachine(0, ws2812, freq=8000000, sideset_base=Pin(PIN_ONBOARD_LED))
-
 def i2c_scan():
     print("Scanning I2C buses")
     i2c_scan_result = i2c.scan()
@@ -122,14 +93,7 @@ def i2c_scan():
 
 
 def setup() -> None:
-    # Start the StateMachine, it will wait for data on its FIFO.
-    sm.active(1)
-
     i2c_scan()
-
-    # print("Setting nFAULT to PULLED UP")
-    # pin_nfault = Pin(PIN_N_FAULT_CELL_2, Pin.IN, Pin.PULL_DOWN)
-    # i2c_scan()
 
     print("Setting nSLEEP to PULLED UP")
     pin_nsleep_2 = Pin(PIN_N_SLEEP_CELL_2, Pin.IN, Pin.PULL_UP)
@@ -137,22 +101,15 @@ def setup() -> None:
 
     time.sleep_ms(500)
 
-    # print("Setting nSLEEP to PULLED DOWN")
-    # pin_nsleep_2 = Pin(PIN_N_SLEEP_CELL_2, Pin.IN, Pin.PULL_DOWN)
-    # i2c_scan()
-
 
 def set_led_color(r: int, g: int, b: int) -> None:
     """Display a color on the LED.
 
     Values should be between 0 and 255.
     """
-    # Display a pattern on the LEDs via an array of LED RGB values.
-    ar = array.array("I", [0])
-
-    # Note: r and g are reversed from what you may expect.
-    ar[0] = g << 16 | r << 8 | b
-    sm.put(ar, 8)
+    np = NeoPixel(onboard_led_pin, 1)
+    np[0] = (r, g, b)
+    np.write()
 
 
 def loop() -> None:
