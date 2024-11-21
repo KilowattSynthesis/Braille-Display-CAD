@@ -2127,7 +2127,7 @@
 	)
 	(rectangle
 		(start 30.48 78.74)
-		(end 179.07 160.02)
+		(end 193.675 165.735)
 		(stroke
 			(width 0)
 			(type default)
@@ -2137,25 +2137,27 @@
 		)
 		(uuid b6718050-f1a6-4ee4-ac3d-fd386bc63f2c)
 	)
-	(text "Note: Current sense can be 0 ohms, probably.\nThe resistors here are used to limit the current,\nvia some amplifier circuit I think."
+	(text "Note: Current sense can be 0 ohms or inf ohms probably.\nThe resistors here are used to limit the current,\nvia some amplifier circuit I think."
 		(exclude_from_sim no)
-		(at 149.606 148.844 0)
+		(at 61.214 162.56 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 				(thickness 0.1588)
 			)
+			(justify left)
 		)
 		(uuid "19fe5fe7-5bf0-4c07-82c3-e157ce16e9d0")
 	)
-	(text "TODO: Calculate best current sense value."
+	(text "Current sense notes:\n- Page 55 of Datasheet\n- I_TRIP = Torque_frac * V_TRIP / R_SENSE_XX\n- I_TRIP = V_VM / (R_L + R_DS_ON_SUM + R_SENSE_XX)\n- R_SENSE = V_TRIP / I_TRIP\n- V_TRIP = 0.15 V (internally-regulated)\n\n- 0.30 ohms with 5V causes near-overheat after a few seconds.\n- 0.30 ohms sets I_TRIP = 500 mA at Torque=100%\n- 0.30 ohms sets I_TRIP = 250 mA at Torque=50%\n\nTo decrease the torque, lower the voltage\nand/or set Torque = 50% register."
 		(exclude_from_sim no)
-		(at 146.558 143.51 0)
+		(at 127.508 135.382 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 				(thickness 0.1588)
 			)
+			(justify left top)
 		)
 		(uuid "4a9394a1-a8ec-4370-8509-bf04370a7156")
 	)
