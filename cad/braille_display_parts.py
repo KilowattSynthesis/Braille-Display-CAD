@@ -34,18 +34,18 @@ class BasePlateSpec:
     cell_pitch_y = 10.0
 
     cell_count_x = 4
-    cell_count_y = 2
+    cell_count_y = 1
 
-    solenoid_core_id = 0.7
+    solenoid_core_id = 1.2
     solenoid_core_height = 8  # Height of the coil.
-    solenoid_core_wall_thickness = 0.2  # Match to nozzle diameter.
+    solenoid_core_wall_thickness = 0.26  # Match to nozzle diameter.
 
-    base_plate_thickness = 2
+    base_plate_thickness = 1
 
-    border_width = 10
+    border_width = 8
 
-    protection_wall_height = 10
-    protection_wall_thickness = 2
+    protection_wall_height = 3
+    protection_wall_thickness = 1
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
@@ -53,6 +53,7 @@ class BasePlateSpec:
         coil_wire_radius = (
             min(self.dot_pitch_x, self.dot_pitch_y)
             - 2 * self.solenoid_core_wall_thickness
+            - self.solenoid_core_id
         ) / 2
 
         logger.success(f"Coil wire radius: {coil_wire_radius:.2f} mm")
@@ -137,9 +138,105 @@ def make_base_plate(spec: BasePlateSpec) -> bd.Part:
     return p
 
 
+@dataclass
+class SpoolSpec:
+    """Specification for a spool."""
+
+    dot_pitch: float = 2.5
+
+    spool_core_id: float = 0.7  # A bit bigger than the 1.0mm magnets.
+    spool_core_height: float = 8  # Height of the coil.
+    spool_core_wall_thickness: float = 0.26  # Match to nozzle diameter.
+
+    grip_base_diameter = 10
+    grip_base_thickness = 5
+
+    flange_diameter = 2.4  # Bit smaller than the pitch.
+    flange_thickness = 1
+
+    dist_between_flange_to_base = 2
+
+    def __post__init__(self) -> None:
+        """Post initialization checks."""
+        # Amount of wire that can be wrapped around each coil.
+        coil_wire_radius = (self.dot_pitch - self.spool_core_od) / 2
+
+        logger.success(f"Coil wire radius for SpoolSpec: {coil_wire_radius:.2f} mm")
+
+    @property
+    def spool_core_od(self) -> float:
+        """Outer diameter of the spool core."""
+        return self.spool_core_id + 2 * self.spool_core_wall_thickness
+
+    @property
+    def total_length(self) -> float:
+        """Total length, including spool, flanges, and grip base."""
+        return (
+            self.spool_core_height
+            + 2 * self.flange_thickness
+            + 2 * self.grip_base_thickness
+        )
+
+
+def make_solenoid_spool(spec: SpoolSpec) -> bd.Part:
+    """Make a spool for the solenoid."""
+    p = bd.Part()
+
+    p += bd.Cylinder(
+        spec.spool_core_od / 2,
+        spec.total_length,
+        align=bde.align.ANCHOR_CENTER,
+    )
+
+    for side in [1, -1]:
+        # Add the flanges.
+        p += bd.Cylinder(
+            spec.flange_diameter / 2,
+            spec.flange_thickness,
+            align=bde.align.ANCHOR_CENTER,
+        ).translate(
+            (
+                0,
+                0,
+                side * (spec.spool_core_height / 2 + spec.flange_thickness / 2),
+            ),
+        )
+
+        # Add the grip base.
+        if side == -1:
+            p += bd.Cylinder(
+                spec.grip_base_diameter / 2,
+                spec.grip_base_thickness,
+                align=bde.align.ANCHOR_CENTER,
+            ).translate(
+                (
+                    0,
+                    0,
+                    side
+                    * (
+                        spec.spool_core_height / 2
+                        + spec.flange_thickness
+                        + spec.dist_between_flange_to_base
+                        + spec.grip_base_thickness / 2
+                    ),
+                ),
+            )
+
+    # Remove the core.
+    p -= bd.Cylinder(
+        spec.spool_core_id / 2,
+        spec.spool_core_height + spec.flange_thickness * 2 + 2,
+        align=bde.align.ANCHOR_CENTER,
+    )
+
+    return p
+
+
 if __name__ == "__main__":
     parts = {
         "base_plate": show(make_base_plate(BasePlateSpec())),
+        "spool_0p7mm_id": show(make_solenoid_spool(SpoolSpec(spool_core_id=0.7))),
+        "spool_1p0mm_id": show(make_solenoid_spool(SpoolSpec(spool_core_id=1.0))),
     }
 
     logger.info("Showing CAD model(s)")
