@@ -244,9 +244,9 @@ class WindingAdapterSpec:
 
     interface_length: float = 2
 
-    output_diameter_max: float = 3.1
-    output_diameter_min: float = 2.9
-    output_length: float = 6
+    output_diameter_max: float = 3.9
+    output_diameter_min: float = 3.2
+    output_length: float = 7
 
     key_screw_diameter: float = 3.2
     key_nut_width: float = 5.5
