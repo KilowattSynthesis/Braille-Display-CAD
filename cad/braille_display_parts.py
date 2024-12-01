@@ -542,7 +542,10 @@ if __name__ == "__main__":
 
     logger.info("Saving CAD model(s)")
 
-    (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
+    (export_folder := Path(__file__).parent.parent / "build/pogo_spools").mkdir(
+        exist_ok=True,
+        parents=True,
+    )
     for name, part in parts.items():
         assert isinstance(part, bd.Part), f"{name} is not a Part"
         # assert part.is_manifold is True, f"{name} is not manifold"
