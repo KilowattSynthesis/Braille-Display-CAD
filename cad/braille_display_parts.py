@@ -190,7 +190,7 @@ def make_motor_model() -> bd.Part:
         10,
         10,
         10,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     )
 
     motor_body_center_x = -motor_shaft_length - motor_body_width_x / 2
@@ -207,7 +207,7 @@ def make_motor_model() -> bd.Part:
     part += bd.Cylinder(
         radius=motor_body_width_y / 2,
         height=motor_body_width_x,
-        align=bde.align.BOTTOM,  # Align pre-rotation.
+        align=bde.align.ANCHOR_BOTTOM,  # Align pre-rotation.
         rotation=bde.rotation.NEG_X,
     ).translate(
         (
@@ -250,7 +250,7 @@ def make_motor_model() -> bd.Part:
             thickness=motor_gear_length,
             pressure_angle=14.5,  # Controls tooth length.
             root_fillet=0.001,  # Rounding at base of each tooth.
-            align=bde.align.BOTTOM,
+            align=bde.align.ANCHOR_BOTTOM,
         )
         .rotate(angle=-90, axis=bd.Axis.Y)
         .translate((0, 0, motor_shaft_z))
@@ -279,14 +279,14 @@ def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
         bd.Cylinder(
             radius=pogo_flange_od / 2,
             height=pogo_flange_length,
-            align=bde.align.BOTTOM,
+            align=bde.align.ANCHOR_BOTTOM,
         )
 
         # Shaft.
         bd.Cylinder(
             radius=pogo_shaft_od / 2,
             height=pogo_shaft_length,
-            align=bde.align.BOTTOM,
+            align=bde.align.ANCHOR_BOTTOM,
         )
 
         # Throw/tip.
@@ -294,7 +294,7 @@ def make_pogo_pin(pogo_throw_tip_od_delta: float = 0) -> bd.Part:
             bd.Cylinder(
                 radius=(pogo_throw_tip_od + pogo_throw_tip_od_delta) / 2,
                 height=pogo_throw_length,
-                align=bde.align.BOTTOM,
+                align=bde.align.ANCHOR_BOTTOM,
             )
 
     return pogo_pin_part.part
@@ -313,7 +313,7 @@ def make_housing() -> bd.Part:
         length=housing_size_x,
         width=housing_size_y,
         height=housing_size_z,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     )
     box_top_face = part.faces().sort_by(bd.Axis.Z)[-1]
 
@@ -334,7 +334,7 @@ def make_housing() -> bd.Part:
         4,  # Width of the tape.
         100,
         0.5,  # Thickness of tape passage.
-        align=bde.align.CENTER,
+        align=bde.align.ANCHOR_CENTER,
     ).translate((0, 0, box_top_face.center().Z - 1))
 
     assert isinstance(part, bd.Part), "Part is not a Part"
@@ -386,7 +386,7 @@ def make_horizontal_bar_holder() -> bd.Part:
         bar_holder_box_width_x,
         bar_holder_box_length_y,
         bar_holder_box_height_z,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     )
 
     # Remove horizontal bolt in middle
@@ -401,7 +401,7 @@ def make_horizontal_bar_holder() -> bd.Part:
         part -= bd.Cylinder(
             radius=bar_holder_anchor_bolt_d / 2,
             height=bar_holder_box_height_z,
-            align=bde.align.BOTTOM,
+            align=bde.align.ANCHOR_BOTTOM,
         ).translate(
             (
                 x_sign * bar_holder_anchor_bolt_sep_x / 2,
@@ -457,7 +457,7 @@ def make_gear_spool() -> bd.Part:
         pressure_angle=14.5,  # Controls tooth length.
         root_fillet=0.001,  # Rounding at base of each tooth.
         rotation=bde.rotation.POS_X,
-        align=bde.align.BOTTOM,  # Normal mode.
+        align=bde.align.ANCHOR_BOTTOM,  # Normal mode.
     ).translate((part.bounding_box().max.X, 0, 0))
 
     # Add flange (on NEG_X side).
@@ -465,7 +465,7 @@ def make_gear_spool() -> bd.Part:
         radius=spool_flange_od / 2,
         height=spool_flange_thickness,
         rotation=bde.rotation.NEG_X,
-        align=bde.align.BOTTOM,  # Normal mode.
+        align=bde.align.ANCHOR_BOTTOM,  # Normal mode.
     ).translate((part.bounding_box().min.X, 0, 0))
 
     # Remove bearing (gear side, POS_X).
@@ -473,7 +473,7 @@ def make_gear_spool() -> bd.Part:
         radius=spool_bearing_od / 2,
         height=spool_bearing_thickness,
         rotation=bde.rotation.NEG_X,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     ).translate((part.bounding_box().max.X, 0, 0))
 
     # Remove bearing (non-gear side, NEG_X).
@@ -481,7 +481,7 @@ def make_gear_spool() -> bd.Part:
         radius=spool_bearing_od / 2,
         height=spool_bearing_thickness,
         rotation=bde.rotation.POS_X,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     ).translate((part.bounding_box().min.X, 0, 0))
 
     # Remove center bolt hole.
