@@ -127,7 +127,7 @@ def make_silicone_sheet_positive() -> bd.Part:
         bd.Part()
         + bd.Sphere(dome_od / 2)
         - bd.Sphere(radius=dome_od / 2 - dome_thickness)
-        - bd.Box(10, 10, 10, align=bde.align.TOP)
+        - bd.Box(10, 10, 10, align=bde.align.ANCHOR_TOP)
     )
 
     for dot_x, dot_y in dot_centers:
@@ -153,7 +153,7 @@ def make_mold_bottom() -> bd.Part:
         mold_width_x,
         mold_width_y,
         mold_plate_t + sheet_thickness,
-        align=bde.align.TOP,
+        align=bde.align.ANCHOR_TOP,
     )
 
     # Must fully fill the dots.
@@ -189,7 +189,7 @@ def make_mold_top() -> bd.Part:
         sheet_width_x + 2 * mold_side_wall_t,
         sheet_height_y + 2 * mold_side_wall_t,
         mold_plate_t + sheet_thickness,
-        align=bde.align.BOTTOM,
+        align=bde.align.ANCHOR_BOTTOM,
     )
 
     p -= make_mold_bottom()
@@ -239,13 +239,12 @@ if __name__ == "__main__":
 
     logger.info(f"Done showing {len(parts)} part(s)")
 
-    (export_folder := Path(__file__).parent.parent / "build/silicone_sheet").mkdir(
+    (
+        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
+    ).mkdir(
         exist_ok=True,
         parents=True,
     )
     for name, part in parts.items():
-        assert isinstance(part, bd.Part), f"{name} is not a Part"
-        # assert part.is_manifold is True, f"{name} is not manifold"
-
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
