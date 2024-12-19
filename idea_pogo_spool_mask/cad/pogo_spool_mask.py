@@ -525,7 +525,9 @@ if __name__ == "__main__":
     logger.info("Saving CAD model(s)")
 
     (
-        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
+        export_folder := Path(__file__).parent.parent.parent
+        / "build"
+        / Path(__file__).stem
     ).mkdir(exist_ok=True, parents=True)
     for name, part in parts.items():
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
