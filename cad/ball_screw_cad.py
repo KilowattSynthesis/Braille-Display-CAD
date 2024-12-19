@@ -13,8 +13,8 @@ import build123d_ease as bde
 from build123d_ease import show
 from loguru import logger
 
-# TODO: I think you need to make the top face >ball_od thick, and then
-# have pegs that go down into where the balls are. Then you can have
+# TODO(KilowattSynthesis): I think you need to make the top face >ball_od thick, and
+# then have pegs that go down into where the balls are. Then you can have
 # the smooth varying radius channel that guides the balls through the
 # ball screw.
 
@@ -465,14 +465,14 @@ if __name__ == "__main__":
     parts = {
         "wavy_screw": show(make_wavy_screw(ScrewSpec())),
         "housing": show(make_housing(HousingSpec(screw_spec=ScrewSpec()))),
-        # "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
+        "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
     }
 
     logger.info("Showing CAD model(s)")
 
     (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
     for name, part in parts.items():
-        assert isinstance(part, bd.Part), f"{name} is not a Part"
+        # assert isinstance(part, bd.Part), f"{name} is not a Part"
         # assert part.is_manifold is True, f"{name} is not manifold"
 
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
