@@ -2,7 +2,10 @@
 
 Intended as a proof of concept to see how the motors can fit.
 
-Conclusion: OD=4mm, H=8mm motors can't really fit.
+Conclusion: At 2.5mm pitch, Motor OD=4mm, H=8mm motors can't really fit.
+
+Conclusion: At 3mm pitch though, Motor OD=4mm, H=8mm motors can totally fit! Just need
+to bend their shafts a bit to make them mate with the screws!
 """
 
 import copy
@@ -30,8 +33,8 @@ def evenly_space_with_center(
 class HousingSpec:
     """Specification for braille cell in general."""
 
-    dot_pitch_x: float = 2.5
-    dot_pitch_y: float = 2.5
+    dot_pitch_x: float = 3
+    dot_pitch_y: float = 3
     inter_cell_pitch_x: float = 6
     inter_cell_pitch_y: float = 10
 
@@ -39,6 +42,7 @@ class HousingSpec:
     motor_body_length: float = 8.0
 
     cell_count_x: int = 3
+    cell_count_y: int = 2
 
     # TODO(KilowattSynthesis): Set these as properties
     total_x: float = 50
@@ -47,6 +51,8 @@ class HousingSpec:
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
+        hypot_len = (self.dot_pitch_x**2 + self.dot_pitch_y**2) ** 0.5
+        logger.info(f"Hypotenuse length: {hypot_len:.2f} mm")
 
     def deep_copy(self) -> "HousingSpec":
         """Copy the current spec."""
@@ -66,17 +72,20 @@ def make_motor_placement_demo(spec: HousingSpec) -> bd.Part:
     # )
 
     # Create the motor holes.
-    for dot_num, (cell_x, dot_offset_x, dot_offset_y) in enumerate(
+    for dot_num, (cell_x, cell_y, dot_offset_x, dot_offset_y) in enumerate(
         product(
             evenly_space_with_center(
                 count=spec.cell_count_x, spacing=spec.inter_cell_pitch_x
+            ),
+            evenly_space_with_center(
+                count=spec.cell_count_y, spacing=spec.inter_cell_pitch_y
             ),
             evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
             evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
         )
     ):
         dot_x = cell_x + dot_offset_x
-        dot_y = dot_offset_y
+        dot_y = cell_y + dot_offset_y
 
         # Create the motor hole.
         p += bd.Cylinder(
