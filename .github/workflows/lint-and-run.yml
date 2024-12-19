@@ -64,3 +64,9 @@ jobs:
             echo "Running $file"
             python "$file"
           done
+
+      - name: Upload CAD build products as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: cad-build
+          path: build/
