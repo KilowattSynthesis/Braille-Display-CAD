@@ -62,7 +62,9 @@ def make_curved_bent_cylinder(
         line_sum += line_horizontal
 
     sweep_polygon = bd.Plane.XY * bd.Circle(diameter / 2)
+    assert isinstance(sweep_polygon, bd.SweepType)  # Type checking.
     line_sum = bd.sweep(sweep_polygon, path=line_sum)
+    assert isinstance(line_sum, bd.Part)  # Type checking.
 
     return line_sum
 
