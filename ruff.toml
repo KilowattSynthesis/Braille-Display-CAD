@@ -12,6 +12,8 @@ ignore = [
     
     "TD003",
     "FIX002",
+
+    "S311", # Allow insecure `random` module.
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
