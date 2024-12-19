@@ -8,6 +8,8 @@ ignore = [
     "S101",  # Use of `assert` statement.
     "RET504",  # Assignment right before return.
     
+    "TD003",
+    "FIX002",
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
