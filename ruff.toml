@@ -11,6 +11,8 @@ ignore = [
     "COM812", # Missing commas.
     "FIX002",
     "TD003",
+    "UP017",
+    "S311",
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
