@@ -252,7 +252,7 @@ def make_nut_holder(nut_holder_spec: NutHolderSpec) -> bd.Part:
         p += bd.Cylinder(
             radius=nut_holder_spec.mount_screw_standoff_d / 2,
             height=nut_holder_spec.mount_screw_standoff_height,
-            align=bde.align.BOTTOM,  # Normal.
+            align=bde.align.ANCHOR_BOTTOM,  # Normal.
             rotation=bde.rotation.NEG_Z,
         ).translate(
             (
