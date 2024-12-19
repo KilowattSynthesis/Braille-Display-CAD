@@ -94,3 +94,8 @@ Experimental design for a braille display using build123d CAD in Python
 
 * Double screw with balls and weird geometry.
 
+* Cams on 2.4mm diameter rods that run along each column of dots.
+    * Each cam would have 8 positions, so 45 degrees per position.
+    * Would probably need to move table up-and-down independently of the cams.
+    * One motor per cam, probably.
+    
