@@ -2,27 +2,12 @@
 
 import itertools
 import json
-import os
 from pathlib import Path
 
 import build123d as bd
 import build123d_ease as bde
+from build123d_ease import show
 from loguru import logger
-
-if os.getenv("CI"):
-
-    def show(*args: object) -> bd.Part:
-        """Do nothing (dummy function) to skip showing the CAD model in CI."""
-        logger.info(f"Skipping show({args}) in CI")
-        return args[0]
-else:
-    import ocp_vscode
-
-    def show(*args: object) -> bd.Part:
-        """Show the CAD model in the CAD viewer."""
-        ocp_vscode.show(*args)
-        return args[0]
-
 
 # region Constants
 crazy_scale_factor = 1  # Normally 1x, but 2x is good for FDM testing.
@@ -108,7 +93,7 @@ def validate() -> None:
 
 def make_silicone_sheet_positive() -> bd.Part:
     """Make the positive silicone sheet."""
-    p = bd.Part()
+    p = bd.Part(None)
 
     p += bd.Box(
         sheet_width_x,
@@ -124,7 +109,7 @@ def make_silicone_sheet_positive() -> bd.Part:
 
     # Create a generic bump.
     bump = (
-        bd.Part()
+        bd.Part(None)
         + bd.Sphere(dome_od / 2)
         - bd.Sphere(radius=dome_od / 2 - dome_thickness)
         - bd.Box(10, 10, 10, align=bde.align.ANCHOR_TOP)
@@ -147,7 +132,7 @@ def make_silicone_sheet_positive() -> bd.Part:
 
 def make_mold_bottom() -> bd.Part:
     """Make the top part of the mold."""
-    p = bd.Part()
+    p = bd.Part(None)
 
     p += bd.Box(
         mold_width_x,
@@ -183,7 +168,7 @@ def make_mold_bottom() -> bd.Part:
 
 def make_mold_top() -> bd.Part:
     """Make the top part of the mold."""
-    p = bd.Part()
+    p = bd.Part(None)
 
     p += bd.Box(
         sheet_width_x + 2 * mold_side_wall_t,
@@ -237,7 +222,7 @@ if __name__ == "__main__":
         "mold_top": (make_mold_top()),
     }
 
-    logger.info(f"Done showing {len(parts)} part(s)")
+    logger.info(f"Done showing {len(parts)} part(s). Saving them...")
 
     (
         export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
