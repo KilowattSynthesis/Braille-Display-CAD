@@ -14,6 +14,7 @@ ignore = [
     "FIX002",
 
     "S311", # Allow insecure `random` module.
+    "COM812", # Remove trailing comma requirement. Makes calling `show` easier.
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
