@@ -54,7 +54,10 @@ class ScrewSpec:
 
 
 def evenly_space_with_center(
-    center: float = 0, *, count: int, spacing: float
+    center: float = 0,
+    *,
+    count: int,
+    spacing: float,
 ) -> list[float]:
     """Evenly space `count` items around `center` with `spacing`."""
     half_spacing = (count - 1) * spacing / 2
@@ -138,7 +141,11 @@ class HousingSpec:
 
 
 def radius_function(
-    z: float, *, pitch: float, start_radius: float, max_radius: float
+    z: float,
+    *,
+    pitch: float,
+    start_radius: float,
+    max_radius: float,
 ) -> float:
     """Calculate the radius of a helix with a periodically varying radius.
 
@@ -198,7 +205,7 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
 
     Relevant learning docs: https://build123d.readthedocs.io/en/latest/examples_1.html#handle
     """
-    p = bd.Part()
+    p = bd.Part(None)
 
     _min_radius = spec.ball_od / 2 + 0.1  # - 0.5
     _max_radius = spec.screw_od / 2 + spec.ball_od / 2 - 0.2
@@ -213,7 +220,7 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
             _max_radius - _min_radius,
             # Run (in Z): 0.5 pitches (must go up and down every 1 pitch).
             (spec.screw_pitch / 2),
-        )
+        ),
     )
     info = {
         "min_radius": _min_radius,
@@ -248,7 +255,7 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     # Debugging: Helpful demo view.
     show(helix_path)
 
-    helix_part = bd.Part() + bd.sweep(
+    helix_part = bd.Part(None) + bd.sweep(
         path=helix_path,
         sections=(helix_path ^ 0) * bd.Circle(radius=spec.ball_od / 2),
         transition=bd.Transition.RIGHT,  # Use RIGHT because ROUND is not manifold.
@@ -285,7 +292,7 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
 
     # Remove the gripper bearing parts.
     gripper_groove = (
-        bd.Part()
+        bd.Part(None)
         + bd.Cylinder(radius=spec.gripper_od / 2, height=spec.gripper_groove_length)
         - bd.Cylinder(
             radius=(spec.gripper_od - 2 * spec.gripper_groove_depth) / 2,
@@ -300,9 +307,9 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     return p
 
 
-def make_housing(spec: HousingSpec) -> bd.Part:
+def make_housing(spec: HousingSpec, *, preview_screw: bool) -> bd.Part:
     """Make the housing that the screw fits into."""
-    p = bd.Part()
+    p = bd.Part(None)
 
     # Create the main outer shell.
     p += bd.Box(
@@ -356,7 +363,7 @@ def make_housing(spec: HousingSpec) -> bd.Part:
                         cell_center_x + dot_x,
                         0,
                         z_center_of_screw,
-                    )
+                    ),
                 )
             )
 
@@ -376,7 +383,7 @@ def make_housing(spec: HousingSpec) -> bd.Part:
                         cell_center_x + dot_x,
                         0,
                         z_center_of_screw,
-                    )
+                    ),
                 )
             )
 
@@ -411,7 +418,7 @@ def make_housing(spec: HousingSpec) -> bd.Part:
                                 )
                             ),
                             z_center_of_screw,
-                        )
+                        ),
                     )
                 )
 
@@ -425,24 +432,25 @@ def make_housing(spec: HousingSpec) -> bd.Part:
         ).translate((cell_center_x, 0, 0))
 
     # Preview: Add the screw to the housing.
-    wavy_screw = make_wavy_screw(spec.screw_spec).rotate(bd.Axis.X, 90)
-    p += wavy_screw.translate(
-        (
-            spec.dot_pitch_x / 2 + 0.01,
-            -wavy_screw.bounding_box().center().Y,
+    if preview_screw:
+        wavy_screw = make_wavy_screw(spec.screw_spec).rotate(bd.Axis.X, 90)
+        p += wavy_screw.translate(
             (
-                spec.dist_bottom_of_housing_to_bottom_of_screw
-                + spec.screw_spec.screw_od / 2
+                spec.dot_pitch_x / 2 + 0.01,
+                -wavy_screw.bounding_box().center().Y,
+                (
+                    spec.dist_bottom_of_housing_to_bottom_of_screw
+                    + spec.screw_spec.screw_od / 2
+                ),
             ),
         )
-    )
 
     return p
 
 
 def make_2x_wavy_screw(spec: ScrewSpec) -> bd.Part:
     """Make 2x wavy screws side-by-side for imaging."""
-    p = bd.Part()
+    p = bd.Part(None)
 
     spec_with_demo_balls = spec.deep_copy()
     spec_with_demo_balls.demo_ball_count_per_turn = 4
@@ -464,17 +472,24 @@ if __name__ == "__main__":
 
     parts = {
         "wavy_screw": show(make_wavy_screw(ScrewSpec())),
-        "housing": show(make_housing(HousingSpec(screw_spec=ScrewSpec()))),
+        "housing": show(
+            make_housing(HousingSpec(screw_spec=ScrewSpec()), preview_screw=False),
+        ),
+        "housing_assembly_with_screw": show(
+            make_housing(HousingSpec(screw_spec=ScrewSpec()), preview_screw=True),
+        ),
         "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
     }
 
-    logger.info("Showing CAD model(s)")
+    logger.info("Saving CAD model(s)...")
 
-    (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
+    (
+        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
+    ).mkdir(
+        exist_ok=True,
+        parents=True,
+    )
     for name, part in parts.items():
-        # assert isinstance(part, bd.Part), f"{name} is not a Part"
-        # assert part.is_manifold is True, f"{name} is not manifold"
-
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
 
