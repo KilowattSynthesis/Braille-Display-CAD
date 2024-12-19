@@ -2,36 +2,63 @@
 
 Experimental design for a braille display using build123d CAD in Python
 
-## BOM
+## Interesting Parts
 
-* M2 bolts
 * 4mm x 8mm DC Motors: https://www.aliexpress.com/item/1005004370822475.html
+* 2.8mm x 3.9mm DC Motors: https://www.aliexpress.com/item/1005006897190118.html
 
-## Ideas
+## Explored Ideas
+
+### Pogo Spools
+
+* Laser printer fuser-like roller mask.
+    * Branch: `archive/pogo-spools`
+    * Files: `ideas_pogo_spool_mask/`
+* Made PCB with small stepper motors, tiny CAD parts (spools).
+
+### RF Inductors as Electromagnets
+
+* Use Mouser's "RF Inductors" selection, mounting an inductor vertically.
+    * Branches: `archive/inductor-smd-vertical`, `archive/inductor-smd-flat`
+    * Eaton makes good-looking ones. 3225 metric (1210 imp) is too big; 2520 metric (1008 imp) might be okay. 2012 metric (0805 imp) is great!
+    * "Power Inductors - Leaded" are never small enough.
+    * Filter to >= 20uH inductance. Filter to >=70 mA.
+    * Examples (Vertical-Mount):
+        * BWLD00241715 -> Not stocked in smaller quantities, though.
+            * 2.4 mm x 1.72 mm x 1.52 mm
+        * LBR2012T470M -> 0805 imp (2012 metric). 47uH. 75mA rated max.
+    * Examples (Horizontal-Mount):
+        * VLS201612CX-220M-1 -> 22uF, very good, but shielded.
+
+* Test results:
+    * 4mm x 4mm x 3mm 33uH coil-wound SMD power inductor (ASPI-4030S-330M-T) can point a magnet. Magnets stick to the inductor always though.
+    * Several inductors, up to 6mm diameter (and 1-2 MH), with 24V get very hot, but don't levitate a 1mm or 2mm neodymium magnet.
+        * Good at pointing pointing the magnet, if it starts far away.
+        * Cannot remove the magnet from the inductor once it's stuck.
+
+* **Conclusion**: RF inductors don't have enough magnetic force to levitate 1mm or 2mm neodymium magnets.
+
+### Nut/Bolt Grid
+
+* Turn a bolt in a threaded hole/nut. Each bolt is a dot. User directly touches the dot.
+* Movement can be done with one motor per dot (very tiny motors, maybe stacked), or motors can be moved between dots (CNC plotter style). Multiple heads can be used.
+* Branch: `archive/cnc-plotter`
+* Files: `cad/nut_bolt_grid.py`, `cad/vertical_motor_layers.py`
+
+
+### Silicone Sheet
+
+* Use CNC plotter to manipulate a silicone sheet which can pop up and down.
+    * Branch: `archive/silicone-sheet`
+    * Files: `cad/silicone_sheet_mold/`
+
+## Unexplored/Unrealized Ideas
 
 * Investigate bi-metallic strip with actuator.
 * Investigate shape memory alloy (SMA) approach. Benefit: Would be very quiet.
 * Should buy some 4mm solenoids.
 
-* Instead of rack and pinion mask, what about laser printer fuser-like roller mask?
-    * Branch: `pogo-spools`
-
 * Key and lock mechanism pushes up on the pins
-
-* Use Mouser's "RF Inductors" selection, mounting an inductor vertically.
-    * Branch: `inductor-smd-vertical`, `inductor-smd-flat`
-    * Eaton makes good-looking ones. 3225 metric (1210 imp) is too big; 2520 metric (1008 imp) might be okay. 2012 metric (0805 imp) is great!
-    * "Power Inductors - Leaded" are never small enough.
-    * Filter to >= 20uH inductance. Filter to >=70 mA.
-
-    * Examples (Vertical-Mount):
-        * BWLD00241715 -> Not stocked in smaller quantities, though.
-            * 2.4 mm x 1.72 mm x 1.52 mm
-        * LBR2012T470M -> 0805 imp (2012 metric). 47uH. 75mA rated max.
-
-    * Examples (Horizontal-Mount):
-        * VLS201612CX-220M-1 -> 22uF, very good, but shielded.
-
 
 * Use GT2 belt (or similar) to press up on pins.
     * T2.5 belt is probably best - https://www.aliexpress.com/item/1005004668423141.html
@@ -59,9 +86,6 @@ Experimental design for a braille display using build123d CAD in Python
 * Motors mounted on orthogonal PCBs, with rotating slanted plate to push on the pins.
     * Use magnets as the mating, somehow.
 
-* Use CNC plotter to manipulate a silicone sheet which can pop up and down.
-    * Branch: `silicone-sheet`
-
 * Microfluidics as valves.
 
 * MEMS on-chip stepper motor:
@@ -70,7 +94,3 @@ Experimental design for a braille display using build123d CAD in Python
 
 * Double screw with balls and weird geometry.
 
-
-### Tested Ideas
-
-* 4mm x 4mm x 3mm 33uH coil-wound SMD power inductor (ASPI-4030S-330M-T) can point a magnet. Magnets stick to the inductor always though.
