@@ -65,8 +65,12 @@ jobs:
             python "$file"
           done
 
-      - name: Upload CAD build products as artifact
-        uses: actions/upload-artifact@v3
+      - name: Compress the build folder
+        run: tar -czf cad-build.tar.gz cad/
+
+      - name: Upload CAD build product to artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: cad-build
-          path: build/
+          path: cad-build.tar.gz
+          retention-days: 2
