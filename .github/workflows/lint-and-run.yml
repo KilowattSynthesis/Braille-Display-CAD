@@ -64,3 +64,13 @@ jobs:
             echo "Running $file"
             python "$file"
           done
+
+      - name: Compress the build folder
+        run: tar -czf cad-build.tar.gz build/
+
+      - name: Upload CAD build product to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cad-build
+          path: cad-build.tar.gz
+          retention-days: 2
