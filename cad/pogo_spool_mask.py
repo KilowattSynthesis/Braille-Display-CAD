@@ -2,28 +2,13 @@
 
 import json
 import math
-import os
 from pathlib import Path
 
 import build123d as bd
 import build123d_ease as bde
 from bd_warehouse.gear import SpurGear
+from build123d_ease import show
 from loguru import logger
-
-if os.getenv("CI"):
-
-    def show(*args: object) -> bd.Part:
-        """Do nothing (dummy function) to skip showing the CAD model in CI."""
-        logger.info(f"Skipping show({args}) in CI")
-        return args[0]
-else:
-    import ocp_vscode
-
-    def show(*args: object) -> bd.Part:
-        """Show the CAD model in the CAD viewer."""
-        ocp_vscode.show(*args)
-        return args[0]
-
 
 # Constants. All distances are in mm.
 
@@ -542,14 +527,10 @@ if __name__ == "__main__":
 
     logger.info("Saving CAD model(s)")
 
-    (export_folder := Path(__file__).parent.parent / "build/pogo_spools").mkdir(
-        exist_ok=True,
-        parents=True,
-    )
+    (
+        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
+    ).mkdir(exist_ok=True, parents=True)
     for name, part in parts.items():
-        assert isinstance(part, bd.Part), f"{name} is not a Part"
-        # assert part.is_manifold is True, f"{name} is not manifold"
-
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
 
