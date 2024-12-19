@@ -60,7 +60,7 @@ jobs:
         
       - name: Run Python scripts in CAD folder
         run: |
-          find **/cad -name "*.py" ! -path "*/no_ci/*" | while read file; do
+          find **/cad/ -name "*.py" ! -path "*/no_ci/*" | while read file; do
             echo "Running $file"
             python "$file"
           done
