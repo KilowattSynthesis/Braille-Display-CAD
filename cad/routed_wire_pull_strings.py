@@ -1,28 +1,17 @@
-"""Create CAD models for the braille display parts."""
+"""Create CAD models for the braille display parts.
+
+This idea uses wires/threads routed through channels in the housing to pull the dots up
+and down.
+"""
 
 import json
 import math
-import os
 from pathlib import Path
 
 import build123d as bd
+from build123d_ease import show
 from cad_lib import make_curved_bent_cylinder
 from loguru import logger
-
-if os.getenv("CI"):
-
-    def show(*args: object) -> bd.Part:
-        """Do nothing (dummy function) to skip showing the CAD model in CI."""
-        logger.info(f"Skipping show({args}) in CI")
-        return args[0]
-else:
-    import ocp_vscode
-
-    def show(*args: object) -> bd.Part:
-        """Show the CAD model in the CAD viewer."""
-        ocp_vscode.show(*args)
-        return args[0]
-
 
 # Constants. All distances are in mm.
 
@@ -249,8 +238,6 @@ def make_housing() -> bd.Part:
             ),
         )
 
-    assert isinstance(part, bd.Part), "Part is not a Part"
-
     return part
 
 
@@ -261,11 +248,10 @@ def make_housing_chain(cell_count: int) -> bd.Part:
     """
     logger.info(f"Making a chain of {cell_count} braille cells.")
     housing = make_housing()
-    assert isinstance(housing, bd.Part), "Housing is not a Part"
     logger.info(f"Single cell housing volume: {housing.volume:.3f}")
 
     # Make a chain of cells.
-    part = bd.Part()
+    part = bd.Part(None)
     for cell_num in range(cell_count):
         part += housing.translate(
             (
@@ -390,8 +376,6 @@ def make_motor_base(cell_count: int) -> bd.Part:
 
         logger.debug(f"Motor mounts added for cell {cell_num}.")
 
-    assert isinstance(part, bd.Part), "Part is not a Part"
-
     logger.info(f"Motor base volume: {part.volume:.2f} mm^3 for {cell_count} cells.")
 
     return part
@@ -409,15 +393,11 @@ if __name__ == "__main__":
         "housing_chain_10x": make_housing_chain(10),
     }
 
-    logger.info("Showing CAD model(s)")
-    # show(parts["pogo_pin"])
-    # show(parts["housing"])
-    # show(parts["motor_base_3x"])
+    logger.info("Saving CAD model(s)...")
 
-    (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
+    (
+        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
+    ).mkdir(exist_ok=True, parents=True)
     for name, part in parts.items():
-        assert isinstance(part, bd.Part), f"{name} is not a Part"
-        # assert part.is_manifold is True, f"{name} is not manifold"
-
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))

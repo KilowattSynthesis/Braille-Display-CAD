@@ -1,19 +1,11 @@
 """Demonstrates the CAD library functions."""
 
-import os
-from pathlib import Path  # noqa: F401
+from pathlib import Path
 
 import build123d as bd
+from build123d_ease import show
 from cad_lib import make_angled_cylinders, make_curved_bent_cylinder
 from loguru import logger
-
-if os.getenv("CI"):
-
-    def show(*args: object) -> None:
-        """Do nothing (dummy function) to skip showing the CAD model in CI."""
-        logger.info(f"Skipping show({args}) in CI")
-else:
-    from ocp_vscode import show
 
 
 def demo_test_pipe_bend() -> bd.Part:
@@ -35,9 +27,11 @@ def demo_test_pipe_bend() -> bd.Part:
     ).translate(-line1.start_point())
 
     sweep_polygon = bd.Plane.YZ * bd.Circle(0.5).translate(line2.end_point())
-
+    assert isinstance(sweep_polygon, bd.SweepType)  # Type checking.
     line_sum = bd.sweep(sweep_polygon, path=line_sum)
+
     line_sum = line_sum.translate(line1.start_point())
+    assert isinstance(line_sum, bd.Part)  # Type checking.
     return line_sum
 
 
@@ -63,18 +57,16 @@ def demo_test_make_angled_cylinders() -> bd.Part:
 
 if __name__ == "__main__":
     parts = {
-        "demo_test_pipe_bend": demo_test_pipe_bend(),
+        "demo_test_pipe_bend": show(demo_test_pipe_bend()),
         "demo_test_make_curved_bent_cylinder": demo_test_make_curved_bent_cylinder(),
         "demo_test_make_angled_cylinders": demo_test_make_angled_cylinders(),
     }
 
-    logger.info("Made CAD model(s)")
+    logger.info("Saving CAD model(s)...")
 
-    logger.info("Showing CAD model(s)")
-    for part in parts.values():
-        show(part)
-
-    # (export_folder := Path(__file__).parent.with_name("build")).mkdir(exist_ok=True)
-    # for name, part in parts.items():
-    #     bd.export_stl(part, str(export_folder / f"{name}.stl"))
-    #     bd.export_step(part, str(export_folder / f"{name}.step"))
+    (
+        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
+    ).mkdir(exist_ok=True, parents=True)
+    for name, part in parts.items():
+        bd.export_stl(part, str(export_folder / f"{name}.stl"))
+        bd.export_step(part, str(export_folder / f"{name}.step"))
