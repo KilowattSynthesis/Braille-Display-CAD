@@ -31,8 +31,11 @@ class MainSpec:
     cell_count_x: int = 3
 
     dot_travel: float = 1
-    dot_diameter_in_rod_min: float = 0.2  # FIXME: Figure out how this can be larger.
-    dot_diameter_in_rod_max: float = 0.4
+    dot_diameter_in_rod_inner: float = 0.5
+    dot_diameter_in_rod_outer: float = 0.8
+
+    # Like `dot_travel`, but for the not-down dot positions.
+    dot_up_divot_depth: float = 0.2
 
     cam_rod_diameter: float = 2.4  # Must be less than dot_pitch_x.
     cam_rod_length: float = 10
@@ -54,6 +57,11 @@ def make_cam_rod(spec: MainSpec) -> bd.Part:
     p += bd.Cylinder(
         radius=spec.cam_rod_diameter / 2,
         height=spec.cam_rod_length,
+    ).rotate(
+        # Rotate is a hack so that the cylinder seam doesn't insect the dots.
+        # If the seam intersects the dots, sometimes they're not removed right.
+        axis=bd.Axis.Z,
+        angle=360 / 16,
     )
 
     # Remove the magnets (one on each side).
@@ -64,24 +72,31 @@ def make_cam_rod(spec: MainSpec) -> bd.Part:
         # Only dig out not-extended pins.
         assert 0 <= rot_idx < 8  # noqa: PLR2004
         assert 0 <= z_idx < 3  # noqa: PLR2004
-        is_pin_extended: bool = (rot_idx & (1 << z_idx)) == 1
-        if is_pin_extended:
-            continue
-
-        # FIXME: Start here and write this.
+        is_pin_extended: bool = (rot_idx & (1 << z_idx)) > 0
+        # logger.debug(f"{rot_idx=}, {z_idx=}, {is_pin_extended=}")
+        dot_depth = spec.dot_travel if is_pin_extended else spec.dot_up_divot_depth
 
         p -= (
-            bd.Cone(
-                # Bottom is toward the center of the cam rod.
-                bottom_radius=spec.dot_diameter_in_rod_min / 2,
-                top_radius=spec.dot_diameter_in_rod_max / 2,
-                height=spec.dot_travel + 1,  # TODO: Fix the "bit extra" part.
-                align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+            (
+                bd.Cone(
+                    # Bottom is toward the center of the cam rod.
+                    bottom_radius=spec.dot_diameter_in_rod_inner / 2,
+                    top_radius=spec.dot_diameter_in_rod_outer / 2,
+                    height=dot_depth,
+                    align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+                )
+                # Add on a cylinder that removes the extra bit above the cone.
+                # Required because the faces of the cone are flat, but the rod is round.
+                + bd.Cylinder(
+                    radius=spec.dot_diameter_in_rod_outer / 2,
+                    height=5,
+                    align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN),
+                ).translate((0, 0, spec.dot_travel - 0.05))
             )
             .rotate(axis=bd.Axis.Y, angle=90)  # Point in Pos X.
             .translate(
                 (
-                    spec.cam_rod_diameter / 2 - spec.dot_travel,
+                    spec.cam_rod_diameter / 2 - dot_depth,
                     0,
                     z_pos,
                 )
