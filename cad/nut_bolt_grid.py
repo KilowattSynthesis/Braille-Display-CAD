@@ -7,7 +7,10 @@ BOM:
 Future options:
 - Try M1.4 x 6mm grub screws and nuts for a little better fit.
 - Try creating the nut holder so it's a smooth surface on the top.
-- Use threaded holes in an aluminum plate instead of nuts.
+
+Conclusion:
+- M1.6 doesn't really fit well. The nuts are too big.
+- Use threaded holes in an aluminum plate instead of nuts!
 """
 
 import itertools
@@ -33,8 +36,10 @@ class NutSpec:
     m_diameter: float
 
 
+# Nut sizes: https://www.aliexpress.com/item/32977174437.html
 m2p5_nut = NutSpec(width=4.9, thickness=1.8, m_diameter=2.5)
 m1p6_nut = NutSpec(width=3.1, thickness=1.2, m_diameter=1.6)
+m1p4_nut = NutSpec(width=2.9, thickness=1.1, m_diameter=1.4)
 
 
 @dataclass
@@ -234,12 +239,11 @@ def make_nut_holder(nut_holder_spec: NutHolderSpec) -> bd.Part:
         p -= (
             bd.Cylinder(
                 radius=(
-                    nut_holder_spec.nut.m_diameter
-                    + nut_holder_spec.screw_extra_diameter
-                )
-                / 2,
-                height=nut_holder_spec.total_thickness
-                * 2.5,  # Extrude it through the brick.
+                    nut_holder_spec.nut.m_diameter / 2
+                    + nut_holder_spec.screw_extra_diameter / 2
+                ),
+                # Extrude it through the brick.
+                height=nut_holder_spec.total_thickness * 2.5,
             )
             .rotate(axis=bd.Axis.X, angle=rotate_nut_direction)
             .translate((x, y, nut_center_z))
@@ -283,7 +287,7 @@ if __name__ == "__main__":
                 ),
             )
         ),
-        "nut_holder_M1p6_From_Bottom": show(
+        "nut_holder_M1p6_From_Bottom": (
             make_nut_holder(
                 NutHolderSpec(
                     nut=m1p6_nut,
@@ -291,7 +295,24 @@ if __name__ == "__main__":
                     separation_between_nuts_z=1,
                     bottom_thickness=0,
                 ),
-            ),
+            )
+        ),
+        "nut_holder_M1p4_From_Top": (
+            make_nut_holder(
+                NutHolderSpec(
+                    nut=m1p4_nut,
+                ),
+            )
+        ),
+        "nut_holder_M1p4_From_Bottom": show(
+            make_nut_holder(
+                NutHolderSpec(
+                    nut=m1p4_nut,
+                    nut_from_top_or_bottom="bottom",
+                    separation_between_nuts_z=1,
+                    bottom_thickness=0,
+                ),
+            )
         ),
     }
 
