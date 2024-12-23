@@ -75,6 +75,9 @@ class HousingSpec:
 
     border_x: float = 5
 
+    top_plate_thickness: float = 1.5
+    top_plate_tap_hole_diameter: float = 1.25  # For M1.6, drill 1.25mm hole.
+
     @property
     def dist_between_motor_walls(self) -> float:
         """Distance between motor walls in a layer."""
@@ -346,6 +349,67 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
     return p
 
 
+def make_top_plate_for_tapping(spec: HousingSpec) -> bd.Part:
+    """Make the threaded top plate, with holes for tapping."""
+    p = bd.Part(None)
+
+    p += bd.Box(
+        spec.total_x,
+        spec.total_y,
+        spec.top_plate_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Add a border to get to the minimum build size for 3d printing company.
+    p += bd.Box(
+        spec.total_x,
+        spec.total_y,
+        2.1,
+        align=bde.align.ANCHOR_BOTTOM,
+    ) - bd.Box(
+        spec.total_x - 4,
+        spec.total_y - 4,
+        2.1,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Create the dots.
+    for cell_x, cell_y, dot_offset_x, dot_offset_y in product(
+        evenly_space_with_center(
+            count=spec.cell_count_x,
+            spacing=spec.cell_pitch_x,
+        ),
+        evenly_space_with_center(
+            count=spec.cell_count_y,
+            spacing=spec.cell_pitch_y,
+        ),
+        evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+        evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
+    ):
+        dot_x = cell_x + dot_offset_x
+        dot_y = cell_y + dot_offset_y
+
+        # Create the braille dot.
+        p -= bd.Cylinder(
+            radius=spec.top_plate_tap_hole_diameter / 2,
+            height=spec.top_plate_thickness,
+            align=bde.align.ANCHOR_BOTTOM,
+        ).translate((dot_x, dot_y, 0))
+
+    # Create the mounting holes.
+    for hole_x, hole_y in product(
+        evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
+        evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
+    ):
+        p -= bd.Cylinder(
+            spec.mounting_hole_diameter / 2,
+            spec.top_plate_thickness,
+            align=bde.align.ANCHOR_BOTTOM,
+        ).translate((hole_x, hole_y, 0))
+
+    return p
+
+
 def write_milling_drawing_info(
     spec: HousingSpec, *, include_each_dot: bool = False
 ) -> str:
@@ -470,6 +534,7 @@ if __name__ == "__main__":
     parts = {
         "motor_placement_demo": show(make_motor_placement_demo(HousingSpec())),
         "motor_housing": show(make_motor_housing(HousingSpec())),
+        "top_plate": show(make_top_plate_for_tapping(HousingSpec())),
     }
 
     logger.info("Showing CAD model(s)")
