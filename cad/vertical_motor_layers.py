@@ -16,6 +16,7 @@ from datetime import UTC, datetime
 from itertools import product
 from pathlib import Path
 
+import bd_warehouse.thread
 import build123d as bd
 import build123d_ease as bde
 from build123d_ease import show
@@ -75,8 +76,11 @@ class HousingSpec:
 
     border_x: float = 5
 
-    top_plate_thickness: float = 1.5
+    top_plate_thickness: float = 2
     top_plate_tap_hole_diameter: float = 1.25  # For M1.6, drill 1.25mm hole.
+
+    top_plate_dot_hole_thread_diameter: float = 1.6
+    top_plate_dot_hole_thread_pitch: float = 0.35
 
     @property
     def dist_between_motor_walls(self) -> float:
@@ -115,11 +119,14 @@ class HousingSpec:
         hypot_len = (self.motor_pitch_x**2 + self.motor_pitch_y**2) ** 0.5
 
         data = {
-            "hypot_len": hypot_len,
+            "hypot_len": round(hypot_len, 2),
             "total_x": self.total_x,
             "total_y": self.total_y,
             "total_z": self.total_z,
             "dist_between_motor_walls": self.dist_between_motor_walls,
+            "threads_in_top_plate": round(
+                self.top_plate_thickness / self.top_plate_dot_hole_thread_pitch, 1
+            ),
         }
 
         logger.info(json.dumps(data, indent=2))
@@ -349,7 +356,7 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
     return p
 
 
-def make_top_plate_for_tapping(spec: HousingSpec) -> bd.Part:
+def make_top_plate_for_tapping(spec: HousingSpec, *, tap_holes: bool) -> bd.Part:
     """Make the threaded top plate, with holes for tapping."""
     p = bd.Part(None)
 
@@ -373,6 +380,15 @@ def make_top_plate_for_tapping(spec: HousingSpec) -> bd.Part:
         align=bde.align.ANCHOR_BOTTOM,
     )
 
+    internal_thread_for_dots = bd_warehouse.thread.TrapezoidalThread(
+        diameter=spec.top_plate_dot_hole_thread_diameter,
+        pitch=spec.top_plate_dot_hole_thread_pitch,
+        thread_angle=30,  # Standard metric.
+        length=spec.top_plate_thickness,
+        external=False,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
     # Create the dots.
     for cell_x, cell_y, dot_offset_x, dot_offset_y in product(
         evenly_space_with_center(
@@ -389,12 +405,21 @@ def make_top_plate_for_tapping(spec: HousingSpec) -> bd.Part:
         dot_x = cell_x + dot_offset_x
         dot_y = cell_y + dot_offset_y
 
-        # Create the braille dot.
-        p -= bd.Cylinder(
-            radius=spec.top_plate_tap_hole_diameter / 2,
-            height=spec.top_plate_thickness,
-            align=bde.align.ANCHOR_BOTTOM,
-        ).translate((dot_x, dot_y, 0))
+        if tap_holes:
+            p -= bd.Cylinder(
+                radius=spec.top_plate_dot_hole_thread_diameter / 2,
+                height=spec.top_plate_thickness,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).translate((dot_x, dot_y, 0))
+
+            p += internal_thread_for_dots.translate((dot_x, dot_y, 0))
+        else:
+            # Create the braille as just a cylinder.
+            p -= bd.Cylinder(
+                radius=spec.top_plate_tap_hole_diameter / 2,
+                height=spec.top_plate_thickness,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).translate((dot_x, dot_y, 0))
 
     # Create the mounting holes.
     for hole_x, hole_y in product(
@@ -534,7 +559,12 @@ if __name__ == "__main__":
     parts = {
         "motor_placement_demo": show(make_motor_placement_demo(HousingSpec())),
         "motor_housing": show(make_motor_housing(HousingSpec())),
-        "top_plate": show(make_top_plate_for_tapping(HousingSpec())),
+        "top_plate_untapped": show(
+            make_top_plate_for_tapping(HousingSpec(), tap_holes=False)
+        ),
+        "top_plate_pre_tapped": show(
+            make_top_plate_for_tapping(HousingSpec(), tap_holes=True)
+        ),
     }
 
     logger.info("Showing CAD model(s)")
