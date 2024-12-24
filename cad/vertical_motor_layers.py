@@ -13,6 +13,7 @@ import json
 import random
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from functools import reduce
 from itertools import product
 from pathlib import Path
 
@@ -49,7 +50,7 @@ class HousingSpec:
     cell_pitch_y: float = 10
 
     motor_body_od: float = 4.0
-    motor_body_length: float = 8.0
+    motor_body_length: float = 8.0 + 1.0  # Extra 1mm for fit (esp for bottom).
 
     # The distance above the top of the motor to not allow the bending `turner_tube`.
     # Best to keep slightly greater than `gap_between_motor_layers`.
@@ -61,6 +62,7 @@ class HousingSpec:
     cell_count_x: int = 4
     cell_count_y: int = 1
 
+    # Width of the wire channel. Also, diameter of the holes out the bottom.
     wire_channel_slot_width: float = 1.5
 
     # `turner_tube` goes to the surface and connects motor to the dot bolt.
@@ -75,6 +77,8 @@ class HousingSpec:
     mounting_hole_diameter: float = 2  # Thread-forming screws from bottom.
 
     border_x: float = 5
+
+    motor_outline_thickness_z: float = 1
 
     top_plate_thickness: float = 2
     top_plate_tap_hole_diameter: float = 1.25  # For M1.6, drill 1.25mm hole.
@@ -242,6 +246,8 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
     )
 
     # Create the motor holes.
+    motor_coords_bottom: list[tuple[float, float]] = []
+    motor_coords_top: list[tuple[float, float]] = []
     for dot_num, (cell_x, cell_y, offset_x, offset_y) in enumerate(
         product(
             evenly_space_with_center(
@@ -263,6 +269,15 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
 
         layer_num = dot_num % 2  # 0 (bottom) or 1 (top)
 
+        # Store the motor coordinates for later.
+        if layer_num == 0:
+            motor_coords_bottom.append((motor_x, motor_y))
+        elif layer_num == 1:
+            motor_coords_top.append((motor_x, motor_y))
+        else:
+            msg = f"Invalid layer_num: {layer_num}"
+            raise ValueError(msg)
+
         # Create the motor hole.
         p -= bd.Cylinder(
             spec.motor_body_od / 2,
@@ -282,29 +297,43 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
         )
 
         # Remove the hole for the wires.
-        if layer_num == 1:  # Top only.
-            # In gap.
-            p -= bd.extrude(
-                bd.SlotCenterToCenter(
-                    center_separation=spec.motor_body_od - spec.wire_channel_slot_width,
-                    height=spec.wire_channel_slot_width,
-                ),
-                amount=spec.gap_between_motor_layers,
-            ).translate(
-                (
-                    motor_x,
-                    motor_y,
-                    spec.motor_body_length + spec.gap_between_motor_layers / 2,
+        if layer_num == 1:  # Top motor layer only.
+            # In gap between motor layers.
+            p -= (
+                bd.extrude(
+                    bd.SlotCenterToCenter(
+                        center_separation=(
+                            spec.motor_body_od - spec.wire_channel_slot_width
+                        ),
+                        height=spec.wire_channel_slot_width,
+                    ),
+                    amount=spec.gap_between_motor_layers,
+                )
+                .rotate(axis=bd.Axis.Z, angle=90)
+                .translate(
+                    (
+                        motor_x,
+                        motor_y,
+                        spec.motor_body_length + spec.gap_between_motor_layers / 2,
+                    )
                 )
             )
 
             # Through to bottom.
+            # For non-middle dots (i.e., Dot 4, 6), the wire channel through to the
+            # bottom goes toward the center of the housing.
             p -= bd.extrude(
-                bd.Circle(
-                    radius=spec.wire_channel_slot_width / 2,
-                ),
+                bd.Circle(radius=spec.wire_channel_slot_width / 2),
                 amount=spec.motor_body_length + spec.gap_between_motor_layers,
-            ).translate((motor_x, motor_y, 0))
+            ).translate(
+                (
+                    motor_x,
+                    # Offset it in by 1mm so it is contained in the hull.
+                    (motor_y + (-offset_y * 0.5)),
+                    # motor_y,
+                    0,
+                )
+            )
 
         # Create the turner_tube hole, with passage right to the dot.
         if layer_num == 0:  # Bottom only.
@@ -333,6 +362,45 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
                 ),
                 amount=spec.motor_rigid_shaft_len + 0.01,
             ).translate((motor_x, motor_y, spec.motor_body_length))
+
+    # Subtract a hull of the centers of the motor holes (TOP layer).
+    # On the top layer, hull all motor holes (top and bottom).
+    p -= bd.extrude(
+        bd.make_hull(
+            reduce(
+                lambda a, b: a + b,
+                [
+                    bd.Circle(radius=0.2).translate((motor_x, motor_y)).edges()
+                    for motor_x, motor_y in [*motor_coords_top, *motor_coords_bottom]
+                ],
+            )
+        ),
+        amount=spec.motor_body_length,
+    ).translate(
+        (
+            0,
+            0,
+            (
+                spec.motor_body_length
+                + spec.gap_between_motor_layers
+                + spec.motor_outline_thickness_z
+            ),
+        )
+    )
+
+    # Subtract a hull of the centers of the motor holes (BOTTOM layer).
+    p -= bd.extrude(
+        bd.make_hull(
+            reduce(
+                lambda a, b: a + b,
+                [
+                    bd.Circle(radius=0.2).translate((motor_x, motor_y)).edges()
+                    for motor_x, motor_y in motor_coords_bottom
+                ],
+            )
+        ),
+        amount=spec.motor_body_length,
+    ).translate((0, 0, -spec.motor_outline_thickness_z))
 
     # Subtract the mounting holes.
     for hole_x, hole_y in product(
@@ -559,10 +627,10 @@ if __name__ == "__main__":
     parts = {
         "motor_placement_demo": show(make_motor_placement_demo(HousingSpec())),
         "motor_housing": show(make_motor_housing(HousingSpec())),
-        "top_plate_untapped": show(
+        "top_plate_untapped": (
             make_top_plate_for_tapping(HousingSpec(), tap_holes=False)
         ),
-        "top_plate_pre_tapped": show(
+        "top_plate_pre_tapped": (
             make_top_plate_for_tapping(HousingSpec(), tap_holes=True)
         ),
     }
