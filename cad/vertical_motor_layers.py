@@ -78,7 +78,7 @@ class HousingSpec:
 
     border_x: float = 5
 
-    motor_outline_thickness_z: float = 1
+    motor_outline_thickness_z: float = 1.2
 
     top_plate_thickness: float = 2
     top_plate_tap_hole_diameter: float = 1.25  # For M1.6, drill 1.25mm hole.
@@ -234,8 +234,15 @@ def make_motor_placement_demo(spec: HousingSpec) -> bd.Part:
     return p
 
 
-def make_motor_housing(spec: HousingSpec) -> bd.Part:
-    """Make housing with the placement from the demo."""
+def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> bd.Part:
+    """Make housing with the placement from the demo.
+
+    Args:
+        spec: The specification for the housing.
+        remove_thin_walls: Whether to remove thin walls that are not needed.
+            For SLA printing, set to True. For FDM, False may work.
+
+    """
     p = bd.Part(None)
 
     p += bd.Box(
@@ -328,9 +335,23 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
             ).translate(
                 (
                     motor_x,
-                    # Offset it in by 1mm so it is contained in the hull.
-                    (motor_y + (-offset_y * 0.5)),
-                    # motor_y,
+                    (
+                        motor_y
+                        + (
+                            # Offset it in by 1mm so it is contained in the hull.
+                            -offset_y * 0.5
+                            if remove_thin_walls
+                            # Else: Offset it toward edge.
+                            else (
+                                offset_y
+                                * (
+                                    spec.motor_body_od / 2
+                                    - spec.wire_channel_slot_width / 2
+                                    - 0.2
+                                )
+                            )
+                        )
+                    ),
                     0,
                 )
             )
@@ -363,44 +384,48 @@ def make_motor_housing(spec: HousingSpec) -> bd.Part:
                 amount=spec.motor_rigid_shaft_len + 0.01,
             ).translate((motor_x, motor_y, spec.motor_body_length))
 
-    # Subtract a hull of the centers of the motor holes (TOP layer).
-    # On the top layer, hull all motor holes (top and bottom).
-    p -= bd.extrude(
-        bd.make_hull(
-            reduce(
-                lambda a, b: a + b,
-                [
-                    bd.Circle(radius=0.2).translate((motor_x, motor_y)).edges()
-                    for motor_x, motor_y in [*motor_coords_top, *motor_coords_bottom]
-                ],
-            )
-        ),
-        amount=spec.motor_body_length,
-    ).translate(
-        (
-            0,
-            0,
-            (
-                spec.motor_body_length
-                + spec.gap_between_motor_layers
-                + spec.motor_outline_thickness_z
+    if remove_thin_walls:
+        # Subtract a hull of the centers of the motor holes (TOP layer).
+        # On the top layer, hull all motor holes (top and bottom).
+        p -= bd.extrude(
+            bd.make_hull(
+                reduce(
+                    lambda a, b: a + b,
+                    [
+                        bd.Circle(radius=0.2).translate((motor_x, motor_y)).edges()
+                        for motor_x, motor_y in [
+                            *motor_coords_top,
+                            *motor_coords_bottom,
+                        ]
+                    ],
+                )
             ),
-        )
-    )
-
-    # Subtract a hull of the centers of the motor holes (BOTTOM layer).
-    p -= bd.extrude(
-        bd.make_hull(
-            reduce(
-                lambda a, b: a + b,
-                [
-                    bd.Circle(radius=0.2).translate((motor_x, motor_y)).edges()
-                    for motor_x, motor_y in motor_coords_bottom
-                ],
+            amount=spec.motor_body_length,
+        ).translate(
+            (
+                0,
+                0,
+                (
+                    spec.motor_body_length
+                    + spec.gap_between_motor_layers
+                    + spec.motor_outline_thickness_z
+                ),
             )
-        ),
-        amount=spec.motor_body_length,
-    ).translate((0, 0, -spec.motor_outline_thickness_z))
+        )
+
+        # Subtract a hull of the centers of the motor holes (BOTTOM layer).
+        p -= bd.extrude(
+            bd.make_hull(
+                reduce(
+                    lambda a, b: a + b,
+                    [
+                        bd.Circle(radius=0.2).translate((motor_x, motor_y)).edges()
+                        for motor_x, motor_y in motor_coords_bottom
+                    ],
+                )
+            ),
+            amount=spec.motor_body_length,
+        ).translate((0, 0, -spec.motor_outline_thickness_z))
 
     # Subtract the mounting holes.
     for hole_x, hole_y in product(
@@ -627,6 +652,9 @@ if __name__ == "__main__":
     parts = {
         "motor_placement_demo": show(make_motor_placement_demo(HousingSpec())),
         "motor_housing": show(make_motor_housing(HousingSpec())),
+        "motor_housing_thin_walls_fdm": show(
+            make_motor_housing(HousingSpec(), remove_thin_walls=False)
+        ),
         "top_plate_untapped": (
             make_top_plate_for_tapping(HousingSpec(), tap_holes=False)
         ),
