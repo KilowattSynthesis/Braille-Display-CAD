@@ -40,6 +40,9 @@ class ScrewSpec:
     gripper_groove_length = 1
     gripper_groove_depth = 0.5
 
+    additional_turner_od: float = 2.0
+    additional_turner_length: float = 10
+
     @property
     def gripper_groove_shoulder_length(self) -> float:
         """Length of each shoulder on the sides of the groove."""
@@ -311,6 +314,10 @@ def make_housing(
             Adds the screws, and keeps the screw install holes there.
 
     """
+    assert not (
+        preview_screw and print_in_place_screws
+    ), "Can't preview AND make print-in-place screws."
+
     p = bd.Part(None)
 
     # Create the main outer shell.
@@ -448,6 +455,26 @@ def make_housing(
                         + spec.screw_spec.screw_od / 2
                     ),
                 ),
+            )
+
+            # Add the `additional_turner` to the screw.
+            p += (
+                bd.Cylinder(
+                    radius=spec.screw_spec.additional_turner_od / 2,
+                    height=spec.screw_spec.additional_turner_length,
+                    align=bde.align.ANCHOR_BOTTOM,
+                )
+                .rotate(axis=bd.Axis.X, angle=-90)
+                .translate(
+                    (
+                        cell_center_x + dot_x,
+                        spec.total_y / 2,
+                        (
+                            spec.dist_bottom_of_housing_to_bottom_of_screw
+                            + spec.screw_spec.screw_od / 2
+                        ),
+                    ),
+                )
             )
 
     # Preview: Add the screw to the housing.
