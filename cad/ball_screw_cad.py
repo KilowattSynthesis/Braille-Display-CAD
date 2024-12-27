@@ -53,17 +53,6 @@ class ScrewSpec:
         return copy.deepcopy(self)
 
 
-def evenly_space_with_center(
-    center: float = 0,
-    *,
-    count: int,
-    spacing: float,
-) -> list[float]:
-    """Evenly space `count` items around `center` with `spacing`."""
-    half_spacing = (count - 1) * spacing / 2
-    return [center - half_spacing + i * spacing for i in range(count)]
-
-
 @dataclass(kw_only=True)
 class HousingSpec:
     """Specification for braille cell housing."""
@@ -129,7 +118,7 @@ class HousingSpec:
 
     def get_x_of_center_of_cells(self) -> list[float]:
         """Get the X coordinate of the center of each cell."""
-        return evenly_space_with_center(
+        return bde.evenly_space_with_center(
             count=self.cell_count_x,
             spacing=self.inter_cell_pitch_x,
         )
@@ -253,14 +242,14 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     helix_path = bd.Polyline(*helix_points)
 
     # Debugging: Helpful demo view.
-    show(helix_path)
+    # show(helix_path)
 
     helix_part = bd.Part(None) + bd.sweep(
         path=helix_path,
         sections=(helix_path ^ 0) * bd.Circle(radius=spec.ball_od / 2),
         transition=bd.Transition.RIGHT,  # Use RIGHT because ROUND is not manifold.
     )
-    show(helix_part)
+    # show(helix_part)
     assert helix_part.is_manifold, "Helix part is not manifold"
     p -= helix_part
 
@@ -307,8 +296,21 @@ def make_wavy_screw(spec: ScrewSpec) -> bd.Part:
     return p
 
 
-def make_housing(spec: HousingSpec, *, preview_screw: bool) -> bd.Part:
-    """Make the housing that the screw fits into."""
+def make_housing(
+    spec: HousingSpec,
+    *,
+    preview_screw: bool = False,
+    print_in_place_screws: bool = False,
+) -> bd.Part:
+    """Make the housing that the screw fits into.
+
+    Args:
+        spec: The specification for the housing.
+        preview_screw: Whether to preview the screw in the housing.
+        print_in_place_screws: Whether to print the screws in place.
+            Adds the screws, and keeps the screw install holes there.
+
+    """
     p = bd.Part(None)
 
     # Create the main outer shell.
@@ -331,8 +333,8 @@ def make_housing(spec: HousingSpec, *, preview_screw: bool) -> bd.Part:
     # Remove the dots.
     for _cell_num, cell_center_x in enumerate(spec.get_x_of_center_of_cells()):
         for dot_x, dot_y in product(
-            evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
-            evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
+            bde.evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+            bde.evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
         ):
             p -= bd.Cylinder(
                 radius=spec.screw_spec.ball_od / 2,
@@ -344,100 +346,116 @@ def make_housing(spec: HousingSpec, *, preview_screw: bool) -> bd.Part:
     z_center_of_screw = (
         spec.dist_bottom_of_housing_to_bottom_of_screw + spec.screw_spec.screw_od / 2
     )
-    for cell_center_x in spec.get_x_of_center_of_cells():
-        for dot_x in evenly_space_with_center(count=2, spacing=spec.dot_pitch_x):
-            # Small hole through the whole thing.
+    wavy_screw_part = make_wavy_screw(spec.screw_spec).rotate(bd.Axis.X, 90)
+    wavy_screw_part.color = bd.Color("red")
+    for cell_center_x, dot_x in product(
+        spec.get_x_of_center_of_cells(),
+        bde.evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+    ):
+        # Small hole through the whole thing.
+        p -= (
+            bd.Cylinder(
+                radius=(
+                    spec.screw_spec.gripper_od / 2
+                    - spec.screw_spec.gripper_groove_depth
+                    + spec.gripper_interface_freedom_radius
+                ),
+                height=spec.total_y,
+                align=bde.align.ANCHOR_CENTER,
+            )
+            .rotate(axis=bd.Axis.X, angle=90)
+            .translate(
+                (
+                    cell_center_x + dot_x,
+                    0,
+                    z_center_of_screw,
+                ),
+            )
+        )
+
+        # Screw OD.
+        p -= (
+            bd.Cylinder(
+                radius=(
+                    spec.screw_spec.screw_od / 2 + spec.gripper_interface_freedom_radius
+                ),
+                height=spec.screw_spec.screw_length,
+                align=bde.align.ANCHOR_CENTER,
+            )
+            .rotate(axis=bd.Axis.X, angle=90)
+            .translate(
+                (
+                    cell_center_x + dot_x,
+                    0,
+                    z_center_of_screw,
+                ),
+            )
+        )
+
+        # Large hole parts for the gripper.
+        for y_side, y_offset in product([1, -1], [1, -1]):
             p -= (
                 bd.Cylinder(
                     radius=(
                         spec.screw_spec.gripper_od / 2
-                        - spec.screw_spec.gripper_groove_depth
                         + spec.gripper_interface_freedom_radius
                     ),
-                    height=spec.total_y,
-                    align=bde.align.ANCHOR_CENTER,
+                    height=(
+                        spec.screw_spec.gripper_groove_shoulder_length
+                        + 2 * spec.gripper_interface_freedom_length
+                    ),
                 )
-                .rotate(axis=bd.Axis.X, angle=90)
+                .rotate(bd.Axis.X, 90)
                 .translate(
                     (
                         cell_center_x + dot_x,
-                        0,
-                        z_center_of_screw,
-                    ),
-                )
-            )
-
-            # Screw OD.
-            p -= (
-                bd.Cylinder(
-                    radius=(
-                        spec.screw_spec.screw_od / 2
-                        + spec.gripper_interface_freedom_radius
-                    ),
-                    height=spec.screw_spec.screw_length,
-                    align=bde.align.ANCHOR_CENTER,
-                )
-                .rotate(axis=bd.Axis.X, angle=90)
-                .translate(
-                    (
-                        cell_center_x + dot_x,
-                        0,
-                        z_center_of_screw,
-                    ),
-                )
-            )
-
-            # Large hole parts for the gripper.
-            for y_side, y_offset in product([1, -1], [1, -1]):
-                p -= (
-                    bd.Cylinder(
-                        radius=(
-                            spec.screw_spec.gripper_od / 2
-                            + spec.gripper_interface_freedom_radius
-                        ),
-                        height=(
-                            spec.screw_spec.gripper_groove_shoulder_length
-                            + 2 * spec.gripper_interface_freedom_length
-                        ),
-                    )
-                    .rotate(bd.Axis.X, 90)
-                    .translate(
                         (
-                            cell_center_x + dot_x,
-                            (
-                                y_side
+                            y_side
+                            * (
+                                spec.total_y / 2
+                                - spec.screw_spec.gripper_length / 2
+                                + y_offset
                                 * (
-                                    spec.total_y / 2
-                                    - spec.screw_spec.gripper_length / 2
-                                    + y_offset
-                                    * (
-                                        0.5 * spec.screw_spec.gripper_groove_length
-                                        + 0.5
-                                        * spec.screw_spec.gripper_groove_shoulder_length
-                                    )
+                                    0.5 * spec.screw_spec.gripper_groove_length
+                                    + 0.5
+                                    * spec.screw_spec.gripper_groove_shoulder_length
                                 )
-                            ),
-                            z_center_of_screw,
+                            )
                         ),
-                    )
+                        z_center_of_screw,
+                    ),
                 )
+            )
 
         # Remove the insertion slot from the bottom.
         # One per cell.
-        p -= bd.Box(
-            spec.screw_spec.gripper_od + spec.dot_pitch_x,
-            spec.total_y,
-            z_center_of_screw,
-            align=bde.align.ANCHOR_BOTTOM,
-        ).translate((cell_center_x, 0, 0))
+        if not print_in_place_screws:
+            p -= bd.Box(
+                spec.screw_spec.gripper_od + spec.dot_pitch_x,
+                spec.total_y,
+                z_center_of_screw,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).translate((cell_center_x, 0, 0))
+
+        # Add a screw if we're doing print-in-place.
+        if print_in_place_screws:
+            p += wavy_screw_part.translate(
+                (
+                    cell_center_x + dot_x + 0.01,
+                    -wavy_screw_part.bounding_box().center().Y,
+                    (
+                        spec.dist_bottom_of_housing_to_bottom_of_screw
+                        + spec.screw_spec.screw_od / 2
+                    ),
+                ),
+            )
 
     # Preview: Add the screw to the housing.
     if preview_screw:
-        wavy_screw = make_wavy_screw(spec.screw_spec).rotate(bd.Axis.X, 90)
-        p += wavy_screw.translate(
+        p += wavy_screw_part.translate(
             (
                 spec.dot_pitch_x / 2 + 0.01,
-                -wavy_screw.bounding_box().center().Y,
+                -wavy_screw_part.bounding_box().center().Y,
                 (
                     spec.dist_bottom_of_housing_to_bottom_of_screw
                     + spec.screw_spec.screw_od / 2
@@ -471,12 +489,23 @@ if __name__ == "__main__":
     logger.info(f"Running {py_file_name}")
 
     parts = {
-        "wavy_screw": show(make_wavy_screw(ScrewSpec())),
+        "wavy_screw": (make_wavy_screw(ScrewSpec())),
         "housing": show(
-            make_housing(HousingSpec(screw_spec=ScrewSpec()), preview_screw=False),
+            make_housing(
+                HousingSpec(screw_spec=ScrewSpec()),
+            )
         ),
-        "housing_assembly_with_screw": show(
-            make_housing(HousingSpec(screw_spec=ScrewSpec()), preview_screw=True),
+        "housing_and_screws_in_place": show(
+            make_housing(
+                HousingSpec(screw_spec=ScrewSpec()),
+                print_in_place_screws=True,
+            )
+        ),
+        "housing_assembly_with_screw": (
+            make_housing(
+                HousingSpec(screw_spec=ScrewSpec()),
+                preview_screw=True,
+            )
         ),
         "demo_2x_wavy_screw": (make_2x_wavy_screw(ScrewSpec())),
     }
