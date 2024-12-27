@@ -15,6 +15,10 @@ ignore = [
 
     "S311", # Allow insecure `random` module.
     "COM812", # Remove trailing comma requirement. Makes calling `show` easier.
+
+    # Fix colliding defaults which cause warning.
+    "D203",
+    "D213",
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
