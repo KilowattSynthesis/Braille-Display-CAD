@@ -1,4 +1,7 @@
-"""Create a braille display base plate."""
+"""Create a braille display base plate.
+
+This idea was a complete failure. It cannot be manufactured.
+"""
 
 from dataclasses import dataclass
 from itertools import product
@@ -8,17 +11,6 @@ import build123d as bd
 import build123d_ease as bde
 from build123d_ease import show
 from loguru import logger
-
-
-def evenly_space_with_center(
-    center: float = 0,
-    *,
-    count: int,
-    spacing: float,
-) -> list[float]:
-    """Evenly space `count` items around `center` with `spacing`."""
-    half_spacing = (count - 1) * spacing / 2
-    return [center - half_spacing + i * spacing for i in range(count)]
 
 
 @dataclass
@@ -94,16 +86,20 @@ def make_base_plate(spec: BasePlateSpec) -> bd.Part:
     )
 
     for cell_x, cell_y in product(
-        evenly_space_with_center(count=spec.cell_count_x, spacing=spec.cell_pitch_x),
-        evenly_space_with_center(count=spec.cell_count_y, spacing=spec.cell_pitch_y),
+        bde.evenly_space_with_center(
+            count=spec.cell_count_x, spacing=spec.cell_pitch_x
+        ),
+        bde.evenly_space_with_center(
+            count=spec.cell_count_y, spacing=spec.cell_pitch_y
+        ),
     ):
         for dot_x, dot_y in product(
-            evenly_space_with_center(
+            bde.evenly_space_with_center(
                 center=cell_x,
                 count=spec.dot_count_x,
                 spacing=spec.dot_pitch_x,
             ),
-            evenly_space_with_center(
+            bde.evenly_space_with_center(
                 center=cell_y,
                 count=spec.dot_count_y,
                 spacing=spec.dot_pitch_y,

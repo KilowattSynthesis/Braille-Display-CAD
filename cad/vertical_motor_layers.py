@@ -23,20 +23,6 @@ import build123d_ease as bde
 from build123d_ease import show
 from loguru import logger
 
-# TODO(KilowattSynthesis): Place motors offset by 1 in the second line of Braille
-# TODO(KilowattSynthesis): Add slanted routing for screwdrivers to reach the dot pitch
-
-
-def evenly_space_with_center(
-    center: float = 0,
-    *,
-    count: int,
-    spacing: float,
-) -> list[float]:
-    """Evenly space `count` items around `center` with `spacing`."""
-    half_spacing = (count - 1) * spacing / 2
-    return [center - half_spacing + i * spacing for i in range(count)]
-
 
 @dataclass(kw_only=True)
 class HousingSpec:
@@ -147,16 +133,16 @@ def make_motor_placement_demo(spec: HousingSpec) -> bd.Part:
     # Create the motor holes.
     for dot_num, (cell_x, cell_y, offset_x, offset_y) in enumerate(
         product(
-            evenly_space_with_center(
+            bde.evenly_space_with_center(
                 count=spec.cell_count_x,
                 spacing=spec.cell_pitch_x,
             ),
-            evenly_space_with_center(
+            bde.evenly_space_with_center(
                 count=spec.cell_count_y,
                 spacing=spec.cell_pitch_y,
             ),
-            evenly_space_with_center(count=2, spacing=1),
-            evenly_space_with_center(count=3, spacing=1),
+            bde.evenly_space_with_center(count=2, spacing=1),
+            bde.evenly_space_with_center(count=3, spacing=1),
         ),
     ):
         motor_x = cell_x + offset_x * spec.motor_pitch_x
@@ -200,16 +186,16 @@ def make_motor_placement_demo(spec: HousingSpec) -> bd.Part:
 
     # Show where the braille dots would be.
     for cell_x, cell_y, offset_x, offset_y in product(
-        evenly_space_with_center(
+        bde.evenly_space_with_center(
             count=spec.cell_count_x,
             spacing=spec.cell_pitch_x,
         ),
-        evenly_space_with_center(
+        bde.evenly_space_with_center(
             count=spec.cell_count_y,
             spacing=spec.cell_pitch_y,
         ),
-        evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
-        evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
+        bde.evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+        bde.evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
     ):
         motor_x = cell_x + offset_x
         motor_y = cell_y + offset_y
@@ -257,16 +243,16 @@ def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> 
     motor_coords_top: list[tuple[float, float]] = []
     for dot_num, (cell_x, cell_y, offset_x, offset_y) in enumerate(
         product(
-            evenly_space_with_center(
+            bde.evenly_space_with_center(
                 count=spec.cell_count_x,
                 spacing=spec.cell_pitch_x,
             ),
-            evenly_space_with_center(
+            bde.evenly_space_with_center(
                 count=spec.cell_count_y,
                 spacing=spec.cell_pitch_y,
             ),
-            evenly_space_with_center(count=2, spacing=1),
-            evenly_space_with_center(count=3, spacing=1),
+            bde.evenly_space_with_center(count=2, spacing=1),
+            bde.evenly_space_with_center(count=3, spacing=1),
         ),
     ):
         motor_x = cell_x + offset_x * spec.motor_pitch_x
@@ -429,8 +415,8 @@ def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> 
 
     # Subtract the mounting holes.
     for hole_x, hole_y in product(
-        evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
-        evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
+        bde.evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
+        bde.evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
     ):
         p -= bd.Cylinder(
             spec.mounting_hole_diameter / 2,
@@ -484,16 +470,16 @@ def make_top_plate_for_tapping(spec: HousingSpec, *, tap_holes: bool) -> bd.Part
 
     # Create the dots.
     for cell_x, cell_y, dot_offset_x, dot_offset_y in product(
-        evenly_space_with_center(
+        bde.evenly_space_with_center(
             count=spec.cell_count_x,
             spacing=spec.cell_pitch_x,
         ),
-        evenly_space_with_center(
+        bde.evenly_space_with_center(
             count=spec.cell_count_y,
             spacing=spec.cell_pitch_y,
         ),
-        evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
-        evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
+        bde.evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+        bde.evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
     ):
         dot_x = cell_x + dot_offset_x
         dot_y = cell_y + dot_offset_y
@@ -516,8 +502,8 @@ def make_top_plate_for_tapping(spec: HousingSpec, *, tap_holes: bool) -> bd.Part
 
     # Create the mounting holes.
     for hole_x, hole_y in product(
-        evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
-        evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
+        bde.evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
+        bde.evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
     ):
         p -= bd.Cylinder(
             spec.mounting_hole_diameter / 2,
@@ -564,8 +550,8 @@ def write_milling_drawing_info(
     # Mounting hole positions.
     hole_positions = list(
         product(
-            evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
-            evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
+            bde.evenly_space_with_center(count=2, spacing=spec.mounting_hole_spacing_x),
+            bde.evenly_space_with_center(count=3, spacing=spec.mounting_hole_spacing_y),
         )
     )
     lines.extend(
@@ -589,16 +575,16 @@ def write_milling_drawing_info(
 
     dot_positions: list[tuple[float, float]] = []
     for cell_x, cell_y, offset_x, offset_y in product(
-        evenly_space_with_center(
+        bde.evenly_space_with_center(
             count=spec.cell_count_x,
             spacing=spec.cell_pitch_x,
         ),
-        evenly_space_with_center(
+        bde.evenly_space_with_center(
             count=spec.cell_count_y,
             spacing=spec.cell_pitch_y,
         ),
-        evenly_space_with_center(count=2, spacing=1),
-        evenly_space_with_center(count=3, spacing=1),
+        bde.evenly_space_with_center(count=2, spacing=1),
+        bde.evenly_space_with_center(count=3, spacing=1),
     ):
         dot_x = cell_x + offset_x * spec.dot_pitch_x
         dot_y = cell_y + offset_y * spec.dot_pitch_y
@@ -653,7 +639,7 @@ def make_fake_motor_chunk(spec: HousingSpec) -> bd.Part:
     p = bd.Part(None)
 
     # Add the motors.
-    for motor_x in evenly_space_with_center(
+    for motor_x in bde.evenly_space_with_center(
         count=2,
         spacing=spec.motor_pitch_x * 2,
     ):
