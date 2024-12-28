@@ -644,12 +644,55 @@ def write_milling_drawing_info(
     return "\n".join(lines)
 
 
+def make_fake_motor_chunk(spec: HousingSpec) -> bd.Part:
+    """Make a fake motor assembly chunk, which 2 motors joined by a plate."""
+    config_bottom_plate_thickness = 2
+    config_extra_motor_length = 2  # Extra length so the plate is higher than flush.
+    config_slop = 0.4  # Remove from diameter.
+
+    p = bd.Part(None)
+
+    # Add the motors.
+    for motor_x in evenly_space_with_center(
+        count=2,
+        spacing=spec.motor_pitch_x * 2,
+    ):
+        p += bd.Cylinder(
+            radius=(spec.motor_body_od - config_slop) / 2,
+            height=spec.motor_body_length + config_extra_motor_length,
+            align=bde.align.ANCHOR_BOTTOM,
+        ).translate(
+            (
+                motor_x,
+                0,
+                config_bottom_plate_thickness,
+            ),
+        )
+
+    p += bd.Box(
+        spec.motor_pitch_x * 2 + spec.motor_body_od + 1.5,
+        spec.motor_body_od + 1.5,
+        config_bottom_plate_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Remove a hole in the middle (wires and/or shaft).
+    p -= bd.Cylinder(
+        radius=2 / 2,
+        height=config_bottom_plate_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    return p
+
+
 if __name__ == "__main__":
     start_time = datetime.now(UTC)
     py_file_name = Path(__file__).name
     logger.info(f"Running {py_file_name}")
 
     parts = {
+        "fake_motor_chunk": show(make_fake_motor_chunk(HousingSpec())),
         "motor_placement_demo": show(make_motor_placement_demo(HousingSpec())),
         "motor_housing": show(make_motor_housing(HousingSpec())),
         "motor_housing_thin_walls_fdm": show(
