@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from itertools import product
 from pathlib import Path
+from typing import Literal
 
 import build123d as bd
 import build123d_ease as bde
@@ -127,17 +128,19 @@ class HousingSpec:
     rod_props: GenericRodProperties
 
     # Important settings.
-    rod_center_z_from_bottom: float = 4
+    rod_center_z_from_bottom: float = 1.5
 
-    # Amount of slop/clearance in radius.
-    rod_slop_radius: float = 0.18
+    # Amount of slop in the radial direction. Radial clearance is half of this.
+    rod_slop_diameter: float = 0.32
 
-    # Amount of slop/clearance in axial direction.
-    rod_slop_axial: float = 0.5
+    # Amount of slop in axial direction. Clearance is half of this.
+    rod_slop_axial: float = 0.6
 
-    rod_holder_plate_thickness: float = 1.5
+    # Distance along the rod which is at the rod_interface_min_od.
+    rod_interface_min_od_length: float = 1.2
+    rod_interface_min_od: float = 1.2
 
-    rod_od_at_interface: float = 2.0
+    rod_extension_od: float = 2.0
 
     # ##### Resume less-important settings (common mostly common across designs).
 
@@ -155,7 +158,7 @@ class HousingSpec:
     # JLC: Wall thickness>1.2mm, thinnest part≥0.8mm, hole size≥1.5mm.
     top_face_thickness: float = 1.2
     left_right_wall_thickness: float = 1.2
-    front_back_wall_thickness: float = 1.2
+    front_back_wall_thickness: float = 2.5
 
     # Distance from outer dots to mounting holes. PCB property.
     x_dist_dots_to_mounting_holes: float = 5.0
@@ -167,6 +170,8 @@ class HousingSpec:
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
+
+        # TODO(KilowattSynthesis): Check the slop diameters.
 
     def deep_copy(self) -> "HousingSpec":
         """Copy the current spec."""
@@ -218,16 +223,6 @@ class HousingSpec:
             + self.dot_pitch_x
         )
 
-    @property
-    def total_rod_length_to_end_of_blockers(self) -> float:
-        """Total length of the rod to the end of the blockers."""
-        return (
-            self.total_y
-            # Rod slop has half its distance on each side (so div-2, x2).
-            + self.rod_slop_axial
-            + self.rod_holder_plate_thickness
-        )
-
     def get_cell_center_x_values(self) -> list[float]:
         """Get the X coordinate of the center of each cell."""
         return bde.evenly_space_with_center(
@@ -260,31 +255,52 @@ def make_complete_rod(
 
     # Add on the rod extensions.
     # TODO(KilowattSynthesis): Could use Cone to grow it out to the inner holder plate.
-    each_rod_extension_length = (
-        spec.total_rod_length_to_end_of_blockers - spec.rod_props.length
-    ) / 2
-    # Top.
-    p += bd.Pos(Z=spec.rod_props.length / 2) * bd.Cylinder(
-        radius=spec.rod_od_at_interface / 2,
-        height=each_rod_extension_length,
-        align=bde.align.ANCHOR_BOTTOM,
-    )
-    # Bottom.
-    p += bd.Pos(Z=-spec.rod_props.length / 2) * bd.Cylinder(
-        radius=spec.rod_od_at_interface / 2,
-        height=each_rod_extension_length,
-        align=bde.align.ANCHOR_TOP,
-    )
 
-    # Add on the holder plates.
-    for z_sign, wall_side in product([1, -1], [1, -1]):
-        p += bd.Pos(
-            X=wall_side * spec.total_x / 2,
-            Z=z_sign * spec.total_y / 2,
-        ) * bd.Cylinder(
-            radius=spec.rod_holder_plate_thickness,
-            spec.rod_holder_plate_thickness,
-        )
+    # Make a list of the rod segments (diameter, z-val).
+    rod_segments_list: list[tuple[float, float, Literal["length", "z"]]] = [
+        # Extension from rod to rod_interface_min_od part, minus the slop.
+        (
+            spec.rod_extension_od,
+            spec.total_y / 2
+            - spec.front_back_wall_thickness / 2
+            - spec.rod_interface_min_od_length / 2
+            - spec.rod_slop_axial / 2,
+            "z",
+        ),
+        # Rod_interface_min_od part.
+        (
+            spec.rod_interface_min_od,
+            spec.rod_interface_min_od_length + spec.rod_slop_axial,
+            "length",
+        ),
+        # Extension from rod to outer wall, plus the slop.
+        (
+            spec.rod_extension_od,
+            spec.total_y / 2 + spec.rod_slop_axial / 2,
+            "z",
+        ),
+    ]
+
+    for final_rot_value in (0, 180):
+        # Draw everything as though it's for the top (+Z).
+        cur_bottom_z = spec.rod_props.length / 2
+        for rod_segment in rod_segments_list:
+            if rod_segment[2] == "z":
+                segment_length = rod_segment[1] - cur_bottom_z
+                assert segment_length > 0
+            elif rod_segment[2] == "length":
+                segment_length = rod_segment[1]
+
+            p += (
+                bd.Pos(Z=cur_bottom_z)
+                * bd.Cylinder(
+                    radius=rod_segment[0] / 2,
+                    height=segment_length,
+                    align=bde.align.ANCHOR_BOTTOM,
+                )
+            ).rotate(axis=bd.Axis.X, angle=final_rot_value)
+
+            cur_bottom_z += segment_length
 
     return p
 
@@ -356,28 +372,69 @@ def make_housing(
     final_rod_part = make_complete_rod(spec)
 
     # For each `rod_x`.
-    for cell_x, rod_offset_x in product(
+    # Remove the rod holes.
+    for cell_x, rod_offset_x, final_rot_val in product(
         spec.get_cell_center_x_values(),
         bde.evenly_space_with_center(count=2, spacing=spec.rod_pitch_x),
+        (0, 180),
     ):
         rod_x = cell_x + rod_offset_x
 
-        # Remove the rod holes.
-        p -= bd.Pos(X=rod_x, Z=spec.rod_center_z_from_bottom) * bd.Cylinder(
-            radius=spec.rod_od_at_interface / 2 - spec.rod_slop_radius,
-            height=spec.total_y,
-            rotation=(90, 0, 0),
-        )
+        # Remove rod spot from inside of wall to rod_interface_min_od.
+        length_of_each_rod_extension_space = (
+            spec.front_back_wall_thickness - spec.rod_interface_min_od_length
+        ) / 2
+        p -= (
+            bd.Pos(
+                X=rod_x,
+                Y=spec.total_y / 2 - spec.front_back_wall_thickness,
+                Z=spec.rod_center_z_from_bottom,
+            )
+            * bd.Cylinder(
+                radius=spec.rod_extension_od / 2 + spec.rod_slop_diameter / 2,
+                height=length_of_each_rod_extension_space,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).rotate(axis=bd.Axis.X, angle=-90)
+        ).rotate(axis=bd.Axis.Z, angle=final_rot_val)
 
-        if enable_add_rods:
-            # Add the rod.
+        # Remove `rod_interface_min_od` part.
+        # Lazy: Remove it all the way through.
+        p -= (
+            bd.Pos(X=rod_x, Z=spec.rod_center_z_from_bottom)
+            * bd.Cylinder(
+                radius=spec.rod_interface_min_od / 2 + spec.rod_slop_diameter / 2,
+                height=spec.total_y,
+                rotation=(90, 0, 0),
+            )
+        ).rotate(axis=bd.Axis.Z, angle=final_rot_val)
+
+        # Remove rod spot from rod_interface_min_od to outside wall.
+        p -= (
+            bd.Pos(
+                X=rod_x,
+                Y=spec.total_y / 2 - length_of_each_rod_extension_space,
+                Z=spec.rod_center_z_from_bottom,
+            )
+            * bd.Cylinder(
+                radius=spec.rod_extension_od / 2 + spec.rod_slop_diameter / 2,
+                height=length_of_each_rod_extension_space,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).rotate(axis=bd.Axis.X, angle=-90)
+        ).rotate(axis=bd.Axis.Z, angle=final_rot_val)
+
+    # Add the rods.
+    if enable_add_rods:
+        for cell_x, rod_offset_x in product(
+            spec.get_cell_center_x_values(),
+            bde.evenly_space_with_center(count=2, spacing=spec.rod_pitch_x),
+        ):
+            rod_x = cell_x + rod_offset_x
             p += bd.Pos(
                 X=rod_x, Z=spec.rod_center_z_from_bottom
             ) * final_rod_part.rotate(
                 axis=bd.Axis.X,
-                # +/-90 puts the top-side of the rod at the back.
-                # TODO: Pick which one.
-                angle=90,
+                # -90 puts the top-side of the rod at the back.
+                angle=-90,
             )
 
     return p
@@ -410,6 +467,12 @@ if __name__ == "__main__":
             )
         ),
     }
+
+    housing_height = (
+        parts["housing"].bounding_box().max.Z - parts["housing"].bounding_box().min.Z
+    )
+    clip_at_z = -housing_height / 2 + housing_spec_1.rod_center_z_from_bottom
+    logger.info(f"Clip at Z={clip_at_z:.3f}")
 
     logger.info("Saving CAD model(s)...")
 
