@@ -20,6 +20,7 @@ from typing import Literal
 import build123d as bd
 import build123d_ease as bde
 import git
+from bd_warehouse.gear import SpurGear
 from build123d_ease import show
 from loguru import logger
 
@@ -173,6 +174,12 @@ class HousingSpec:
 
     cell_count_x: int = 4
 
+    rod_length_past_outside_wall_to_gear: float = 1
+    gear_module_number: float = 0.2
+    gear_length: float = 7
+    gear_tooth_count: int = 12
+    gear_pressure_angle: float = 14.5  # Controls tooth length.
+
     def __post_init__(self) -> None:
         """Post initialization checks."""
 
@@ -241,6 +248,7 @@ class HousingSpec:
 
 def make_complete_rod(
     spec: HousingSpec,
+    draw_gear_mode: Literal["top", "bottom", "both"] | None = "top",
 ) -> bd.Part:
     """Make the complete rod, with the holder plates and extra length.
 
@@ -288,7 +296,6 @@ def make_complete_rod(
             "z",
         ),
     ]
-
     for final_rot_value in (0, 180):
         # Draw everything as though it's for the top (+Z).
         cur_bottom_z = spec.rod_props.length / 2
@@ -309,6 +316,37 @@ def make_complete_rod(
             ).rotate(axis=bd.Axis.X, angle=final_rot_value)
 
             cur_bottom_z += segment_length
+
+    # Add on the driving gears.
+    rot_vals = {
+        "top": (0,),
+        "bottom": (180,),
+        "both": (0, 180),
+        None: (),
+    }[draw_gear_mode]
+    for final_rot_value in rot_vals:
+        # Past outside_wall, toward the gear.
+        p += (
+            bd.Pos(Z=cur_bottom_z)
+            * bd.Cylinder(
+                radius=spec.rod_extension_od / 2,
+                height=spec.rod_length_past_outside_wall_to_gear,
+                align=bde.align.ANCHOR_BOTTOM,
+            )
+        ).rotate(axis=bd.Axis.X, angle=final_rot_value)
+
+        # Add the gear.
+        p += (
+            bd.Pos(Z=cur_bottom_z + spec.rod_length_past_outside_wall_to_gear)
+            * SpurGear(
+                module=spec.gear_module_number,
+                tooth_count=spec.gear_tooth_count,
+                thickness=spec.gear_length,
+                pressure_angle=spec.gear_pressure_angle,
+                root_fillet=0.001,  # Rounding at base of each tooth.
+                align=bde.align.ANCHOR_BOTTOM,
+            )
+        ).rotate(axis=bd.Axis.X, angle=final_rot_value)
 
     return p
 
@@ -377,7 +415,8 @@ def make_housing(
             align=bde.align.ANCHOR_BOTTOM,
         )
 
-    final_rod_part = make_complete_rod(spec)
+    final_rod_part_top_gear = make_complete_rod(spec, draw_gear_mode="top")
+    final_rod_part_bottom_gear = make_complete_rod(spec, draw_gear_mode="bottom")
 
     # For each `rod_x`.
     # Remove the rod holes.
@@ -432,14 +471,19 @@ def make_housing(
 
     # Add the rods.
     if enable_add_rods:
-        for cell_x, rod_offset_x in product(
-            spec.get_cell_center_x_values(),
-            bde.evenly_space_with_center(count=2, spacing=spec.rod_pitch_x),
+        for rod_num, (cell_x, rod_offset_x) in enumerate(
+            product(
+                spec.get_cell_center_x_values(),
+                bde.evenly_space_with_center(count=2, spacing=spec.rod_pitch_x),
+            )
         ):
             rod_x = cell_x + rod_offset_x
-            p += bd.Pos(
-                X=rod_x, Z=spec.rod_center_z_from_bottom
-            ) * final_rod_part.rotate(
+            rod_part = (
+                final_rod_part_top_gear
+                if rod_num % 2 == 0
+                else final_rod_part_bottom_gear
+            )
+            p += bd.Pos(X=rod_x, Z=spec.rod_center_z_from_bottom) * rod_part.rotate(
                 axis=bd.Axis.X,
                 # -90 puts the top-side of the rod at the back.
                 angle=-90,
