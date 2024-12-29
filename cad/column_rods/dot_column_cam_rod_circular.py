@@ -1,6 +1,8 @@
 """Cam rod for each column, rotated to a multiple of 45 degrees (8 positions).
 
 Would require that the bed be lifted.
+
+This design creates a circular cam rod, and each dot is a cone.
 """
 
 import copy
