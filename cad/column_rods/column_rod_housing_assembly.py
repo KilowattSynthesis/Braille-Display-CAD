@@ -10,6 +10,7 @@
 
 import copy
 import json
+import sys
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from itertools import product
@@ -21,6 +22,10 @@ import build123d_ease as bde
 import git
 from build123d_ease import show
 from loguru import logger
+
+# Prepare for imports from the parent directory.
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.absolute()))
+from cad.column_rods import dot_column_cam_rod_octagon
 
 
 @dataclass(kw_only=True)
@@ -42,7 +47,7 @@ class GenericRodProperties:
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
-        if self.min_od >= self.max_od:
+        if self.min_od > self.max_od:
             msg = "min_od must be less than max_od."
             raise ValueError(msg)
 
@@ -139,7 +144,7 @@ class HousingSpec:
     # Distance along the rod which is at the rod_interface_min_od.
     rod_interface_min_od_length: float = 1.2
     rod_interface_min_od: float = 1.2
-
+    # Rod extension from the loaded rod to the outer wall.
     rod_extension_od: float = 2.0
 
     # ##### Resume less-important settings (common mostly common across designs).
@@ -201,8 +206,11 @@ class HousingSpec:
     @property
     def total_y(self) -> float:
         """Total Y width of the housing."""
-        # TODO(KilowattSynthesis): Come up with something better than this.
-        return 12
+        return (
+            self.front_back_wall_thickness * 2
+            + self.rod_props.length
+            + self.rod_slop_axial
+        )
 
     @property
     def total_z(self) -> float:
@@ -440,6 +448,32 @@ def make_housing(
     return p
 
 
+def make_octagon_cam_housing_in_place() -> bd.Part:
+    """Make the octagon cam housing in place."""
+    # TODO(KilowattSynthesis): Could add arg - housing_spec_overrides: dict[str, Any]
+    cam_spec = dot_column_cam_rod_octagon.MainSpec()
+
+    rod_part = dot_column_cam_rod_octagon.make_cam_rod(cam_spec)
+
+    housing_spec = HousingSpec(
+        rod_part=rod_part,
+        rod_props=GenericRodProperties(
+            min_od=cam_spec.cam_rod_diameter_major,
+            max_od=cam_spec.cam_rod_diameter_major,
+            od_top_end=cam_spec.cam_rod_diameter_major,
+            od_bottom_end=cam_spec.cam_rod_diameter_major,
+            length=cam_spec.cam_rod_length,
+        ),
+    )
+
+    housing_part = make_housing(
+        housing_spec,
+        enable_add_rods=True,
+    )
+
+    return housing_part
+
+
 if __name__ == "__main__":
     start_time = datetime.now(UTC)
     py_file_name = Path(__file__).name
@@ -466,6 +500,7 @@ if __name__ == "__main__":
                 enable_add_rods=True,
             )
         ),
+        "octagon_cam_housing_print_in_place": show(make_octagon_cam_housing_in_place()),
     }
 
     housing_height = (
