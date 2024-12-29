@@ -1,0 +1,425 @@
+"""Housing which can work with any column rod design.
+
+## Spec for Column Rod Interface:
+    * An interesting part of the rod is inserted into a housing, and the
+        interface bearing rod ends are added.
+    * The column rod must be in the Z-axis.
+    * The rod's positioning does not matter. It will be centered by its bounding box.
+    * The rod will be rotated such that max-Z is at the back (max-Y).
+"""
+
+import copy
+import json
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from itertools import product
+from pathlib import Path
+
+import build123d as bd
+import build123d_ease as bde
+import git
+from build123d_ease import show
+from loguru import logger
+
+
+@dataclass(kw_only=True)
+class GenericRodProperties:
+    """Properties of a generic rod part being inserted into the assembly.
+
+    Used to gather information about the ball screw rod, cam rods, etc.
+    """
+
+    min_od: float
+    max_od: float
+    od_top_end: float  # Top end becomes the back.
+    od_bottom_end: float  # Bottom end becomes the front.
+
+    # Length of the "interesting" part of the rod.
+    length: float
+
+    # TODO(KilowattSynthesis): Add property about holes in the ends, maybe.
+
+    def __post_init__(self) -> None:
+        """Post initialization checks."""
+        if self.min_od >= self.max_od:
+            msg = "min_od must be less than max_od."
+            raise ValueError(msg)
+
+        if not (self.min_od <= self.od_top_end <= self.max_od):
+            msg = "od_top_end must be between min_od and max_od."
+            raise ValueError(msg)
+        if not (self.min_od <= self.od_bottom_end <= self.max_od):
+            msg = "od_bottom_end must be between min_od and max_od."
+            raise ValueError(msg)
+
+    def deep_copy(self) -> "GenericRodProperties":
+        """Copy the current properties."""
+        return copy.deepcopy(self)
+
+    def __str__(self) -> str:
+        """Return string representation of the properties, as JSON."""
+        return json.dumps(self.__dict__, indent=2)
+
+    # TODO(KilowattSynthesis): Add a method for validating that a part conforms.
+
+
+def make_generic_rod_example(
+    max_od: float, min_od: float, length: float
+) -> tuple[bd.Part, GenericRodProperties]:
+    """Make a generic rod part for the assembly."""
+    p = bd.Part(None)
+
+    segment_length = length / 4
+
+    # Prepare to remove a hole in the side.
+    remove_cylinder = bd.Pos(Z=length / 2) * bd.Cylinder(
+        radius=0.6 / 2,
+        height=max_od * 2,
+        rotation=(90, 0, 0),
+    )
+
+    p += bd.Cone(
+        bottom_radius=min_od / 2,
+        top_radius=max_od / 2,
+        height=segment_length,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+    p += (
+        bd.Pos(Z=segment_length)
+        * bd.Cylinder(
+            radius=max_od / 2,
+            height=segment_length,
+            align=bde.align.ANCHOR_BOTTOM,
+        )
+        - remove_cylinder
+    )
+    p += bd.Pos(Z=2 * segment_length) * bd.Cone(
+        bottom_radius=max_od / 2,
+        top_radius=min_od / 2,
+        height=segment_length,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+    p += bd.Pos(Z=3 * segment_length) * bd.Cone(
+        bottom_radius=min_od / 2,
+        top_radius=max_od / 2,
+        height=segment_length,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Remove a random hole in the side in its center.
+    # Doesn't work well with the render, but that's fine.
+
+    prop = GenericRodProperties(
+        min_od=min_od,
+        max_od=max_od,
+        od_top_end=max_od,
+        od_bottom_end=min_od,
+        length=length,
+    )
+    return (p, prop)
+
+
+@dataclass(kw_only=True)
+class HousingSpec:
+    """Specification for braille cell housing."""
+
+    rod_part: bd.Part
+    rod_props: GenericRodProperties
+
+    # Important settings.
+    rod_center_z_from_bottom: float = 4
+
+    # Amount of slop/clearance in radius.
+    rod_slop_radius: float = 0.18
+
+    # Amount of slop/clearance in axial direction.
+    rod_slop_axial: float = 0.5
+
+    rod_holder_plate_thickness: float = 1.5
+
+    rod_od_at_interface: float = 2.0
+
+    # ##### Resume less-important settings (common mostly common across designs).
+
+    dot_pitch_x: float = 2.5
+    dot_pitch_y: float = 2.5
+    cell_pitch_x: float = 6
+    cell_pitch_y: float = 10
+
+    # Diameter of dot holes on the top.
+    dot_hole_id: float = 1.7
+
+    rod_pitch_x: float = 2.5  # Very closely related to the cell pitch.
+    dist_rod_max_od_to_top_face: float = 1.5
+
+    # JLC: Wall thickness>1.2mm, thinnest part≥0.8mm, hole size≥1.5mm.
+    top_face_thickness: float = 1.2
+    left_right_wall_thickness: float = 1.2
+    front_back_wall_thickness: float = 1.2
+
+    # Distance from outer dots to mounting holes. PCB property.
+    x_dist_dots_to_mounting_holes: float = 5.0
+    mounting_hole_spacing_y: float = 3
+    mounting_hole_diameter: float = 2  # Thread-forming screws from bottom.
+    margin_around_mounting_holes: float = 5.0  # Sets box size. Radius.
+
+    cell_count_x: int = 4
+
+    def __post_init__(self) -> None:
+        """Post initialization checks."""
+
+    def deep_copy(self) -> "HousingSpec":
+        """Copy the current spec."""
+        return copy.deepcopy(self)
+
+    @property
+    def inner_cavity_size_x(self) -> float:
+        """Size of the inner cavity in the X direction."""
+        return (
+            self.cell_pitch_x * (self.cell_count_x - 1)
+            + self.dot_pitch_x
+            + (self.x_dist_dots_to_mounting_holes * 2)
+            - 3.5  # TODO(KilowattSynthesis): Tweak this.
+        )
+
+    @property
+    def total_x(self) -> float:
+        """Total X width of the housing."""
+        return (
+            (self.cell_pitch_x * (self.cell_count_x - 1))
+            + (self.dot_pitch_x)
+            + (self.x_dist_dots_to_mounting_holes * 2)
+            + (self.margin_around_mounting_holes * 2)
+            + (2 * self.left_right_wall_thickness)
+        )
+
+    @property
+    def total_y(self) -> float:
+        """Total Y width of the housing."""
+        # TODO(KilowattSynthesis): Come up with something better than this.
+        return 12
+
+    @property
+    def total_z(self) -> float:
+        """Total Z height of the housing."""
+        return (
+            self.rod_center_z_from_bottom
+            + self.rod_props.max_od / 2
+            + self.dist_rod_max_od_to_top_face
+            + self.top_face_thickness
+        )
+
+    @property
+    def mounting_hole_spacing_x(self) -> float:
+        """Spacing between the mounting holes, in X axis."""
+        return (
+            self.x_dist_dots_to_mounting_holes * 2
+            + self.cell_pitch_x * (self.cell_count_x - 1)
+            + self.dot_pitch_x
+        )
+
+    @property
+    def total_rod_length_to_end_of_blockers(self) -> float:
+        """Total length of the rod to the end of the blockers."""
+        return (
+            self.total_y
+            # Rod slop has half its distance on each side (so div-2, x2).
+            + self.rod_slop_axial
+            + self.rod_holder_plate_thickness
+        )
+
+    def get_cell_center_x_values(self) -> list[float]:
+        """Get the X coordinate of the center of each cell."""
+        return bde.evenly_space_with_center(
+            count=self.cell_count_x,
+            spacing=self.cell_pitch_x,
+        )
+
+
+def make_complete_rod(
+    spec: HousingSpec,
+) -> bd.Part:
+    """Make the complete rod, with the holder plates and extra length.
+
+    Output remains in the Z axis.
+    """
+    p = bd.Part(None)
+
+    # Center the rod.
+    p += (
+        bd.Pos(
+            (spec.rod_part.bounding_box().max.X + spec.rod_part.bounding_box().min.X)
+            / -2,
+            (spec.rod_part.bounding_box().max.Y + spec.rod_part.bounding_box().min.Y)
+            / -2,
+            (spec.rod_part.bounding_box().max.Z + spec.rod_part.bounding_box().min.Z)
+            / -2,
+        )
+        * spec.rod_part
+    )
+
+    # Add on the rod extensions.
+    # TODO(KilowattSynthesis): Could use Cone to grow it out to the inner holder plate.
+    each_rod_extension_length = (
+        spec.total_rod_length_to_end_of_blockers - spec.rod_props.length
+    ) / 2
+    # Top.
+    p += bd.Pos(Z=spec.rod_props.length / 2) * bd.Cylinder(
+        radius=spec.rod_od_at_interface / 2,
+        height=each_rod_extension_length,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+    # Bottom.
+    p += bd.Pos(Z=-spec.rod_props.length / 2) * bd.Cylinder(
+        radius=spec.rod_od_at_interface / 2,
+        height=each_rod_extension_length,
+        align=bde.align.ANCHOR_TOP,
+    )
+
+    # Add on the holder plates.
+    for z_sign, wall_side in product([1, -1], [1, -1]):
+        p += bd.Pos(
+            X=wall_side * spec.total_x / 2,
+            Z=z_sign * spec.total_y / 2,
+        ) * bd.Cylinder(
+            radius=spec.rod_holder_plate_thickness,
+            spec.rod_holder_plate_thickness,
+        )
+
+    return p
+
+
+def make_housing(
+    spec: HousingSpec,
+    *,
+    enable_add_rods: bool = False,
+    # enable_print_in_place: bool = False,
+) -> bd.Part:
+    """Make the housing that the screw fits into.
+
+    Args:
+        spec: The specification for the housing.
+        enable_add_rods: Whether to add all the rods.
+        enable_print_in_place: Whether to print the screws in place.
+
+    """
+    p = bd.Part(None)
+
+    # Create the main outer shell.
+    p += bd.Box(
+        spec.total_x,
+        spec.total_y,
+        spec.total_z,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Remove the box inside the walls.
+    p -= bd.Box(
+        spec.inner_cavity_size_x,
+        spec.total_y - 2 * spec.front_back_wall_thickness,
+        spec.total_z - spec.top_face_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    # Remove the mounting holes.
+    for x_val, y_val in product(
+        bde.evenly_space_with_center(
+            count=2,
+            spacing=spec.mounting_hole_spacing_x,
+        ),
+        bde.evenly_space_with_center(
+            count=3,
+            spacing=spec.mounting_hole_spacing_y,
+        ),
+    ):
+        p -= bd.Pos(x_val, y_val) * bd.Cylinder(
+            radius=spec.mounting_hole_diameter / 2,
+            height=spec.total_z,
+            align=bde.align.ANCHOR_BOTTOM,
+        )
+
+    # Remove the braille dot holes.
+    for cell_x, rod_offset_x, dot_offset_y in product(
+        spec.get_cell_center_x_values(),
+        bde.evenly_space_with_center(count=2, spacing=spec.dot_pitch_x),
+        bde.evenly_space_with_center(count=3, spacing=spec.dot_pitch_y),
+    ):
+        dot_x = cell_x + rod_offset_x
+        dot_y = dot_offset_y
+
+        p -= bd.Pos(dot_x, dot_y) * bd.Cylinder(
+            radius=spec.dot_hole_id / 2,
+            height=spec.total_z,
+            align=bde.align.ANCHOR_BOTTOM,
+        )
+
+    final_rod_part = make_complete_rod(spec)
+
+    # For each `rod_x`.
+    for cell_x, rod_offset_x in product(
+        spec.get_cell_center_x_values(),
+        bde.evenly_space_with_center(count=2, spacing=spec.rod_pitch_x),
+    ):
+        rod_x = cell_x + rod_offset_x
+
+        # Remove the rod holes.
+        p -= bd.Pos(X=rod_x, Z=spec.rod_center_z_from_bottom) * bd.Cylinder(
+            radius=spec.rod_od_at_interface / 2 - spec.rod_slop_radius,
+            height=spec.total_y,
+            rotation=(90, 0, 0),
+        )
+
+        if enable_add_rods:
+            # Add the rod.
+            p += bd.Pos(
+                X=rod_x, Z=spec.rod_center_z_from_bottom
+            ) * final_rod_part.rotate(
+                axis=bd.Axis.X,
+                # +/-90 puts the top-side of the rod at the back.
+                # TODO: Pick which one.
+                angle=90,
+            )
+
+    return p
+
+
+if __name__ == "__main__":
+    start_time = datetime.now(UTC)
+    py_file_name = Path(__file__).name
+    logger.info(f"Running {py_file_name}")
+
+    generic_rod_1_part, generic_rod_1_props = make_generic_rod_example(
+        max_od=2.4,
+        min_od=1.5,
+        length=6,
+    )
+    logger.info(f"Generic Rod 1 Properties: {generic_rod_1_props}")
+    housing_spec_1 = HousingSpec(
+        rod_part=generic_rod_1_part,
+        rod_props=generic_rod_1_props,
+    )
+
+    parts = {
+        "generic_rod": show(generic_rod_1_part),
+        "housing": show(make_housing(housing_spec_1)),
+        "complete_rod": show(make_complete_rod(housing_spec_1)),
+        "housing_with_rods": show(
+            make_housing(
+                housing_spec_1,
+                enable_add_rods=True,
+            )
+        ),
+    }
+
+    logger.info("Saving CAD model(s)...")
+
+    repo_dir = git.Repo(__file__, search_parent_directories=True).working_tree_dir
+    assert repo_dir
+    (export_folder := Path(repo_dir) / "build" / Path(__file__).stem).mkdir(
+        exist_ok=True, parents=True
+    )
+    for name, part in parts.items():
+        bd.export_stl(part, str(export_folder / f"{name}.stl"))
+        bd.export_step(part, str(export_folder / f"{name}.step"))
+
+    logger.info(f"Done running {py_file_name} in {datetime.now(UTC) - start_time}")
