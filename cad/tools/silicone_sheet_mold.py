@@ -6,6 +6,7 @@ from pathlib import Path
 
 import build123d as bd
 import build123d_ease as bde
+import git
 from build123d_ease import show
 from loguru import logger
 
@@ -224,12 +225,15 @@ if __name__ == "__main__":
 
     logger.info(f"Done showing {len(parts)} part(s). Saving them...")
 
-    (
-        export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
-    ).mkdir(
-        exist_ok=True,
-        parents=True,
+    logger.info("Saving CAD model(s)...")
+
+    repo_dir = git.Repo(__file__, search_parent_directories=True).working_tree_dir
+    assert repo_dir
+    (export_folder := Path(repo_dir) / "build" / Path(__file__).stem).mkdir(
+        exist_ok=True, parents=True
     )
     for name, part in parts.items():
         bd.export_stl(part, str(export_folder / f"{name}.stl"))
         bd.export_step(part, str(export_folder / f"{name}.step"))
+
+    logger.info(f"Done running {Path(__file__).name}")
