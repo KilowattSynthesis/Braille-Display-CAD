@@ -84,6 +84,7 @@ if __name__ == "__main__":
     parts = {
         "magnet_aligner_2mm_od": show(make_magnet_aligner(MainSpec(magnet_od=2.2))),
         "magnet_aligner_1mm_od": show(make_magnet_aligner(MainSpec(magnet_od=1.2))),
+        "magnet_aligner_1.6mm_od": show(make_magnet_aligner(MainSpec(magnet_od=1.6))),
     }
 
     logger.info("Saving CAD model(s)...")

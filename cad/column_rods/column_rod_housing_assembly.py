@@ -134,7 +134,7 @@ class HousingSpec:
     rod_props: GenericRodProperties
 
     # Important settings.
-    rod_center_z_from_bottom: float = 1.5
+    rod_center_z_from_bottom: float = 3.05  # 4.7mm motor OD/2 + 0.7mm motor leg length
 
     # Amount of slop in the radial direction. Radial clearance is half of this.
     rod_slop_diameter: float = 0.32
@@ -144,9 +144,9 @@ class HousingSpec:
 
     # Distance along the rod which is at the rod_interface_min_od.
     rod_interface_min_od_length: float = 1.2
-    rod_interface_min_od: float = 1.2
+    rod_interface_min_od: float = 1.4
     # Rod extension from the loaded rod to the outer wall.
-    rod_extension_od: float = 2.0
+    rod_extension_od: float = 2.2
 
     # ##### Resume less-important settings (common mostly common across designs).
 
@@ -174,14 +174,30 @@ class HousingSpec:
 
     cell_count_x: int = 4
 
-    rod_length_past_outside_wall_to_gear: float = 1
+    rod_length_past_outside_wall_to_gear_or_shaft: float = 0.5
     gear_module_number: float = 0.2
-    gear_length: float = 7
+    gear_length: float = 0  # Disabled.
     gear_tooth_count: int = 12
     gear_pressure_angle: float = 14.5  # Controls tooth length.
 
+    motor_shaft_hole_id_outer: float = 0.8
+    motor_shaft_hole_id_inner: float = 0.6
+    motor_shaft_hole_depth: float = 2  # 1.4mm nominally.
+    motor_shaft_grip_length: float = 3.2  # Fits magnet within.
+    motor_shaft_grip_od: float = 3.2
+
+    zeroing_magnet_od: float = 2.0
+    zeroing_magnet_height: float = 0.7  # Sink it a bit more.
+
     def __post_init__(self) -> None:
         """Post initialization checks."""
+        data = {
+            "inner_cavity_size_x": self.inner_cavity_size_x,
+            "total_x": self.total_x,
+            "total_y": self.total_y,
+            "total_z": self.total_z,
+        }
+        logger.info(json.dumps(data, indent=2))
 
         # TODO(KilowattSynthesis): Check the slop diameters.
 
@@ -313,7 +329,7 @@ def make_complete_rod(
                     height=segment_length,
                     align=bde.align.ANCHOR_BOTTOM,
                 )
-            ).rotate(axis=bd.Axis.X, angle=final_rot_value)
+            ).rotate(axis=bd.Axis.Y, angle=final_rot_value)
 
             cur_bottom_z += segment_length
 
@@ -330,23 +346,69 @@ def make_complete_rod(
             bd.Pos(Z=cur_bottom_z)
             * bd.Cylinder(
                 radius=spec.rod_extension_od / 2,
-                height=spec.rod_length_past_outside_wall_to_gear,
+                height=spec.rod_length_past_outside_wall_to_gear_or_shaft,
                 align=bde.align.ANCHOR_BOTTOM,
             )
-        ).rotate(axis=bd.Axis.X, angle=final_rot_value)
+        ).rotate(axis=bd.Axis.Y, angle=final_rot_value)
 
         # Add the gear.
+        if spec.gear_length > 0:
+            p += (
+                bd.Pos(
+                    Z=cur_bottom_z + spec.rod_length_past_outside_wall_to_gear_or_shaft
+                )
+                * SpurGear(
+                    module=spec.gear_module_number,
+                    tooth_count=spec.gear_tooth_count,
+                    thickness=spec.gear_length,
+                    pressure_angle=spec.gear_pressure_angle,
+                    root_fillet=0.001,  # Rounding at base of each tooth.
+                    align=bde.align.ANCHOR_BOTTOM,
+                )
+            ).rotate(axis=bd.Axis.Y, angle=final_rot_value)
+
+        # Add the motor shaft gripper and hole.
         p += (
-            bd.Pos(Z=cur_bottom_z + spec.rod_length_past_outside_wall_to_gear)
-            * SpurGear(
-                module=spec.gear_module_number,
-                tooth_count=spec.gear_tooth_count,
-                thickness=spec.gear_length,
-                pressure_angle=spec.gear_pressure_angle,
-                root_fillet=0.001,  # Rounding at base of each tooth.
+            bd.Pos(Z=cur_bottom_z + spec.rod_length_past_outside_wall_to_gear_or_shaft)
+            * bd.Cylinder(
+                radius=spec.motor_shaft_grip_od / 2,
+                height=spec.motor_shaft_grip_length,
                 align=bde.align.ANCHOR_BOTTOM,
             )
-        ).rotate(axis=bd.Axis.X, angle=final_rot_value)
+        ).rotate(axis=bd.Axis.Y, angle=final_rot_value)
+        p -= (
+            bd.Pos(
+                Z=cur_bottom_z
+                + spec.rod_length_past_outside_wall_to_gear_or_shaft
+                + (spec.motor_shaft_grip_length - spec.motor_shaft_hole_depth)
+            )
+            * bd.Cone(
+                top_radius=spec.motor_shaft_hole_id_outer / 2,
+                bottom_radius=spec.motor_shaft_hole_id_inner / 2,
+                height=spec.motor_shaft_hole_depth,
+                align=bde.align.ANCHOR_BOTTOM,
+            )
+        ).rotate(axis=bd.Axis.Y, angle=final_rot_value)
+        # Remove a hole for the the zeroing magnet on each rod.
+        p -= (
+            bd.Cylinder(
+                radius=spec.zeroing_magnet_od / 2,
+                height=spec.zeroing_magnet_height * 2,
+            )
+            .rotate(bd.Axis.X, angle=90)
+            .translate(
+                (
+                    0,
+                    -spec.motor_shaft_grip_od / 2,
+                    (
+                        cur_bottom_z
+                        + spec.rod_length_past_outside_wall_to_gear_or_shaft
+                        + spec.motor_shaft_grip_length / 2
+                    ),
+                )
+            )
+            .rotate(axis=bd.Axis.Y, angle=final_rot_value)
+        )
 
     return p
 

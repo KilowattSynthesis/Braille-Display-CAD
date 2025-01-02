@@ -41,7 +41,8 @@ class MainSpec:
 
     pcb_length_x: float = 60
     pcb_length_y: float = 50
-    pcb_and_housing_thickness_z: float = 1.6 + 8 + 2  # PCB + Housing + Screw_Heads
+    # PCB + Housing + Screw_Heads -or- PCB + Raiser_Motor_OD + Raiser_Motor_Clip
+    pcb_and_housing_thickness_z: float = 1.6 + 6.0 + 1.0
     pcb_travel_z: float = 2
     pcb_extra_z: float = 3  # Extra dist in Z, for housing-to-PCB screw heads.
 
@@ -65,7 +66,7 @@ class MainSpec:
     def __post_init__(self) -> None:
         """Post initialization checks."""
         data = {
-            "something": 12,
+            "enclosure_total_z": self.enclosure_total_z,
         }
         logger.info(json.dumps(data, indent=2))
 
