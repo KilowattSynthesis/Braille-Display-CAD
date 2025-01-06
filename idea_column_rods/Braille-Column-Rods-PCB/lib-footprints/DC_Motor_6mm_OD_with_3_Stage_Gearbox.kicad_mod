@@ -189,17 +189,6 @@
 		(layer "F.SilkS")
 		(uuid "2bb85f94-b4df-4f09-a5c8-c5a50eea0cd7")
 	)
-	(fp_rect
-		(start 2.9 -1)
-		(end 3.9254 1)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(fill solid)
-		(layer "F.SilkS")
-		(uuid "9884aaf3-11a6-4397-bad8-e8582d9bc180")
-	)
 	(fp_line
 		(start -25.6 -4)
 		(end -25.6 4)
@@ -252,7 +241,7 @@
 	)
 	(fp_line
 		(start -18.1 7.5)
-		(end -2.1 7.5)
+		(end -2 7.5)
 		(stroke
 			(width 0.05)
 			(type default)
@@ -261,7 +250,7 @@
 		(uuid "16e35f18-8794-4e77-b2a7-852d327371e4")
 	)
 	(fp_line
-		(start -2.1 -7.5)
+		(start -2 -7.5)
 		(end -18.1 -7.5)
 		(stroke
 			(width 0.05)
@@ -271,18 +260,38 @@
 		(uuid "aa1ce8ac-45ee-4e15-9673-10f60f9a7af6")
 	)
 	(fp_line
-		(start -2.1 -5)
-		(end -2.1 -7.5)
+		(start -2 -7.5)
+		(end -2 -6)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
 		(layer "F.CrtYd")
-		(uuid "26b640be-4fc9-417f-a898-ad9902fcb560")
+		(uuid "946d2f1f-ad9a-4f9d-bda3-e57219c2da96")
 	)
 	(fp_line
-		(start -2.1 5)
-		(end 3.9 5)
+		(start -2 -6)
+		(end 9.5 -6)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "f412ab1f-ca6b-4e59-a138-b25863bdd781")
+	)
+	(fp_line
+		(start -2 6)
+		(end -2 7.5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "098731e5-86d8-4bef-8989-61876fcf0b8a")
+	)
+	(fp_line
+		(start -2 6)
+		(end 9.5 6)
 		(stroke
 			(width 0.05)
 			(type default)
@@ -291,74 +300,14 @@
 		(uuid "d71e325c-f2c8-41fe-9d44-0738c5f632f7")
 	)
 	(fp_line
-		(start -2.1 7.5)
-		(end -2.1 5)
+		(start 9.5 -6)
+		(end 9.5 6)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
 		(layer "F.CrtYd")
-		(uuid "77735588-65a8-46a8-a8d2-a5e37d396da1")
-	)
-	(fp_line
-		(start 3.9 -5)
-		(end -2.1 -5)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "F.CrtYd")
-		(uuid "6b3f4b38-8410-490f-9d2f-8799083e551a")
-	)
-	(fp_line
-		(start 3.9 -2)
-		(end 3.9 -5)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "F.CrtYd")
-		(uuid "a4d582da-2e09-40b1-a17d-772ce2fb0bfa")
-	)
-	(fp_line
-		(start 3.9 5)
-		(end 3.9 2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "F.CrtYd")
-		(uuid "abbe2150-b96f-488e-873f-785dc01cc506")
-	)
-	(fp_line
-		(start 4.4 -2)
-		(end 3.9 -2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "F.CrtYd")
-		(uuid "3c3c405b-0806-4041-838a-81bc06213b63")
-	)
-	(fp_line
-		(start 4.4 2)
-		(end 3.9 2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "F.CrtYd")
-		(uuid "b0a65115-cc09-4b96-9207-9661ed93cabc")
-	)
-	(fp_line
-		(start 4.4 2)
-		(end 4.4 -2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "F.CrtYd")
-		(uuid "19080c94-530b-451d-bf6b-8771aa8338a4")
+		(uuid "241c1d54-7ac7-4235-9846-671d9beabebb")
 	)
 	(fp_text user "${REFERENCE}"
 		(at -28.1 0 90)
@@ -373,9 +322,9 @@
 		)
 	)
 	(pad "" np_thru_hole rect
-		(at 1.3 0)
+		(at 1.2 0)
 		(size 1.524 1.524)
-		(drill oval 3 8)
+		(drill oval 3 10)
 		(layers "*.Mask")
 		(uuid "7d4644f3-acdc-49da-a26b-cd681d406512")
 	)
@@ -473,6 +422,22 @@
 		(remove_unused_layers no)
 		(uuid "8178cebd-af7b-4c1d-bc7d-e010c3831697")
 	)
+	(pad "MP" thru_hole circle
+		(at 6.9 -3.5)
+		(size 4.4 4.4)
+		(drill 2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "675c3491-c7a7-4894-a6bd-32455c89930a")
+	)
+	(pad "MP" thru_hole circle
+		(at 6.9 3.5)
+		(size 4.4 4.4)
+		(drill 2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "458a79e4-7abd-40a2-9c8c-6d088ef22300")
+	)
 	(model "${KIPRJMOD}/lib-cad/dc_motor_and_gearbox_6mm_3_stages.step"
 		(offset
 			(xyz 0 0 3)
@@ -482,6 +447,28 @@
 		)
 		(rotate
 			(xyz 90 0 90)
+		)
+	)
+	(model "${KIPRJMOD}/lib-cad/cam.step"
+		(offset
+			(xyz 0 0 3)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 90 90 90)
+		)
+	)
+	(model "${KIPRJMOD}/lib-cad/bushing_block.step"
+		(offset
+			(xyz 6.9 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
 		)
 	)
 )

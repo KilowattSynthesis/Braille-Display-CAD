@@ -929,108 +929,6 @@
 				)
 			)
 		)
-		(symbol "Mechanical:MountingHole_Pad"
-			(pin_numbers hide)
-			(pin_names
-				(offset 1.016) hide)
-			(exclude_from_sim yes)
-			(in_bom no)
-			(on_board yes)
-			(property "Reference" "H"
-				(at 0 6.35 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "MountingHole_Pad"
-				(at 0 4.445 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Mounting Hole with connection"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "mounting hole"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "MountingHole*Pad*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "MountingHole_Pad_0_1"
-				(circle
-					(center 0 1.27)
-					(radius 1.27)
-					(stroke
-						(width 1.27)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "MountingHole_Pad_1_1"
-				(pin input line
-					(at 0 -2.54 90)
-					(length 2.54)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
 		(symbol "power:+3V3"
 			(power)
 			(pin_numbers hide)
@@ -1396,10 +1294,6 @@
 		(at 143.51 71.12)
 		(uuid "3bb28e23-edc6-4a7a-99f4-6b479f1f411b")
 	)
-	(no_connect
-		(at 24.13 36.83)
-		(uuid "8b1b8f2d-1316-43c5-8824-9f3252335f9f")
-	)
 	(wire
 		(pts
 			(xy 232.41 144.78) (xy 232.41 148.59)
@@ -1745,18 +1639,6 @@
 		(uuid 96f751dc-0290-474f-a635-f3a1ddaa2454)
 	)
 	(rectangle
-		(start 18.415 15.875)
-		(end 65.405 39.37)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid f44693ca-ebd8-4bc7-80d0-e4b19603c38a)
-	)
-	(rectangle
 		(start 71.12 53.975)
 		(end 153.035 87.63)
 		(stroke
@@ -1777,16 +1659,6 @@
 			)
 		)
 		(uuid "21618ec2-0e0a-47e3-b6e0-14f2ceaa2243")
-	)
-	(text "Near Motor"
-		(exclude_from_sim no)
-		(at 36.576 31.496 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "3b8ecf71-96c6-4bbe-8924-ea1b3ff57615")
 	)
 	(text "Hall Magnet Sensor\n(Analog)"
 		(exclude_from_sim no)
@@ -1809,16 +1681,6 @@
 			)
 		)
 		(uuid "97d69d98-a355-4c23-8df6-4f3fdcb85b95")
-	)
-	(text "Corner Mounting Holes"
-		(exclude_from_sim no)
-		(at 30.988 18.796 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "ee503bb3-9164-49de-b941-ed148ca1ec2b")
 	)
 	(hierarchical_label "IN_A"
 		(shape input)
@@ -2113,85 +1975,6 @@
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR095")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole_Pad")
-		(at 24.13 34.29 0)
-		(unit 1)
-		(exclude_from_sim yes)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "61cf36aa-7e4e-4aec-81aa-35ad5c90952c")
-		(property "Reference" "H5"
-			(at 26.67 31.7499 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole_Pad"
-			(at 26.67 34.2899 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
-			(at 24.13 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 24.13 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Mounting Hole with connection"
-			(at 24.13 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "22a35f47-e72b-4c5c-a744-c873cd6e0aa5")
-		)
-		(instances
-			(project "Braille-Column-Rods-PCB"
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/2b0fba1b-003e-4494-b9f7-98e2ce35fa03"
-					(reference "H8")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/4a266777-439f-4c03-9f8b-0659894f2f29"
-					(reference "H6")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6d14cd74-7953-4982-bf48-b3d2560b5e8c"
-					(reference "H5")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
-					(reference "H7")
 					(unit 1)
 				)
 			)
