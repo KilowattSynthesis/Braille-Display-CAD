@@ -3574,7 +3574,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "00-lib-footprints:SOT-23-Hall"
 			(at 125.73 60.198 0)
 			(effects
 				(font
