@@ -1768,17 +1768,6 @@
 		)
 		(uuid f90028d9-aa4f-48f6-a79d-53aa1d7fec76)
 	)
-	(text "TODO: Add zeroing mechanism(s) - for motor position (done) and/or for raise/lower self-check (TODO)"
-		(exclude_from_sim no)
-		(at 63.754 106.172 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "00dd3433-d549-400f-9a1d-3d5578b4ddcd")
-	)
 	(text "LED Indicator Lights for Direction\n(Forward and Reverse)"
 		(exclude_from_sim no)
 		(at 195.834 46.228 0)
@@ -1810,17 +1799,6 @@
 			)
 		)
 		(uuid "590f741f-e955-4308-b549-014b86de2442")
-	)
-	(text "TODO: Add mounting mechanisms for dc motor"
-		(exclude_from_sim no)
-		(at 63.5 111.252 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "69c94912-7d80-47f7-9a6e-99e20cdd1a9e")
 	)
 	(text "Motor: https://www.aliexpress.com/item/1005008297964764.html\n6mm OD 270 RPM Planetary Gear Motor"
 		(exclude_from_sim no)
