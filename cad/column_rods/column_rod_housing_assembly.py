@@ -191,15 +191,33 @@ class HousingSpec:
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
+        magnet_coord_y = (
+            self.total_y / 2
+            + self.rod_slop_axial / 2
+            + self.rod_length_past_outside_wall_to_gear_or_shaft
+            + self.motor_shaft_grip_length / 2
+        )
+
+        motor_shaft_gripper_max_y = (
+            self.total_y / 2
+            + self.rod_slop_axial / 2
+            + self.rod_length_past_outside_wall_to_gear_or_shaft
+            + self.motor_shaft_grip_length
+        )
+
         data = {
+            "mounting_hole_spacing_x": self.mounting_hole_spacing_x,
             "inner_cavity_size_x": self.inner_cavity_size_x,
             "total_x": self.total_x,
             "total_y": self.total_y,
             "total_z": self.total_z,
+            "get_cell_center_x_values()": self.get_cell_center_x_values(),
+            "magnet_coord_y": magnet_coord_y,  # PCB design.
+            "motor_shaft_gripper_max_y": motor_shaft_gripper_max_y,  # PCB design.
         }
         logger.info(json.dumps(data, indent=2))
 
-        # TODO(KilowattSynthesis): Check the slop diameters.
+        # TODO(KilowattSynthesis): Validate the slop diameters.
 
     def deep_copy(self) -> "HousingSpec":
         """Copy the current spec."""
@@ -580,6 +598,40 @@ def make_octagon_cam_housing_in_place() -> bd.Part:
     return housing_part
 
 
+def print_pcb_column_x_coords(
+    spec: HousingSpec,
+    *,
+    pcb_housing_center_x: float = 110.25,
+    pcb_housing_center_y: float = 125,
+) -> None:
+    """Print the X coordinates of the column cells."""
+    _pcb_housing_center_y = pcb_housing_center_y
+
+    cell_center_x_values = spec.get_cell_center_x_values()
+
+    back_side_x_vals: list[float] = []  # Towards +Y.
+    front_side_x_vals: list[float] = []  # Towards -Y.
+
+    for cell_x in cell_center_x_values:
+        for rod_x_sign in (-1, 1):
+            rod_x = pcb_housing_center_x + cell_x + (rod_x_sign * spec.rod_pitch_x / 2)
+            if rod_x_sign == -1:
+                back_side_x_vals.append(rod_x)
+            elif rod_x_sign == 1:
+                front_side_x_vals.append(rod_x)
+            else:
+                msg = "Invalid rod_x_sign."
+                raise ValueError(msg)
+
+    logger.info(f"Back Side X Vals: {back_side_x_vals}")
+    logger.info(f"Front Side X Vals: {front_side_x_vals}")
+
+    assert len(back_side_x_vals) == len(front_side_x_vals)
+    assert (
+        len(back_side_x_vals) + len(front_side_x_vals) == len(cell_center_x_values) * 2
+    )
+
+
 if __name__ == "__main__":
     start_time = datetime.now(UTC)
     py_file_name = Path(__file__).name
@@ -595,6 +647,8 @@ if __name__ == "__main__":
         rod_part=generic_rod_1_part,
         rod_props=generic_rod_1_props,
     )
+
+    print_pcb_column_x_coords(housing_spec_1)
 
     parts = {
         "generic_rod": show(generic_rod_1_part),
