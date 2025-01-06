@@ -40,20 +40,24 @@ class MainSpec:
     cam_main_od: float = 8.0
 
     # "zero" refers to the homing magnet holder section.
-    zero_length: float = 3.0
-    zero_od: float = 4.25
+    homing_length: float = 3.0
+    homing_od: float = 3.5
 
     magnet_od = 2.0
     magnet_depth: float = 2.0  # Nominally 1.0, but a bit extra is good.
 
-    bushing_part_length: float = 3.0
-    bushing_part_od: float = 3.0
+    cam_to_block_slop: float = 1.0
+
+    bushing_block_thickness: float = 4
 
     bushing_block_wall_thickness: float = 2.0
     bushing_block_slop_diameter: float = 0.5
 
     bushing_block_screw_hole_id: float = 1.9  # M2 thread forming screw.
-    bushing_block_screw_hole_sep: float = 7.0  # Center to center.
+    bushing_block_screw_hole_sep: float = 8.0  # Center to center.
+
+    bushing_hall_sensor_width: float = 3.5 + 1
+    bushing_hall_sensor_height: float = 0.01
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
@@ -85,8 +89,8 @@ def make_cam(spec: MainSpec) -> bd.Part:
 
     # Add the homing magnet holder.
     p += bd.Pos(Z=spec.cam_length) * bd.Cylinder(
-        spec.zero_od / 2,
-        spec.zero_length,
+        spec.homing_od / 2,
+        spec.homing_length + spec.bushing_block_thickness + spec.cam_to_block_slop,
         align=bde.align.ANCHOR_BOTTOM,
     )
 
@@ -112,22 +116,23 @@ def make_cam(spec: MainSpec) -> bd.Part:
         .translate(
             (
                 0,
-                -spec.zero_od / 2,
-                (spec.cam_length + spec.zero_length / 2),
+                -spec.homing_od / 2,
+                (
+                    spec.cam_length
+                    + spec.bushing_block_thickness
+                    + spec.cam_to_block_slop
+                    + spec.homing_length / 2
+                ),
             )
         )
     )
 
-    # Add the bushing part.
-    p += bd.Pos(Z=spec.cam_length + spec.zero_length) * bd.Cylinder(
-        spec.bushing_part_od / 2,
-        spec.bushing_part_length,
-        align=bde.align.ANCHOR_BOTTOM,
-    )
-
     # Remove a tiny divot for centering.
     p -= bd.Pos(
-        Z=spec.zero_length + spec.cam_length + spec.bushing_part_length
+        Z=spec.cam_length
+        + spec.bushing_block_thickness
+        + spec.homing_length
+        + spec.cam_to_block_slop
     ) * bd.Cone(
         top_radius=0.3,
         bottom_radius=0.1,
@@ -146,7 +151,7 @@ def make_bushing_block(spec: MainSpec) -> bd.Part:
     p = bd.Part(None)
 
     p += bd.Box(
-        spec.bushing_part_length,
+        spec.bushing_block_thickness,
         (
             spec.bushing_block_screw_hole_sep
             + spec.bushing_block_screw_hole_id
@@ -162,8 +167,8 @@ def make_bushing_block(spec: MainSpec) -> bd.Part:
 
     # Remove the hole (making it a bushing).
     p -= bd.Pos(Z=spec.shaft_dist_from_pcb) * bd.Cylinder(
-        spec.bushing_part_od / 2 + spec.bushing_block_slop_diameter / 2,
-        spec.bushing_part_length * 5,  # Arbitrary.
+        spec.homing_od / 2 + spec.bushing_block_slop_diameter / 2,
+        spec.bushing_block_thickness * 5,  # Arbitrary.
     ).rotate(bd.Axis.Y, angle=90)
 
     for y_value in bde.evenly_space_with_center(
@@ -175,6 +180,14 @@ def make_bushing_block(spec: MainSpec) -> bd.Part:
             height=spec.shaft_dist_from_pcb * 3,
             align=bde.align.ANCHOR_BOTTOM,
         )
+
+    # Remove the hall sensor hole.
+    p -= bd.Box(
+        20,
+        spec.bushing_hall_sensor_width,
+        spec.bushing_hall_sensor_height,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
 
     return p
 
@@ -200,7 +213,7 @@ if __name__ == "__main__":
     parts = {
         "cam": show(make_cam(MainSpec())),
         "assembly_cam_and_dc_motor": show(make_assembly_cam_and_dc_motor(MainSpec())),
-        "bushing_block": show(make_bushing_block(MainSpec())),
+        "bushing_block": (make_bushing_block(MainSpec())),
     }
 
     logger.info("Saving CAD model(s)...")
