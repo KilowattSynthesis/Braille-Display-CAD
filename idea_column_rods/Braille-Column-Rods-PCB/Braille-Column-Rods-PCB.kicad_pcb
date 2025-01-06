@@ -39799,7 +39799,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "Cell Housing:\n	* Mounting hole spacing (X) = 30.5mm\n	* Center = (110.25mm, 125mm)"
+	(gr_text "* Cell Housing:\n	* Mounting hole spacing (X) = 30.5mm\n	* Center = (110.25mm, 125mm)\n\n* Rods Dimensions:\n	* Back Side X Vals: [98.75, 104.75, 110.75, 116.75]\n	* Front Side X Vals: [103.75, 109.75, 115.75, 121.75]\n	* magnet_coord_y: 8.7\n	* motor_shaft_gripper_max_y: 10.3"
 		(at 192 103.75 0)
 		(layer "Cmts.User")
 		(uuid "1a798cc3-dfad-4f52-8ed1-ca3d746ec565")
