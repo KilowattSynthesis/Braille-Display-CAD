@@ -114,4 +114,16 @@
 		(remove_unused_layers no)
 		(uuid "43a80a44-6c09-4827-b328-1f72ca04fdc4")
 	)
+	(model "${KIPRJMOD}/lib-cad/octagon_cam_housing_print_in_place.step"
+		(opacity 0.6400)
+		(offset
+			(xyz 15.25 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

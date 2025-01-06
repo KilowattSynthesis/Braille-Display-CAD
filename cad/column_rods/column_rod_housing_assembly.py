@@ -614,7 +614,7 @@ def print_pcb_column_x_coords(
 
     for cell_x in cell_center_x_values:
         for rod_x_sign in (-1, 1):
-            rod_x = pcb_housing_center_x + cell_x + rod_x_sign * spec.rod_pitch_x
+            rod_x = pcb_housing_center_x + cell_x + (rod_x_sign * spec.rod_pitch_x / 2)
             if rod_x_sign == -1:
                 back_side_x_vals.append(rod_x)
             elif rod_x_sign == 1:
