@@ -1397,10 +1397,6 @@
 		(uuid "3bb28e23-edc6-4a7a-99f4-6b479f1f411b")
 	)
 	(no_connect
-		(at 24.13 27.94)
-		(uuid "6668400b-9b16-4409-8aa0-664046b52a0a")
-	)
-	(no_connect
 		(at 24.13 36.83)
 		(uuid "8b1b8f2d-1316-43c5-8824-9f3252335f9f")
 	)
@@ -1771,16 +1767,6 @@
 			(type none)
 		)
 		(uuid f90028d9-aa4f-48f6-a79d-53aa1d7fec76)
-	)
-	(text "Legit Corner (Unused)"
-		(exclude_from_sim no)
-		(at 41.656 23.114 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "005f5afc-8515-4cc0-80d1-0f90640dfa19")
 	)
 	(text "TODO: Add zeroing mechanism(s) - for motor position (done) and/or for raise/lower self-check (TODO)"
 		(exclude_from_sim no)
@@ -2392,85 +2378,6 @@
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "D19")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole_Pad")
-		(at 24.13 25.4 0)
-		(unit 1)
-		(exclude_from_sim yes)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "67a48477-fdbc-4b65-b403-f23edb248fbf")
-		(property "Reference" "H1"
-			(at 26.67 22.8599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole_Pad"
-			(at 26.67 25.3999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
-			(at 24.13 25.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 24.13 25.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Mounting Hole with connection"
-			(at 24.13 25.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0cdbcea4-2f16-434b-9013-f5d160a718a1")
-		)
-		(instances
-			(project "Braille-Column-Rods-PCB"
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/2b0fba1b-003e-4494-b9f7-98e2ce35fa03"
-					(reference "H4")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/4a266777-439f-4c03-9f8b-0659894f2f29"
-					(reference "H2")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6d14cd74-7953-4982-bf48-b3d2560b5e8c"
-					(reference "H1")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
-					(reference "H3")
 					(unit 1)
 				)
 			)
