@@ -108,8 +108,8 @@
 		(uuid "0d7788fa-0a72-4e65-a6b7-2ce2c5b09f53")
 	)
 	(fp_line
-		(start -10.8 -3)
-		(end -10.8 3)
+		(start -10.8 -1.5)
+		(end -10.8 1.5)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -118,28 +118,8 @@
 		(uuid "02c52495-2862-43d3-af12-03ca0101c511")
 	)
 	(fp_line
-		(start -8.85 -3)
-		(end -12.35 -3)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "e5fda86f-e1f4-468c-af75-2abadb84b846")
-	)
-	(fp_line
-		(start -8.85 3)
-		(end -12.35 3)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "9dc08f50-da3a-4493-8072-10058853aea7")
-	)
-	(fp_line
 		(start -1.1 -3)
-		(end -3.35 -3)
+		(end -1.75 -3)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -149,7 +129,7 @@
 	)
 	(fp_line
 		(start -1.1 3)
-		(end -3.35 3)
+		(end -1.75 3)
 		(stroke
 			(width 0.1)
 			(type default)
@@ -467,7 +447,23 @@
 		(uuid "ebab0bbd-0e51-44d7-b9a1-c4c20e62cdf2")
 	)
 	(pad "MP" thru_hole circle
-		(at -6.1 -4.5)
+		(at -9.8 -4.5)
+		(size 5.6 5.6)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "c1fd22e6-59fa-405e-968e-d746d81bb9bd")
+	)
+	(pad "MP" thru_hole circle
+		(at -9.8 4.5)
+		(size 5.6 5.6)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "6d6c6096-9b62-455e-8efb-50d374c54731")
+	)
+	(pad "MP" thru_hole circle
+		(at -4.5 -4.5)
 		(size 5.6 5.6)
 		(drill 3.2)
 		(layers "*.Cu" "*.Mask")
@@ -475,7 +471,7 @@
 		(uuid "3df30085-2437-4d3a-98a2-5b64794e9425")
 	)
 	(pad "MP" thru_hole circle
-		(at -6.1 4.5)
+		(at -4.5 4.5)
 		(size 5.6 5.6)
 		(drill 3.2)
 		(layers "*.Cu" "*.Mask")
@@ -484,18 +480,20 @@
 	)
 	(pad "MP" thru_hole circle
 		(at 4.4 -3.5)
-		(size 4.4 4.4)
+		(size 2.4 2.4)
 		(drill 2)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
+		(clearance 1)
 		(uuid "675c3491-c7a7-4894-a6bd-32455c89930a")
 	)
 	(pad "MP" thru_hole circle
 		(at 4.4 3.5)
-		(size 4.4 4.4)
+		(size 2.4 2.4)
 		(drill 2)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
+		(clearance 1)
 		(uuid "458a79e4-7abd-40a2-9c8c-6d088ef22300")
 	)
 	(model "${KIPRJMOD}/lib-cad/dc_motor_and_gearbox_6mm_3_stages.step"

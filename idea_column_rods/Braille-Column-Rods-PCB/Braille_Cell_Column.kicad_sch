@@ -4,6 +4,11 @@
 	(generator_version "8.0")
 	(uuid "d3cbee0c-f64e-4154-bf22-60ee8f65a426")
 	(paper "USLetter")
+	(title_block
+		(title "Braille Cam Rod Prototype (Type 4)")
+		(date "2025-01-06")
+		(rev "Rev 1")
+	)
 	(lib_symbols
 		(symbol "00-lib-symbols:MT910xET"
 			(exclude_from_sim no)

@@ -233,4 +233,15 @@
 		(thermal_bridge_angle 45)
 		(uuid "19bf90ef-8244-4827-909b-9f1d2a353246")
 	)
+	(model "${KIPRJMOD}/lib-cad/micro_stepper_motor_od_4p7.step"
+		(offset
+			(xyz 0 -0.5 2.5)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 90 -180 0)
+		)
+	)
 )
