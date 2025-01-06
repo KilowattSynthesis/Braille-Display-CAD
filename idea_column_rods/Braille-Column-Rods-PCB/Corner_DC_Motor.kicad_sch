@@ -929,6 +929,108 @@
 				)
 			)
 		)
+		(symbol "Mechanical:MountingHole_Pad"
+			(pin_numbers hide)
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim yes)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole_Pad"
+				(at 0 4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole with connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*Pad*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_Pad_0_1"
+				(circle
+					(center 0 1.27)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MountingHole_Pad_1_1"
+				(pin input line
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "power:+3V3"
 			(power)
 			(pin_numbers hide)
@@ -1291,8 +1393,16 @@
 		(uuid "ef0a03ed-9118-4d75-b933-6c7e3072c491")
 	)
 	(no_connect
-		(at 130.81 71.12)
+		(at 143.51 71.12)
 		(uuid "3bb28e23-edc6-4a7a-99f4-6b479f1f411b")
+	)
+	(no_connect
+		(at 24.13 27.94)
+		(uuid "6668400b-9b16-4409-8aa0-664046b52a0a")
+	)
+	(no_connect
+		(at 24.13 36.83)
+		(uuid "8b1b8f2d-1316-43c5-8824-9f3252335f9f")
 	)
 	(wire
 		(pts
@@ -1639,6 +1749,18 @@
 		(uuid 96f751dc-0290-474f-a635-f3a1ddaa2454)
 	)
 	(rectangle
+		(start 18.415 15.875)
+		(end 65.405 39.37)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid f44693ca-ebd8-4bc7-80d0-e4b19603c38a)
+	)
+	(rectangle
 		(start 71.12 53.975)
 		(end 153.035 87.63)
 		(stroke
@@ -1649,6 +1771,16 @@
 			(type none)
 		)
 		(uuid f90028d9-aa4f-48f6-a79d-53aa1d7fec76)
+	)
+	(text "Legit Corner (Unused)"
+		(exclude_from_sim no)
+		(at 41.656 23.114 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "005f5afc-8515-4cc0-80d1-0f90640dfa19")
 	)
 	(text "TODO: Add zeroing mechanism(s) - for motor position (done) and/or for raise/lower self-check (TODO)"
 		(exclude_from_sim no)
@@ -1670,6 +1802,16 @@
 			)
 		)
 		(uuid "21618ec2-0e0a-47e3-b6e0-14f2ceaa2243")
+	)
+	(text "Near Motor"
+		(exclude_from_sim no)
+		(at 36.576 31.496 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "3b8ecf71-96c6-4bbe-8924-ea1b3ff57615")
 	)
 	(text "Hall Magnet Sensor\n(Analog)"
 		(exclude_from_sim no)
@@ -1703,6 +1845,16 @@
 			)
 		)
 		(uuid "97d69d98-a355-4c23-8df6-4f3fdcb85b95")
+	)
+	(text "Corner Mounting Holes"
+		(exclude_from_sim no)
+		(at 30.988 18.796 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "ee503bb3-9164-49de-b941-ed148ca1ec2b")
 	)
 	(hierarchical_label "IN_A"
 		(shape input)
@@ -1774,7 +1926,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "238da953-897b-4aa1-b4b2-01e054197994")
-		(property "Reference" "#PWR0148"
+		(property "Reference" "#PWR0160"
 			(at 222.25 137.16 0)
 			(effects
 				(font
@@ -1835,10 +1987,6 @@
 					(reference "#PWR0148")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0164")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR0156")
 					(unit 1)
@@ -1856,7 +2004,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "24808d6c-bb2d-4e73-9e94-5d31976afa95")
-		(property "Reference" "C33"
+		(property "Reference" "C39"
 			(at 195.58 140.9699 0)
 			(effects
 				(font
@@ -1921,10 +2069,6 @@
 					(reference "C33")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "C41")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "C37")
 					(unit 1)
@@ -1942,7 +2086,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "58efa41b-9cdd-48e3-a377-17318669d5d4")
-		(property "Reference" "#PWR087"
+		(property "Reference" "#PWR099"
 			(at 77.47 69.85 0)
 			(effects
 				(font
@@ -2003,12 +2147,87 @@
 					(reference "#PWR087")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0110")
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
+					(reference "#PWR095")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 24.13 34.29 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "61cf36aa-7e4e-4aec-81aa-35ad5c90952c")
+		(property "Reference" "H5"
+			(at 26.67 31.7499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 26.67 34.2899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
+			(at 24.13 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 24.13 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 24.13 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "22a35f47-e72b-4c5c-a744-c873cd6e0aa5")
+		)
+		(instances
+			(project "Braille-Column-Rods-PCB"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/2b0fba1b-003e-4494-b9f7-98e2ce35fa03"
+					(reference "H8")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/4a266777-439f-4c03-9f8b-0659894f2f29"
+					(reference "H6")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6d14cd74-7953-4982-bf48-b3d2560b5e8c"
+					(reference "H5")
 					(unit 1)
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
-					(reference "#PWR095")
+					(reference "H7")
 					(unit 1)
 				)
 			)
@@ -2024,7 +2243,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "63e46513-1d22-40da-998b-cfab9aa5c2a4")
-		(property "Reference" "C34"
+		(property "Reference" "C40"
 			(at 236.22 151.1299 0)
 			(effects
 				(font
@@ -2089,10 +2308,6 @@
 					(reference "C34")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "C42")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "C38")
 					(unit 1)
@@ -2110,7 +2325,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "662dc835-c292-42f7-85f7-a001ab8f8e07")
-		(property "Reference" "D17"
+		(property "Reference" "D20"
 			(at 203.2 69.5324 90)
 			(effects
 				(font
@@ -2175,12 +2390,87 @@
 					(reference "D17")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "D21")
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
+					(reference "D19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 24.13 25.4 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "67a48477-fdbc-4b65-b403-f23edb248fbf")
+		(property "Reference" "H1"
+			(at 26.67 22.8599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 26.67 25.3999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "00-lib-footprints:MountingHole_3.2mm_M3_Pad_NoSilk"
+			(at 24.13 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 24.13 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 24.13 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0cdbcea4-2f16-434b-9013-f5d160a718a1")
+		)
+		(instances
+			(project "Braille-Column-Rods-PCB"
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/2b0fba1b-003e-4494-b9f7-98e2ce35fa03"
+					(reference "H4")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/4a266777-439f-4c03-9f8b-0659894f2f29"
+					(reference "H2")
+					(unit 1)
+				)
+				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6d14cd74-7953-4982-bf48-b3d2560b5e8c"
+					(reference "H1")
 					(unit 1)
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
-					(reference "D19")
+					(reference "H3")
 					(unit 1)
 				)
 			)
@@ -2196,7 +2486,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "76f1af4a-ecb2-4ea6-920a-34e93e3f4b27")
-		(property "Reference" "D12"
+		(property "Reference" "D15"
 			(at 193.04 72.7074 90)
 			(effects
 				(font
@@ -2261,10 +2551,6 @@
 					(reference "D12")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "D16")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "D14")
 					(unit 1)
@@ -2281,7 +2567,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "78d800e8-b1a7-4f35-b0d6-02d460683573")
-		(property "Reference" "#PWR0149"
+		(property "Reference" "#PWR0161"
 			(at 222.25 166.37 0)
 			(effects
 				(font
@@ -2342,10 +2628,6 @@
 					(reference "#PWR0149")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0165")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR0157")
 					(unit 1)
@@ -2363,7 +2645,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "80b9d05b-2a0c-4f01-8763-3b8b4308b8bf")
-		(property "Reference" "#PWR088"
+		(property "Reference" "#PWR0100"
 			(at 77.47 82.55 0)
 			(effects
 				(font
@@ -2424,10 +2706,6 @@
 					(reference "#PWR088")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0111")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR096")
 					(unit 1)
@@ -2445,7 +2723,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a418fcae-4d5a-41ad-9553-0d9ae7465e43")
-		(property "Reference" "#PWR090"
+		(property "Reference" "#PWR0102"
 			(at 106.68 85.09 0)
 			(effects
 				(font
@@ -2506,10 +2784,6 @@
 					(reference "#PWR090")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0113")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR098")
 					(unit 1)
@@ -2527,7 +2801,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a68750a3-b083-4326-86e3-0f6011260e8f")
-		(property "Reference" "#PWR089"
+		(property "Reference" "#PWR0101"
 			(at 106.68 67.31 0)
 			(effects
 				(font
@@ -2588,10 +2862,6 @@
 					(reference "#PWR089")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0112")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR097")
 					(unit 1)
@@ -2608,7 +2878,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b1100ec5-3d78-4754-bcbe-2518783079d3")
-		(property "Reference" "#PWR0147"
+		(property "Reference" "#PWR0159"
 			(at 199.39 156.21 0)
 			(effects
 				(font
@@ -2669,10 +2939,6 @@
 					(reference "#PWR0147")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0163")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR0155")
 					(unit 1)
@@ -2682,16 +2948,15 @@
 	)
 	(symbol
 		(lib_id "00-lib-symbols:Motor_DC_With_MP")
-		(at 137.16 69.85 0)
+		(at 137.16 72.39 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "b49c190d-9495-4d7f-a42c-6ce3cd4ac97e")
-		(property "Reference" "M9"
-			(at 142.24 71.1199 0)
+		(property "Reference" "M12"
+			(at 143.256 67.056 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2700,16 +2965,17 @@
 			)
 		)
 		(property "Value" "Motor_DC_With_MP"
-			(at 142.24 73.6599 0)
+			(at 156.972 65.532 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "00-lib-footprints:DC_Motor_6mm_OD_with_3_Stage_Gearbox"
-			(at 137.16 72.136 0)
+			(at 137.16 70.104 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2718,7 +2984,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 137.16 72.136 0)
+			(at 137.16 70.104 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2727,7 +2993,7 @@
 			)
 		)
 		(property "Description" "DC Motor"
-			(at 137.16 69.85 0)
+			(at 137.16 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2758,10 +3024,6 @@
 					(reference "M9")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "M13")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "M11")
 					(unit 1)
@@ -2779,7 +3041,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cf289ba2-57eb-4d94-b277-9b7b2a29b1a7")
-		(property "Reference" "#PWR0146"
+		(property "Reference" "#PWR0158"
 			(at 199.39 139.7 0)
 			(effects
 				(font
@@ -2840,10 +3102,6 @@
 					(reference "#PWR0146")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "#PWR0162")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "#PWR0154")
 					(unit 1)
@@ -2861,7 +3119,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cf7a85d2-e3dd-40a3-8c45-b9209e592f65")
-		(property "Reference" "U25"
+		(property "Reference" "U28"
 			(at 218.44 143.5099 0)
 			(effects
 				(font
@@ -2929,10 +3187,6 @@
 					(reference "U25")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "U29")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "U27")
 					(unit 1)
@@ -2950,7 +3204,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f4b66334-446e-4220-8797-355d447d02bf")
-		(property "Reference" "C10"
+		(property "Reference" "C13"
 			(at 81.28 69.8499 0)
 			(effects
 				(font
@@ -3015,10 +3269,6 @@
 					(reference "C10")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "C16")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "C12")
 					(unit 1)
@@ -3036,7 +3286,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f78c671a-8932-47d5-8313-0e435c78a02c")
-		(property "Reference" "U10"
+		(property "Reference" "U13"
 			(at 108.8741 60.96 0)
 			(effects
 				(font
@@ -3113,10 +3363,6 @@
 					(reference "U10")
 					(unit 1)
 				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "U16")
-					(unit 1)
-				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"
 					(reference "U12")
 					(unit 1)
@@ -3134,7 +3380,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fb596c28-9535-4e02-81bc-a2e5cfb3985c")
-		(property "Reference" "R38"
+		(property "Reference" "R41"
 			(at 191.77 59.6899 0)
 			(effects
 				(font
@@ -3197,10 +3443,6 @@
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6d14cd74-7953-4982-bf48-b3d2560b5e8c"
 					(reference "R38")
-					(unit 1)
-				)
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/6eed8c04-6460-4064-b133-0003fef19a77"
-					(reference "R42")
 					(unit 1)
 				)
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/1220b182-3f07-4fe8-af47-372abe179b4f/c98a9462-365d-45ad-943d-c4627fc9b58b"

@@ -16,7 +16,7 @@
 		)
 	)
 	(property "Value" "DC_Motor_6mm_OD_with_3_Stage_Gearbox"
-		(at -27 0 90)
+		(at -28.5 0 90)
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "510fe61d-200b-4c78-ad11-552a7a24145b")
@@ -90,7 +90,7 @@
 	)
 	(fp_rect
 		(start 0 -1.8)
-		(end 1.1 1.8)
+		(end 0.8 1.8)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -101,7 +101,7 @@
 	)
 	(fp_rect
 		(start 0 -1)
-		(end 3.6 1)
+		(end 1.4 1)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -111,18 +111,188 @@
 		(uuid "2bb85f94-b4df-4f09-a5c8-c5a50eea0cd7")
 	)
 	(fp_rect
-		(start -24.5 -10.5)
-		(end 9.5 10.5)
+		(start 4 -1)
+		(end 5.0254 1)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill solid)
+		(layer "F.SilkS")
+		(uuid "9884aaf3-11a6-4397-bad8-e8582d9bc180")
+	)
+	(fp_line
+		(start -25 -4)
+		(end -25 3)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
-		(fill none)
 		(layer "F.CrtYd")
-		(uuid "0ea3b798-c61a-4249-b48a-64479a2107d9")
+		(uuid "0d3dd643-f194-4cc2-823d-98004a47493e")
+	)
+	(fp_line
+		(start -25 3)
+		(end -25 4)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "f1707e19-3007-4d54-95ab-58315e381ad5")
+	)
+	(fp_line
+		(start -25 4)
+		(end -17 4)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "c87f4f2f-ed55-4b2f-a684-40a254b0519b")
+	)
+	(fp_line
+		(start -17 -10)
+		(end -17 -4)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "bcece670-bb40-4f40-8acc-3a0b47a80c1d")
+	)
+	(fp_line
+		(start -17 -4)
+		(end -25 -4)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "1cc3732e-5b7c-4b6d-8963-28021b69827f")
+	)
+	(fp_line
+		(start -17 4)
+		(end -17 10)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "265bad5a-2613-4386-8672-e9a89b34fc50")
+	)
+	(fp_line
+		(start -17 10)
+		(end -1 10)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "16e35f18-8794-4e77-b2a7-852d327371e4")
+	)
+	(fp_line
+		(start -1 -10)
+		(end -17 -10)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "aa1ce8ac-45ee-4e15-9673-10f60f9a7af6")
+	)
+	(fp_line
+		(start -1 -5)
+		(end -1 -10)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "26b640be-4fc9-417f-a898-ad9902fcb560")
+	)
+	(fp_line
+		(start -1 5)
+		(end 5 5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "d71e325c-f2c8-41fe-9d44-0738c5f632f7")
+	)
+	(fp_line
+		(start -1 10)
+		(end -1 5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "77735588-65a8-46a8-a8d2-a5e37d396da1")
+	)
+	(fp_line
+		(start 5 -5)
+		(end -1 -5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "6b3f4b38-8410-490f-9d2f-8799083e551a")
+	)
+	(fp_line
+		(start 5 -2)
+		(end 5 -5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "a4d582da-2e09-40b1-a17d-772ce2fb0bfa")
+	)
+	(fp_line
+		(start 5 5)
+		(end 5 2)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "abbe2150-b96f-488e-873f-785dc01cc506")
+	)
+	(fp_line
+		(start 5.5 -2)
+		(end 5 -2)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "3c3c405b-0806-4041-838a-81bc06213b63")
+	)
+	(fp_line
+		(start 5.5 2)
+		(end 5 2)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "b0a65115-cc09-4b96-9207-9661ed93cabc")
+	)
+	(fp_line
+		(start 5.5 2)
+		(end 5.5 -2)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "19080c94-530b-451d-bf6b-8771aa8338a4")
 	)
 	(fp_text user "${REFERENCE}"
-		(at -25.5 0 90)
+		(at -27 0 90)
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "c5d11c6c-e900-4669-8bfd-9d00e04cc647")
@@ -132,6 +302,13 @@
 				(thickness 0.15)
 			)
 		)
+	)
+	(pad "" np_thru_hole rect
+		(at 2.4 0)
+		(size 1.524 1.524)
+		(drill oval 3 8)
+		(layers "*.Mask")
+		(uuid "7d4644f3-acdc-49da-a26b-cd681d406512")
 	)
 	(pad "1" thru_hole circle
 		(at -23.5 -1.5)
