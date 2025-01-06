@@ -191,6 +191,20 @@ class HousingSpec:
 
     def __post_init__(self) -> None:
         """Post initialization checks."""
+        magnet_coord_y = (
+            self.total_y / 2
+            + self.rod_slop_axial / 2
+            + self.rod_length_past_outside_wall_to_gear_or_shaft
+            + self.motor_shaft_grip_length / 2
+        )
+
+        motor_shaft_gripper_max_y = (
+            self.total_y / 2
+            + self.rod_slop_axial / 2
+            + self.rod_length_past_outside_wall_to_gear_or_shaft
+            + self.motor_shaft_grip_length
+        )
+
         data = {
             "mounting_hole_spacing_x": self.mounting_hole_spacing_x,
             "inner_cavity_size_x": self.inner_cavity_size_x,
@@ -198,6 +212,8 @@ class HousingSpec:
             "total_y": self.total_y,
             "total_z": self.total_z,
             "get_cell_center_x_values()": self.get_cell_center_x_values(),
+            "magnet_coord_y": magnet_coord_y,  # PCB design.
+            "motor_shaft_gripper_max_y": motor_shaft_gripper_max_y,  # PCB design.
         }
         logger.info(json.dumps(data, indent=2))
 

@@ -2516,7 +2516,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "00-lib-footprints:MicroStepper_8mm-2mmGear"
+		(property "Footprint" "00-lib-footprints:MicroStepper_4.7_OD"
 			(at 127.254 127.254 0)
 			(effects
 				(font
