@@ -2345,6 +2345,50 @@
 		)
 		(uuid "ea7cb0ac-04a6-4fd0-8840-a987a65e35cb")
 	)
+	(global_label "I2C_SDA"
+		(shape input)
+		(at 86.36 91.44 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "585fe131-4369-456d-b0bb-995be37dfe75")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 75.7548 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "I2C_SCL"
+		(shape input)
+		(at 86.36 88.9 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f8fa7176-c9a8-4961-af72-a6576902ffc7")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 75.8153 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(hierarchical_label "HALL_ANALOG"
 		(shape input)
 		(at 88.9 86.36 180)
@@ -3425,75 +3469,6 @@
 			(project "Braille-Column-Rods-PCB"
 				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f44c903d-2365-4758-aca6-5117133a8846"
 					(reference "#PWR018")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 81.28 88.9 0)
-		(mirror y)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "9c0c239e-3ff1-4699-9fd2-85e832f065f0")
-		(property "Reference" "J2"
-			(at 78.994 90.17 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "Conn_01x02"
-			(at 81.28 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 81.28 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 81.28 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 81.28 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "b5771df5-e21c-4fd3-8dc6-09ec25104278")
-		)
-		(pin "1"
-			(uuid "01b15f64-8d61-4480-b403-61d0b06c8a60")
-		)
-		(instances
-			(project ""
-				(path "/f7fdfeea-4cd4-4338-ad68-f9089a17ed6f/f44c903d-2365-4758-aca6-5117133a8846"
-					(reference "J2")
 					(unit 1)
 				)
 			)
