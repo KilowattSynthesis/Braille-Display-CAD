@@ -16,6 +16,7 @@ from datetime import UTC, datetime
 from functools import reduce
 from itertools import product
 from pathlib import Path
+from typing import Literal
 
 import bd_warehouse.thread
 import build123d as bd
@@ -35,7 +36,7 @@ class HousingSpec:
     cell_pitch_x: float = 6
     cell_pitch_y: float = 10
 
-    motor_body_od: float = 4.0
+    motor_body_od: float = 4.2
     motor_body_length: float = 8.0 + 1.0  # Extra 1mm for fit (esp for bottom).
 
     # The distance above the top of the motor to not allow the bending `turner_tube`.
@@ -71,6 +72,10 @@ class HousingSpec:
 
     top_plate_dot_hole_thread_diameter: float = 1.6
     top_plate_dot_hole_thread_pitch: float = 0.35
+
+    remove_thin_walls: bool = True
+
+    slice_thickness: float = 4
 
     @property
     def dist_between_motor_walls(self) -> float:
@@ -220,13 +225,11 @@ def make_motor_placement_demo(spec: HousingSpec) -> bd.Part:
     return p
 
 
-def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> bd.Part:
+def make_motor_housing(spec: HousingSpec) -> bd.Part:
     """Make housing with the placement from the demo.
 
     Args:
         spec: The specification for the housing.
-        remove_thin_walls: Whether to remove thin walls that are not needed.
-            For SLA printing, set to True. For FDM, False may work.
 
     """
     p = bd.Part(None)
@@ -326,7 +329,7 @@ def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> 
                         + (
                             # Offset it in by 1mm so it is contained in the hull.
                             -offset_y * 0.5
-                            if remove_thin_walls
+                            if spec.remove_thin_walls
                             # Else: Offset it toward edge.
                             else (
                                 offset_y
@@ -370,7 +373,7 @@ def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> 
                 amount=spec.motor_rigid_shaft_len + 0.01,
             ).translate((motor_x, motor_y, spec.motor_body_length))
 
-    if remove_thin_walls:
+    if spec.remove_thin_walls:
         # Subtract a hull of the centers of the motor holes (TOP layer).
         # On the top layer, hull all motor holes (top and bottom).
         p -= bd.extrude(
@@ -433,6 +436,33 @@ def make_motor_housing(spec: HousingSpec, *, remove_thin_walls: bool = True) -> 
     ).translate((0, 0, spec.motor_body_length * 2 + spec.gap_between_motor_layers))
 
     return p
+
+
+def make_motor_housing_slice(
+    spec: HousingSpec, *, upper_or_lower: Literal["upper", "lower"]
+) -> bd.Part:
+    """Create a slice of the motor housing."""
+    p = make_motor_housing(spec)
+
+    if upper_or_lower == "upper":
+        slice_z_bottom = (
+            spec.motor_body_length
+            + spec.gap_between_motor_layers
+            + spec.motor_outline_thickness_z
+            + 0.1
+        )
+    elif upper_or_lower == "lower":
+        slice_z_bottom = 1
+    else:
+        msg = f"Invalid upper_or_lower: {upper_or_lower}"
+        raise ValueError(msg)
+
+    return p & bd.Box(
+        spec.total_x * 2,
+        spec.total_y * 2,
+        spec.slice_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    ).translate((0, 0, slice_z_bottom))
 
 
 def make_top_plate_for_tapping(spec: HousingSpec, *, tap_holes: bool) -> bd.Part:
@@ -672,24 +702,44 @@ def make_fake_motor_chunk(spec: HousingSpec) -> bd.Part:
     return p
 
 
+def make_thin_fake_motor(spec: HousingSpec) -> bd.Part:
+    """Make a cylinder the size of a thin motor."""
+    p = bd.Part(None)
+
+    p += bd.Cylinder(
+        radius=(spec.motor_body_od) / 2,
+        height=spec.slice_thickness,
+        align=bde.align.ANCHOR_BOTTOM,
+    )
+
+    return p
+
+
 if __name__ == "__main__":
     start_time = datetime.now(UTC)
     py_file_name = Path(__file__).name
     logger.info(f"Running {py_file_name}")
 
     parts = {
-        "fake_motor_chunk": show(make_fake_motor_chunk(HousingSpec())),
-        "motor_placement_demo": show(make_motor_placement_demo(HousingSpec())),
-        "motor_housing": show(make_motor_housing(HousingSpec())),
-        "motor_housing_thin_walls_fdm": show(
-            make_motor_housing(HousingSpec(), remove_thin_walls=False)
+        "motor_housing_slice_upper": show(
+            make_motor_housing_slice(HousingSpec(), upper_or_lower="upper")
+        ),
+        "motor_housing_slice_lower": show(
+            make_motor_housing_slice(HousingSpec(), upper_or_lower="lower")
+        ),
+        "thin_fake_motor": (make_thin_fake_motor(HousingSpec())),
+        "fake_motor_chunk": (make_fake_motor_chunk(HousingSpec())),
+        "motor_placement_demo": (make_motor_placement_demo(HousingSpec())),
+        "motor_housing": (make_motor_housing(HousingSpec())),
+        "motor_housing_thin_walls_fdm": (
+            make_motor_housing(HousingSpec(remove_thin_walls=False))
         ),
         "top_plate_untapped": (
             make_top_plate_for_tapping(HousingSpec(), tap_holes=False)
         ),
-        "top_plate_pre_tapped": (
-            make_top_plate_for_tapping(HousingSpec(), tap_holes=True)
-        ),
+        # "top_plate_pre_tapped": ( # Very slow to generate.
+        #     make_top_plate_for_tapping(HousingSpec(), tap_holes=True)
+        # ),
     }
 
     logger.info("Showing CAD model(s)")
