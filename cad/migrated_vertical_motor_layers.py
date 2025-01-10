@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import reduce
 from itertools import product
+from math import sqrt
 from pathlib import Path
 from typing import Literal
 
@@ -30,7 +31,7 @@ class HousingSpec:
     """Specification for braille cell in general."""
 
     motor_pitch_x: float = 3
-    motor_pitch_y: float = 3
+    motor_pitch_y: float = 2.64  # Solved below to hold motor tightly.
     dot_pitch_x: float = 2.5
     dot_pitch_y: float = 2.5
     cell_pitch_x: float = 6
@@ -114,7 +115,7 @@ class HousingSpec:
         hypot_len = (self.motor_pitch_x**2 + self.motor_pitch_y**2) ** 0.5
 
         data = {
-            "hypot_len": round(hypot_len, 2),
+            "hypot_len": round(hypot_len, 2),  # Forced to match `motor_od`.
             "total_x": self.total_x,
             "total_y": self.total_y,
             "total_z": self.total_z,
@@ -465,7 +466,12 @@ def make_motor_housing_slice(
     ).translate((0, 0, slice_z_bottom))
 
 
-def make_top_plate_for_tapping(spec: HousingSpec, *, tap_holes: bool) -> bd.Part:
+def make_top_plate_for_tapping(
+    spec: HousingSpec,
+    *,
+    tap_holes: bool,
+    enable_dot_6_nut_hole: bool = False,
+) -> bd.Part:
     """Make the threaded top plate, with holes for tapping."""
     p = bd.Part(None)
 
@@ -522,8 +528,39 @@ def make_top_plate_for_tapping(spec: HousingSpec, *, tap_holes: bool) -> bd.Part
             ).translate((dot_x, dot_y, 0))
 
             p += internal_thread_for_dots.translate((dot_x, dot_y, 0))
-        else:
+        elif not enable_dot_6_nut_hole:
             # Create the braille as just a cylinder.
+            p -= bd.Cylinder(
+                radius=spec.top_plate_tap_hole_diameter / 2,
+                height=spec.top_plate_thickness,
+                align=bde.align.ANCHOR_BOTTOM,
+            ).translate((dot_x, dot_y, 0))
+
+    if enable_dot_6_nut_hole:
+        for cell_x, cell_y in product(
+            bde.evenly_space_with_center(
+                count=spec.cell_count_x,
+                spacing=spec.cell_pitch_x,
+            ),
+            bde.evenly_space_with_center(
+                count=spec.cell_count_y,
+                spacing=spec.cell_pitch_y,
+            ),
+        ):
+            # Make coords for dot 6 (for testing).
+            dot_x = cell_x + spec.dot_pitch_x / 2
+            dot_y = cell_y - spec.dot_pitch_y
+
+            p -= bd.extrude(
+                bd.RegularPolygon(
+                    radius=3 / 2,  # Nut width of M1.6 is 3mm.
+                    side_count=6,
+                    major_radius=False,
+                ),
+                amount=10,
+            ).translate((dot_x, dot_y, spec.top_plate_thickness - 1.5))
+
+            # Remove the hole.
             p -= bd.Cylinder(
                 radius=spec.top_plate_tap_hole_diameter / 2,
                 height=spec.top_plate_thickness,
@@ -715,12 +752,59 @@ def make_thin_fake_motor(spec: HousingSpec) -> bd.Part:
     return p
 
 
+def make_fake_thin_motor_block(spec: HousingSpec) -> bd.Part:
+    """Make three cylinders the size of thin motors hulled."""
+    p = bd.Part(None)
+
+    motor_locations: list[tuple[float, float]] = [
+        (-spec.motor_pitch_x, 0),
+        (0, -spec.motor_pitch_y),
+        (0, spec.motor_pitch_y),
+    ]
+
+    p += bd.extrude(
+        bd.make_hull(
+            reduce(
+                lambda a, b: a + b,
+                [
+                    bd.Circle(radius=spec.motor_body_od / 4).translate(coord).edges()
+                    for coord in motor_locations
+                ],
+            )
+        )
+        + reduce(
+            lambda a, b: a + b,
+            [
+                bd.Circle(radius=spec.motor_body_od / 2).translate(coord)
+                for coord in motor_locations
+            ],
+        ),
+        amount=spec.slice_thickness,
+    )
+
+    return p
+
+
+def solve_motor_spacing() -> None:
+    """Do calculations about motor spacing."""
+    _dot_pitch_x = 2.5
+    cell_pitch_x = 6
+    motor_od = 4
+
+    motor_pitch_x = cell_pitch_x / 2  # Forced, so motors can hold each other.
+    motor_pitch_y = sqrt(motor_od**2 - motor_pitch_x**2)
+    logger.info(f"motor_pitch_y: {motor_pitch_y}")
+
+
 if __name__ == "__main__":
     start_time = datetime.now(UTC)
     py_file_name = Path(__file__).name
     logger.info(f"Running {py_file_name}")
 
+    solve_motor_spacing()
+
     parts = {
+        "fake_thin_motor_block": show(make_fake_thin_motor_block(HousingSpec())),
         "motor_housing_slice_upper": show(
             make_motor_housing_slice(HousingSpec(), upper_or_lower="upper")
         ),
@@ -737,12 +821,22 @@ if __name__ == "__main__":
         "top_plate_untapped": (
             make_top_plate_for_tapping(HousingSpec(), tap_holes=False)
         ),
+        "top_plate_with_dot_6_nut": show(
+            make_top_plate_for_tapping(
+                HousingSpec(
+                    top_plate_thickness=3,
+                    top_plate_tap_hole_diameter=2.1,  # Clearance for M1.6.
+                ),
+                tap_holes=False,
+                enable_dot_6_nut_hole=True,
+            )
+        ),
         # "top_plate_pre_tapped": ( # Very slow to generate.
         #     make_top_plate_for_tapping(HousingSpec(), tap_holes=True)
         # ),
     }
 
-    logger.info("Showing CAD model(s)")
+    logger.info("Saving CAD model(s)")
 
     (
         export_folder := Path(__file__).parent.parent / "build" / Path(__file__).stem
