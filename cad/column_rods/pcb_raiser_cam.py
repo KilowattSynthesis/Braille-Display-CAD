@@ -54,7 +54,7 @@ class MainSpec:
     bushing_block_slop_diameter: float = 0.5
 
     bushing_block_screw_hole_id: float = 1.9  # M2 thread forming screw.
-    bushing_block_screw_hole_sep: float = 8.0  # Center to center.
+    bushing_block_screw_hole_sep: float = 7.0  # Center to center.
 
     bushing_hall_sensor_width: float = 3.5 + 1
     bushing_hall_sensor_height: float = 0.01
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     parts = {
         "cam": show(make_cam(MainSpec())),
         "assembly_cam_and_dc_motor": show(make_assembly_cam_and_dc_motor(MainSpec())),
-        "bushing_block": (make_bushing_block(MainSpec())),
+        "bushing_block": show(make_bushing_block(MainSpec())),
     }
 
     logger.info("Saving CAD model(s)...")
